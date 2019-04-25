@@ -1,2 +1,2 @@
 # papers
-Material from papers from KULL centre
+Materials, scripts, data etc from papers from KULL centre
