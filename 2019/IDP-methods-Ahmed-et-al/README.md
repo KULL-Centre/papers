@@ -2,7 +2,7 @@
 
 This is a Python code to perform calclation of the radius of gyration and hydrodynamic radius from a structual ensemble. This code also include a how-to guide to perform BME reweighting and re-generate figures and data in main text. Here, We use Ensemble 1 from the paper as an exemplar.  
 
-## Getting Started
+### Getting Started
 
 The folder `/notebook` contains a guide to generate data and figures from the main text in jupyter notebook format.
 
@@ -17,7 +17,7 @@ The folder `/data` contains the input files for the notebook.
 4. Jupyter and Matplotlib
 5. MDtraj
 
-## References 
+### References 
 You may consider reading and citing the following relevant references as well:
 ```
 @article{bottaro2018integrating,
@@ -41,5 +41,5 @@ You may consider reading and citing the following relevant references as well:
   publisher={Elsevier}
 }
 ```
-## Acknowledgments
+### Acknowledgments
 
