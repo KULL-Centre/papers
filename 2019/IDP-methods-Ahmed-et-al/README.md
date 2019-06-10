@@ -4,10 +4,10 @@ This is a Python code to perform calclation of the radius of gyration and hydrod
 
 ## Getting Started
 
-The folder `/notebook` contains all the details to generate data and figures from the main text in form of a jupyter notebook.
+The folder `/notebook` contains a guide to generate data and figures from the main text in jupyter notebook format.
 
 The folder `/data` contains the input files for the notebook.
-The files are:
+
 
 ### Requirements
 
@@ -15,6 +15,7 @@ The files are:
 2. BME 
 3. Numpy, Scipy libraries
 4. Jupyter and Matplotlib
+5. MDtraj
 
 ## References 
 You may consider reading and citing the following relevant references as well:
