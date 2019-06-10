@@ -1,13 +1,17 @@
 # Analyzing and comparing the radius of gyration and hydrodynamic radius in conformational ensembles of intrinsically disordered proteins
 
-This is a Python code to perform calclation of the radius of gyration and hydrodynamic radius from a structual ensemble. This code also include a how-to guide to perform BME reweighting and re-generate figures and data in main text. 
+This is a Python code to perform calclation of the radius of gyration and hydrodynamic radius from a structual ensemble. This code also include a how-to guide to perform BME reweighting and re-generate figures and data in main text. Here, We use Ensemble 1 from the paper as an exemplar.  
 
 ## Getting Started
 
-The notebook file `notebook` contains all the details to generate data and figures from the main text in form of a jupyter notebooks.
+The folder '/notebook' contains all the details to generate data and figures from the main text in form of a jupyter notebook.
 
-The folder `/data` contains the input files for the notebook:
+The folder `/data` contains the input files for the notebook.
+The files are:
 
+```
+Give the example
+```
 
 ### Requirements
 
