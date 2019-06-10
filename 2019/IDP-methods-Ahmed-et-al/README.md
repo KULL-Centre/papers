@@ -6,7 +6,7 @@ This is a Python code to perform calclation of the radius of gyration and hydrod
 
 The notebook file `notebook` contains all the details to generate data and figures from the main text in form of a jupyter notebooks.
 
-In the folder `/data` you will find input files for the notebook
+The folder `/data` contains the input files for the notebook:
 
 
 ### Requirements
