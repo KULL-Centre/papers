@@ -18,7 +18,7 @@ The files are:
 
 ## References 
 You may consider reading and citing the following relevant references as well:
-
+```
 @article{bottaro2018integrating,
   title={Integrating Molecular Simulation and Experimental Data: A Bayesian/Maximum Entropy Reweighting Approach},
   author={Bottaro, Sandro and Bengtsen, Tone and Lindorff-Larsen, Kresten},
@@ -27,7 +27,8 @@ You may consider reading and citing the following relevant references as well:
   year={2018},
   publisher={Cold Spring Harbor Laboratory}
 }
-
+```
+```
 @article{nygaard2017efficient,
   title={An efficient method for estimating the hydrodynamic radius of disordered protein conformations},
   author={Nygaard, Mads and Kragelund, Birthe B and Papaleo, Elena and Lindorff-Larsen, Kresten},
@@ -38,6 +39,6 @@ You may consider reading and citing the following relevant references as well:
   year={2017},
   publisher={Elsevier}
 }
-
+```
 ## Acknowledgments
 
