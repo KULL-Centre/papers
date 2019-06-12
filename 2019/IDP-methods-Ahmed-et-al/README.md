@@ -18,7 +18,7 @@ The folder `/data` contains the input files for the notebook.
 5. MDtraj
 
 ### References 
-You may consider reading and citing the following relevant references as well:
+You may consider reading and citing the following relevant papers as well:
 ```
 @article{bottaro2018integrating,
   title={Integrating Molecular Simulation and Experimental Data: A Bayesian/Maximum Entropy Reweighting Approach},
