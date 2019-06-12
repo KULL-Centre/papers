@@ -13,9 +13,10 @@ The folder `/data` contains the input files for the notebook.
 
 1. Python >=3.4
 2. BME 
-3. Numpy, Scipy libraries
-4. Jupyter and Matplotlib
-5. MDtraj
+3. MDtraj
+4. Numpy libraries
+5. Jupyter and Matplotlib
+
 
 ### References 
 You may consider reading and citing the following relevant papers as well:
