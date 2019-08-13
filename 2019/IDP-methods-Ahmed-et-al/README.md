@@ -11,11 +11,13 @@ The folder `/data` contains the input files for the notebook.
 
 ### Requirements
 
-1. Python >=3.4
-2. BME 
-3. MDtraj
-4. Numpy libraries
-5. Jupyter and Matplotlib
+1. Jupyter and Matplotlib, Python >=3.4 
+2. MDtraj
+3. Numpy libraries 
+4. BME `https://github.com/KULL-Centre/BME`
+5. uncertainties 3.1.2 `https://pypi.org/project/uncertainties/`
+6. Pepsi-SAXS  `https://team.inria.fr/nano-d/software/pepsi-saxs`
+
 
 
 ### References 
