@@ -1,4 +1,4 @@
-# Analyzing and comparing the radius of gyration and hydrodynamic radius in conformational ensembles of intrinsically disordered proteins
+# Computing, analyzing and comparing the radius of gyration and hydrodynamic radius in conformational ensembles of intrinsically disordered proteins
 
 This is a Python code to perform calculation of the radius of gyration and hydrodynamic radius from a structual ensemble. This code also include a how-to guide to perform BME reweighting and re-generate figures and data in main text. Here we use Ensemble 1 from the paper as an exemplar.  
 
@@ -11,9 +11,9 @@ The folder `/data` contains the input files for the notebook.
 
 ### Requirements
 
-1. Jupyter and Matplotlib, Python >=3.4 
-2. MDtraj
-3. Numpy libraries 
+1. Python Jupyter and Matplotlib with Python >=3.4 https://jupyter.org/
+2. MDtraj http://mdtraj.org/1.9.3/
+3. Numpy libraries (native in Python Jupyter)
 4. BME `https://github.com/KULL-Centre/BME`
 5. uncertainties 3.1.2 `https://pypi.org/project/uncertainties/`
 6. Pepsi-SAXS  `https://team.inria.fr/nano-d/software/pepsi-saxs`
