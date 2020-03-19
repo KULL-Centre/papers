@@ -14,6 +14,8 @@
             pdb structure of lipids and MSP proteins, excluding solvent. 
     - all_simulations.xtc
         concatenation of simulation_1 and simulation_2 into one long and processed to have continous timesteps (-settime in gmx trjcat). 
+    - vmd_visualize_simulation.tcl
+        file to help visualise the simulation in the visualization program VMD (better than pymol for large trajectories). Run by: vmd -e vmd_visualize_simulation.tcl
     - gromacs_run_files/simulation_1.xtc
         First simulation excluding solvent. Outputted every 1 ns, first 10ns discarded. Processed to avoid possible PBC jumps. 
     - gromacs_run_files/simulation_2.xtc
