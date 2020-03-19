@@ -1,0 +1,30 @@
+CHARMM36 all-atom lipid force field (with CHARMM22 plus CMAP protein force field and CHARMM27 nucleic acid force field)
+
+This is the GROMACS 4.5.7 version of this force field (see http://www.gromacs.org/About_Gromacs/Release_Notes/Versions_4.5.x for any force field difference to the 4.5.4 version).
+
+Most of this forcefield is taken from the CHARMM27 port so please look at the forcefield.doc from the charmm27.ff folder for references, but make sure you cite:
+
+Bjelkmar, P., Larsson, P., Cuendet, M. A, Bess, B., Lindahl, E.
+Implementation of the CHARMM force field in GROMACS: Analysis of protein
+stability effects from correction maps, virtual interaction sites, and
+water models., Journal of Chemical Theory and Computation, 6: 459-466, 2010.
+
+
+The lipid parameters were converted from the CHARMM36 .rtf, .par and .str files (by Thomas Piggot, as well as Par Bjelkmar for lipid.rtp), so also cite the CHARMM36 paper:
+
+Jeffery B. Klauda, Richard M. Venable, J. Alfredo Freites, Joseph
+W. O’Connor, Douglas J. Tobias, Carlos Mondragon-Ramirez, Igor
+Vorobyov, Alexander D. MacKerell, Jr. and Richard W. Pastor "Update of
+the CHARMM All-Atom Additive Force Field for Lipids: Validation on Six
+Lipid Types" J. Phys. Chem. B, 2010, 114 (23), pp 7830–7843
+
+
+Finally we also ask you to please read and cite our work, validating this conversion. We hope that you also find this work useful as a guide for the selection of appropriate parameters to use with this lipid force field in GROMACS:
+
+Thomas J. Piggot, Ángel Piñeiro and Syma Khalid
+Molecular Dynamics Simulations of Phosphatidylcholine Membranes: A Comparative Force Field Study
+Journal of Chemical Theory and Computation
+DOI: 10.1021/ct3003157
+
+
+If you have any questions about these forcefield files then please contact me (t.piggot@soton.ac.uk) or ask the GROMACS mailing list.

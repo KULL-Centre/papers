@@ -1,0 +1,17 @@
+; Conversion of CHARMM36 parameters to GROMACS format by Thomas Piggot, July 2010. 
+; Also added some parameters from later CHARMM27 versions, such as those for the PS headgroup.
+;
+; If you use these parameters please check out the forcefield.doc for papers to cite
+
+#define _FF_CHARMM
+[ defaults ]
+; nbfunc	comb-rule	gen-pairs	fudgeLJ	fudgeQQ
+1	2	yes	1.0	1.0
+
+#include "ffnonbonded.itp"
+#include "ffbonded.itp"
+#include "gb.itp"
+#include "cmap.itp"
+; Nucleic acids nonbonded and bonded parameters"
+#include "ffnanonbonded.itp"
+#include "ffnabonded.itp"
