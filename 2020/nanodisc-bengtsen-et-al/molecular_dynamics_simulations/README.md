@@ -1,4 +1,11 @@
 # Molecular dynamics simulation files
+
+## Visualization
+See simulation visualised by using the visualization program VMD (better than pymol for large simulations). Run:
+``` 
+vmd -e vmd_visualize_simulation.tcl
+```
+
 ## Methods: 
     - ff: CHARMM36-m 
     - programme: GROMACS 5.0.7
