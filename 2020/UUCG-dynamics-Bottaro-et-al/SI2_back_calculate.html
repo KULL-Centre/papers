@@ -13017,45 +13017,6 @@ ul.typeahead-list  > li > a.pull-right {
 .highlight .vm { color: #19177C } /* Name.Variable.Magic */
 .highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
     </style>
-<style type="text/css">
-    
-/* Temporary definitions which will become obsolete with Notebook release 5.0 */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-bold { font-weight: bold; }
-
-    </style>
 
 
 <style type="text/css">
@@ -13116,17 +13077,49 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Back-calculate-experimental-data-from-structure">Back-calculate experimental data from structure<a class="anchor-link" href="#Back-calculate-experimental-data-from-structure">&#182;</a></h1><p>Here we back-calcuate the experimental quantities from structures and trjactories. We first need to define three small helper functions</p>
+<h1 id="Back-calculate-experimental-data-from-structure">Back-calculate experimental data from structure<a class="anchor-link" href="#Back-calculate-experimental-data-from-structure">&#182;</a></h1><p>Here we back-calcuate the experimental quantities from PDB structures and trjactories.
+The experimental datasets are</p>
+<ul>
+<li>Dataset A: Exact eNOEs (Nichols et al. (2018b)), consisting in 62 bidirectional exact NOE, 177 unidirectional eNOE and 77 generic normalized eNOE (gn-125 eNOE). This dataset alone was used to determine the structure of the UUCG tetraloop with PDB accession codes 6BY4 and 6BY5.In addition to the original dataset we added 1 new eNOE and 6 new gn-eNOEs:</li>
+</ul>
+
+<pre><code>NEW bidirectional eNOE
+C8_H4';G10_H8  5.77 0.577
+
+New gn-eNOE, used as lower-bound distances 
+ C8_H5;G10_H1'  5.8 0.58 
+ C8_H5;G10_H8 5.87 0.587  
+ C8_H2';G10_H8 7.06 0.706
+ C8_H3';G9_H8 5.78 0.578 
+ C8_H2';G9_H8 5.92 0.592 
+ C8_H1';G10_H4' 5.28 0.528 
+ C8_H2';G9_H2' 4.62 0.462</code></pre>
+<ul>
+<li>Dataset B. Taken from the study “High-Resolution NMR Structure of a RNA model system: the 14mer cUUCGg tetraloop hairpin RNA“ and corresponding PDB structure 2KOC. </li>
+<li><p>Dataset C. 38 (RDC1) plus 13 (RDC2) residual dipolar couplings. These RDCs have been used in conjunction with MD simulations to obtain a dynamic ensemble of the UUCG tetraloop. Borkar et al. (2017).</p>
+</li>
+<li><p>Dataset D. 91 solvent paramagnetic resonance enhancement (sPRE) measurements from Hartlmüller et al. (2017).</p>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Dataset-A">Dataset A<a class="anchor-link" href="#Dataset-A">&#182;</a></h1><h2 id="bidirectional-exact-noes-(eNOE).">bidirectional exact noes (eNOE).<a class="anchor-link" href="#bidirectional-exact-noes-(eNOE).">&#182;</a></h2><p>From the original list of 72 distances, 10 datapoints were removed, corresponding to distances between H41-H42, H21-H22, H5'-H5'' and H5-H6 protons in the same nucleotide. 6 URA H2' 7 URA H6 bi-dir 4.56 and 6 URA H2' 6 URA H6 bi-dir 3.83 are duplicated and were also removed. The experimental error was set to 10% of the eNOE. For all NOE data used here we use the standard $^{-6}$ averaging, i.e. $\text{NOE}_{\text{CALC}} = (\sum_i w_i r_i^{-6})^{-1/6}$</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">glob</span>
 
 <span class="c1"># helper functions, subsititute strings. This is because the name of hydrogens is a mess</span>
 <span class="n">alt</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;H2&#39;&quot;</span><span class="p">:</span><span class="s2">&quot;1H2&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;H5&#39;&#39;&quot;</span><span class="p">:</span><span class="s2">&quot;2H5&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;H5&#39;&quot;</span><span class="p">:</span><span class="s2">&quot;1H5&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;HO2&#39;&quot;</span><span class="p">:</span><span class="s2">&quot;2HO&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;H5</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">:</span><span class="s2">&quot;2H5&#39;&quot;</span><span class="p">}</span>
@@ -13191,40 +13184,23 @@ div#notebook {
         <span class="n">stri</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">stri</span><span class="p">)</span>
     <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div>
 
-    </div>
-</div>
-</div>
+    
+<span class="c1">#######################</span>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Dataset-A0">Dataset A0<a class="anchor-link" href="#Dataset-A0">&#182;</a></h1><p>The first dataset that we consider is the original set of eNOE data published in "Nichols, Parker J., et al. "High-resolution small RNA structures from exact nuclear Overhauser enhancement measurements without additional restraints." Communications biology 1.1 (2018): 61."</p>
-<h2 id="bidirectional-exact-noes-(eNOE).">bidirectional exact noes (eNOE).<a class="anchor-link" href="#bidirectional-exact-noes-(eNOE).">&#182;</a></h2><p>From the original list of 72 distances, 10 datapoints were removed, corresponding to distances between H41-H42, H21-H22, H5'-H5'' and H5-H6 protons in the same nucleotide. 6 URA H2' 7 URA H6 bi-dir 4.56 and 6 URA H2' 6 URA H6 bi-dir 3.83 are duplicated and were also removed. The experimental error was set to 10% of the eNOE. For all NOE data used here we use the standard $^{-6}$ averaging, i.e. $\text{NOE}_{\text{CALC}} = (\sum_i w_i r_i^{-6})^{-1/6}$</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">mdtraj</span> <span class="k">as</span> <span class="nn">md</span>
+    
+<span class="kn">import</span> <span class="nn">mdtraj</span> <span class="k">as</span> <span class="nn">md</span>
 
 <span class="n">top</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/2koc_gmx.pdb&quot;</span>
 <span class="n">traj</span> <span class="o">=</span> <span class="s2">&quot;data/traj_temp_f_0.xtc&quot;</span>
-<span class="n">labels</span><span class="p">,</span><span class="n">vals</span> <span class="o">=</span> <span class="n">read_exp</span><span class="p">(</span><span class="s2">&quot;data/set_A0/eNOE.exp.dat&quot;</span><span class="p">)</span>
+<span class="n">labels</span><span class="p">,</span><span class="n">vals</span> <span class="o">=</span> <span class="n">read_exp</span><span class="p">(</span><span class="s2">&quot;data/exp/set_A/eNOE.exp.dat&quot;</span><span class="p">)</span>
 
-<span class="c1">#######################</span>
 <span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
 <span class="n">pairs</span> <span class="o">=</span> <span class="n">get_idxs</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">md_trj</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
 <span class="c1"># convert to Angstrom</span>
 <span class="n">dists_md</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
 <span class="c1"># write to file </span>
-<span class="n">write</span><span class="p">(</span><span class="n">dists_md</span><span class="p">,</span><span class="s2">&quot;data/set_A0/eNOE.calc.dat&quot;</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="n">dists_md</span><span class="p">,</span><span class="s2">&quot;data/calc/set_A/eNOE.calc.dat&quot;</span><span class="p">)</span>
 
 <span class="n">pdbs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;2koc&quot;</span><span class="p">,</span><span class="s2">&quot;6by5&quot;</span><span class="p">]</span>
 <span class="n">dists_pdbs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -13234,7 +13210,7 @@ div#notebook {
     <span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
     <span class="n">pairs</span> <span class="o">=</span> <span class="n">get_idxs</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">md_trj</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
     <span class="n">dists</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
-    <span class="n">write</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span><span class="s2">&quot;data/set_A0/</span><span class="si">%s</span><span class="s2">.eNOE.calc.dat&quot;</span> <span class="o">%</span><span class="k">p</span>)
+    <span class="n">write</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span><span class="s2">&quot;data/calc/set_A/</span><span class="si">%s</span><span class="s2">.eNOE.calc.dat&quot;</span> <span class="o">%</span><span class="k">p</span>)
     
 </pre></div>
 
@@ -13252,7 +13228,7 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre># Found 62 pairs out of 62
+<pre># Found 63 pairs out of 63
 </pre>
 </div>
 </div>
@@ -13277,8 +13253,8 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre># Found 62 pairs out of 62
-# Found 62 pairs out of 62
+<pre># Found 63 pairs out of 63
+# Found 63 pairs out of 63
 </pre>
 </div>
 </div>
@@ -13298,10 +13274,10 @@ C5_H5;C5_H5''; A4_H62;U11_H3; A4_H61;U11_H3; C5_H4';C5_H5; U7_H5'';G9_H1. Since 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span><span class="n">vals</span> <span class="o">=</span> <span class="n">read_exp</span><span class="p">(</span><span class="s2">&quot;data/set_A0/eNOE_unidir.exp.dat&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span><span class="n">vals</span> <span class="o">=</span> <span class="n">read_exp</span><span class="p">(</span><span class="s2">&quot;data/exp/set_A/eNOE_unidir.exp.dat&quot;</span><span class="p">)</span>
 
 
 <span class="n">top</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/2koc_gmx.pdb&quot;</span>
@@ -13312,7 +13288,7 @@ C5_H5;C5_H5''; A4_H62;U11_H3; A4_H61;U11_H3; C5_H4';C5_H5; U7_H5'';G9_H1. Since 
 <span class="c1"># convert to Angstrom</span>
 <span class="n">dists_md</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
 <span class="c1"># write to file </span>
-<span class="n">write</span><span class="p">(</span><span class="n">dists_md</span><span class="p">,</span><span class="s2">&quot;data/set_A0/eNOE_unidir.calc.dat&quot;</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="n">dists_md</span><span class="p">,</span><span class="s2">&quot;data/calc/set_A/eNOE_unidir.calc.dat&quot;</span><span class="p">)</span>
 
 <span class="n">pdbs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;2koc&quot;</span><span class="p">,</span><span class="s2">&quot;6by5&quot;</span><span class="p">]</span>
 <span class="n">dists_pdbs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -13322,7 +13298,7 @@ C5_H5;C5_H5''; A4_H62;U11_H3; A4_H61;U11_H3; C5_H4';C5_H5; U7_H5'';G9_H1. Since 
     <span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
     <span class="n">pairs</span> <span class="o">=</span> <span class="n">get_idxs</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">md_trj</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
     <span class="n">dists</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
-    <span class="n">write</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span><span class="s2">&quot;data/set_A0/</span><span class="si">%s</span><span class="s2">.eNOE_unidir.calc.dat&quot;</span> <span class="o">%</span><span class="k">p</span>)
+    <span class="n">write</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span><span class="s2">&quot;data/calc/set_A/</span><span class="si">%s</span><span class="s2">.eNOE_unidir.calc.dat&quot;</span> <span class="o">%</span><span class="k">p</span>)
     
 </pre></div>
 
@@ -13361,10 +13337,10 @@ C5_H5;C5_H5''; A4_H62;U11_H3; A4_H61;U11_H3; C5_H4';C5_H5; U7_H5'';G9_H1. Since 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span><span class="n">vals</span> <span class="o">=</span> <span class="n">read_exp</span><span class="p">(</span><span class="s2">&quot;data/set_A0/gn_eNOE.exp.dat&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span><span class="n">vals</span> <span class="o">=</span> <span class="n">read_exp</span><span class="p">(</span><span class="s2">&quot;data/exp/set_A/gn_eNOE.exp.dat&quot;</span><span class="p">)</span>
 <span class="n">top</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/2koc_gmx.pdb&quot;</span>
 <span class="n">traj</span> <span class="o">=</span> <span class="s2">&quot;data/traj_temp_f_0.xtc&quot;</span>
 <span class="c1">#######################</span>
@@ -13373,7 +13349,7 @@ C5_H5;C5_H5''; A4_H62;U11_H3; A4_H61;U11_H3; C5_H4';C5_H5; U7_H5'';G9_H1. Since 
 <span class="c1"># convert to Angstrom</span>
 <span class="n">dists_md</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
 <span class="c1"># write to file </span>
-<span class="n">write</span><span class="p">(</span><span class="n">dists_md</span><span class="p">,</span><span class="s2">&quot;data/set_A0/gn_eNOE.calc.dat&quot;</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="n">dists_md</span><span class="p">,</span><span class="s2">&quot;data/calc/set_A/gn_eNOE.calc.dat&quot;</span><span class="p">)</span>
 
 <span class="n">pdbs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;2koc&quot;</span><span class="p">,</span><span class="s2">&quot;6by5&quot;</span><span class="p">]</span>
 <span class="n">dists_pdbs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -13383,189 +13359,7 @@ C5_H5;C5_H5''; A4_H62;U11_H3; A4_H61;U11_H3; C5_H4';C5_H5; U7_H5'';G9_H1. Since 
     <span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
     <span class="n">pairs</span> <span class="o">=</span> <span class="n">get_idxs</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">md_trj</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
     <span class="n">dists</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
-    <span class="n">write</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span><span class="s2">&quot;data/set_A0/</span><span class="si">%s</span><span class="s2">.gn_eNOE.calc.dat&quot;</span> <span class="o">%</span><span class="k">p</span>)
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre># Found 77 pairs out of 77
-# Found 77 pairs out of 77
-# Found 77 pairs out of 77
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Dataset-A1">Dataset A1<a class="anchor-link" href="#Dataset-A1">&#182;</a></h1><p>Dataset A1 is identical to A0, with the following additions. Dataset A1 is the one used in the Manuscript, while Dataset A0 is used for comparative purposes only.</p>
-
-<pre><code>NEW bidirectional eNOE
-C8_H4';G10_H8  5.77 0.577
-
-New gn-eNOE, used as lower-bound distances 
- C8_H5;G10_H1'  5.8 0.58 
- C8_H5;G10_H8 5.87 0.587  
- C8_H2';G10_H8 7.06 0.706
- C8_H3';G9_H8 5.78 0.578 
- C8_H2';G9_H8 5.92 0.592 
- C8_H1';G10_H4' 5.28 0.528 
- C8_H2';G9_H2' 4.62 0.462</code></pre>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">mdtraj</span> <span class="k">as</span> <span class="nn">md</span>
-
-<span class="n">top</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/2koc_gmx.pdb&quot;</span>
-<span class="n">traj</span> <span class="o">=</span> <span class="s2">&quot;data/traj_temp_f_0.xtc&quot;</span>
-<span class="n">labels</span><span class="p">,</span><span class="n">vals</span> <span class="o">=</span> <span class="n">read_exp</span><span class="p">(</span><span class="s2">&quot;data/set_A1/eNOE.exp.dat&quot;</span><span class="p">)</span>
-
-<span class="c1">#######################</span>
-<span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
-<span class="n">pairs</span> <span class="o">=</span> <span class="n">get_idxs</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">md_trj</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
-<span class="c1"># convert to Angstrom</span>
-<span class="n">dists_md</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
-<span class="c1"># write to file </span>
-<span class="n">write</span><span class="p">(</span><span class="n">dists_md</span><span class="p">,</span><span class="s2">&quot;data/set_A1/eNOE.calc.dat&quot;</span><span class="p">)</span>
-
-<span class="n">pdbs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;2koc&quot;</span><span class="p">,</span><span class="s2">&quot;6by5&quot;</span><span class="p">]</span>
-<span class="n">dists_pdbs</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span>  <span class="n">p</span> <span class="ow">in</span> <span class="n">pdbs</span><span class="p">:</span>
-    <span class="n">top</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/</span><span class="si">%s</span><span class="s2">.pdb&quot;</span> <span class="o">%</span> <span class="n">p</span> 
-    <span class="n">traj</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/</span><span class="si">%s</span><span class="s2">.pdb&quot;</span> <span class="o">%</span> <span class="n">p</span> 
-    <span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
-    <span class="n">pairs</span> <span class="o">=</span> <span class="n">get_idxs</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">md_trj</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
-    <span class="n">dists</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
-    <span class="n">write</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span><span class="s2">&quot;data/set_A1/</span><span class="si">%s</span><span class="s2">.eNOE.calc.dat&quot;</span> <span class="o">%</span><span class="k">p</span>)
-    
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre># Found 63 pairs out of 63
-# Found 63 pairs out of 63
-# Found 63 pairs out of 63
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span><span class="n">vals</span> <span class="o">=</span> <span class="n">read_exp</span><span class="p">(</span><span class="s2">&quot;data/set_A1/eNOE_unidir.exp.dat&quot;</span><span class="p">)</span>
-
-
-<span class="n">top</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/2koc_gmx.pdb&quot;</span>
-<span class="n">traj</span> <span class="o">=</span> <span class="s2">&quot;data/traj_temp_f_0.xtc&quot;</span>
-<span class="c1">#######################</span>
-<span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
-<span class="n">pairs</span> <span class="o">=</span> <span class="n">get_idxs</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">md_trj</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
-<span class="c1"># convert to Angstrom</span>
-<span class="n">dists_md</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
-<span class="c1"># write to file </span>
-<span class="n">write</span><span class="p">(</span><span class="n">dists_md</span><span class="p">,</span><span class="s2">&quot;data/set_A1/eNOE_unidir.calc.dat&quot;</span><span class="p">)</span>
-
-<span class="n">pdbs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;2koc&quot;</span><span class="p">,</span><span class="s2">&quot;6by5&quot;</span><span class="p">]</span>
-<span class="n">dists_pdbs</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span>  <span class="n">p</span> <span class="ow">in</span> <span class="n">pdbs</span><span class="p">:</span>
-    <span class="n">top</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/</span><span class="si">%s</span><span class="s2">.pdb&quot;</span> <span class="o">%</span> <span class="n">p</span> 
-    <span class="n">traj</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/</span><span class="si">%s</span><span class="s2">.pdb&quot;</span> <span class="o">%</span> <span class="n">p</span> 
-    <span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
-    <span class="n">pairs</span> <span class="o">=</span> <span class="n">get_idxs</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">md_trj</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
-    <span class="n">dists</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
-    <span class="n">write</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span><span class="s2">&quot;data/set_A1/</span><span class="si">%s</span><span class="s2">.eNOE_unidir.calc.dat&quot;</span> <span class="o">%</span><span class="k">p</span>)
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre># Found 177 pairs out of 177
-# Found 177 pairs out of 177
-# Found 177 pairs out of 177
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span><span class="n">vals</span> <span class="o">=</span> <span class="n">read_exp</span><span class="p">(</span><span class="s2">&quot;data/set_A1/gn_eNOE.exp.dat&quot;</span><span class="p">)</span>
-<span class="n">top</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/2koc_gmx.pdb&quot;</span>
-<span class="n">traj</span> <span class="o">=</span> <span class="s2">&quot;data/traj_temp_f_0.xtc&quot;</span>
-<span class="c1">#######################</span>
-<span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
-<span class="n">pairs</span> <span class="o">=</span> <span class="n">get_idxs</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">md_trj</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
-<span class="c1"># convert to Angstrom</span>
-<span class="n">dists_md</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
-<span class="c1"># write to file </span>
-<span class="n">write</span><span class="p">(</span><span class="n">dists_md</span><span class="p">,</span><span class="s2">&quot;data/set_A1/gn_eNOE.calc.dat&quot;</span><span class="p">)</span>
-
-<span class="n">pdbs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;2koc&quot;</span><span class="p">,</span><span class="s2">&quot;6by5&quot;</span><span class="p">]</span>
-<span class="n">dists_pdbs</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span>  <span class="n">p</span> <span class="ow">in</span> <span class="n">pdbs</span><span class="p">:</span>
-    <span class="n">top</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/</span><span class="si">%s</span><span class="s2">.pdb&quot;</span> <span class="o">%</span> <span class="n">p</span> 
-    <span class="n">traj</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/</span><span class="si">%s</span><span class="s2">.pdb&quot;</span> <span class="o">%</span> <span class="n">p</span> 
-    <span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
-    <span class="n">pairs</span> <span class="o">=</span> <span class="n">get_idxs</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">md_trj</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
-    <span class="n">dists</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
-    <span class="n">write</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span><span class="s2">&quot;data/set_A1/</span><span class="si">%s</span><span class="s2">.gn_eNOE.calc.dat&quot;</span> <span class="o">%</span><span class="k">p</span>)
+    <span class="n">write</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span><span class="s2">&quot;data/calc/set_A/</span><span class="si">%s</span><span class="s2">.gn_eNOE.calc.dat&quot;</span> <span class="o">%</span><span class="k">p</span>)
 </pre></div>
 
     </div>
@@ -13604,10 +13398,10 @@ New gn-eNOE, used as lower-bound distances
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span><span class="n">vals</span> <span class="o">=</span> <span class="n">read_exp</span><span class="p">(</span><span class="s2">&quot;data/set_B/NOE.exp.dat&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span><span class="n">vals</span> <span class="o">=</span> <span class="n">read_exp</span><span class="p">(</span><span class="s2">&quot;data/exp/set_B/NOE.exp.dat&quot;</span><span class="p">)</span>
 
 <span class="c1">#######################</span>
 <span class="n">top</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/2koc_gmx.pdb&quot;</span>
@@ -13617,7 +13411,7 @@ New gn-eNOE, used as lower-bound distances
 <span class="c1"># convert to Angstrom</span>
 <span class="n">dists_md</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
 <span class="c1"># write to file </span>
-<span class="n">write</span><span class="p">(</span><span class="n">dists_md</span><span class="p">,</span><span class="s2">&quot;data/set_B/NOE.calc.dat&quot;</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="n">dists_md</span><span class="p">,</span><span class="s2">&quot;data/calc/set_B/NOE.calc.dat&quot;</span><span class="p">)</span>
 
 <span class="n">pdbs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;2koc&quot;</span><span class="p">,</span><span class="s2">&quot;6by5&quot;</span><span class="p">]</span>
 <span class="n">dists_pdbs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -13627,7 +13421,7 @@ New gn-eNOE, used as lower-bound distances
     <span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
     <span class="n">pairs</span> <span class="o">=</span> <span class="n">get_idxs</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">md_trj</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
     <span class="n">dists</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><span class="n">md</span><span class="o">.</span><span class="n">compute_distances</span><span class="p">(</span><span class="n">md_trj</span><span class="p">,</span><span class="n">pairs</span><span class="p">)</span>
-    <span class="n">write</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span><span class="s2">&quot;data/set_B/</span><span class="si">%s</span><span class="s2">.NOE.calc.dat&quot;</span> <span class="o">%</span><span class="k">p</span>)
+    <span class="n">write</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span><span class="s2">&quot;data/calc/set_B/</span><span class="si">%s</span><span class="s2">.NOE.calc.dat&quot;</span> <span class="o">%</span><span class="k">p</span>)
 </pre></div>
 
     </div>
@@ -13672,16 +13466,16 @@ The error was taken 1.5HZ for all data.  In total, there are 96 scalar couplings
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># read experimental data</span>
 <span class="kn">import</span> <span class="nn">barnaba</span> <span class="k">as</span> <span class="nn">bb</span>
-<span class="kn">from</span> <span class="nn">barnaba</span> <span class="k">import</span> <span class="n">definitions</span>
+<span class="kn">from</span> <span class="nn">barnaba</span> <span class="kn">import</span> <span class="n">definitions</span>
 <span class="n">jj</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">(</span><span class="n">definitions</span><span class="o">.</span><span class="n">couplings_idx</span><span class="p">)]</span>
 <span class="n">exp</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">dd</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;data/set_B/J3.exp.dat&quot;</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;data/exp/set_B/J3.exp.dat&quot;</span><span class="p">):</span>
     <span class="k">if</span><span class="p">(</span><span class="s2">&quot;#&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">line</span><span class="p">):</span>
         <span class="n">a</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span> <span class="n">a</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
@@ -13706,7 +13500,7 @@ The error was taken 1.5HZ for all data.  In total, there are 96 scalar couplings
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># calculate scalar couplings for trajectory and write to file</span>
@@ -13716,15 +13510,15 @@ The error was taken 1.5HZ for all data.  In total, there are 96 scalar couplings
 
 <span class="n">couplings</span><span class="p">,</span><span class="n">res</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">jcouplings</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">topology</span><span class="o">=</span><span class="n">top</span><span class="p">)</span> 
 <span class="n">data</span> <span class="o">=</span> <span class="n">couplings</span><span class="p">[:,:,:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">jjr</span><span class="p">))[:,</span><span class="n">idxs</span><span class="p">]</span>
-<span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s2">&quot;data/set_B/J3.calc.dat&quot;</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s2">&quot;data/calc/set_B/J3.calc.dat&quot;</span><span class="p">)</span>
 
 <span class="n">couplings_2koc</span><span class="p">,</span><span class="n">res_2koc</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">jcouplings</span><span class="p">(</span><span class="s2">&quot;data/PDB/2koc.pdb&quot;</span><span class="p">,</span><span class="n">topology</span><span class="o">=</span><span class="s2">&quot;data/PDB/2koc.pdb&quot;</span><span class="p">)</span>
 <span class="n">data_2koc</span> <span class="o">=</span> <span class="n">couplings_2koc</span><span class="p">[:,:,:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">jjr</span><span class="p">))[:,</span><span class="n">idxs</span><span class="p">]</span>
-<span class="n">write</span><span class="p">(</span><span class="n">data_2koc</span><span class="p">,</span><span class="s2">&quot;data/set_B/2koc.J3.calc.dat&quot;</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="n">data_2koc</span><span class="p">,</span><span class="s2">&quot;data/calc/set_B/2koc.J3.calc.dat&quot;</span><span class="p">)</span>
 
 <span class="n">couplings_6by5</span><span class="p">,</span><span class="n">res_6by5</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">jcouplings</span><span class="p">(</span><span class="s2">&quot;data/PDB/6by5.pdb&quot;</span><span class="p">,</span><span class="n">topology</span><span class="o">=</span><span class="s2">&quot;data/PDB/6by5.pdb&quot;</span><span class="p">)</span>
 <span class="n">data_6by5</span> <span class="o">=</span> <span class="n">couplings_6by5</span><span class="p">[:,:,:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">jjr</span><span class="p">))[:,</span><span class="n">idxs</span><span class="p">]</span>
-<span class="n">write</span><span class="p">(</span><span class="n">data_6by5</span><span class="p">,</span><span class="s2">&quot;data/set_B/6by5.J3.calc.dat&quot;</span><span class="p">)</span>
+<span class="n">write</span><span class="p">(</span><span class="n">data_6by5</span><span class="p">,</span><span class="s2">&quot;data/calc/set_B/6by5.J3.calc.dat&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13755,6 +13549,61 @@ The error was taken 1.5HZ for all data.  In total, there are 96 scalar couplings
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="cross-correlated-relaxation-rates">cross-correlated relaxation rates<a class="anchor-link" href="#cross-correlated-relaxation-rates">&#182;</a></h1><p>Cross-correlated relaxation rates are calculated using the script available on <a href="https://github.com/sbottaro/CCRR">github</a>. Here we just format the data to make them compatible with the reweighting script.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># read experimental data </span>
+<span class="n">df_exp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/exp/set_B/CCRR.exp.dat&quot;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">,</span><span class="s2">&quot;exp_val&quot;</span><span class="p">],</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># read 6BY5</span>
+<span class="n">df_calc_6by5</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/calc/set_B/6by5_ccrr_calc.dat&quot;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;\s+&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="c1"># merge</span>
+<span class="n">df_calc_6by5_ok</span> <span class="o">=</span> <span class="n">df_exp</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_calc_6by5</span><span class="p">,</span><span class="n">left_on</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+<span class="c1"># write to file</span>
+<span class="n">df_calc_6by5_ok</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_calc_6by5_ok</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">df_calc_6by5_ok</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:])])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">df_calc_6by5_ok</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;data/calc/set_B/6by5.CCRR.calc.dat&quot;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%8.4e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="c1"># read 2KOC</span>
+<span class="n">df_calc_2koc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/calc/set_B/2koc_ccrr_calc.dat&quot;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;\s+&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="c1"># merge</span>
+<span class="n">df_calc_2koc_ok</span> <span class="o">=</span> <span class="n">df_exp</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_calc_2koc</span><span class="p">,</span><span class="n">left_on</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+<span class="c1"># write to file</span>
+<span class="n">df_calc_2koc_ok</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_calc_2koc_ok</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">df_calc_2koc_ok</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:])])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">df_calc_2koc_ok</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;data/calc/set_B/2koc.CCRR.calc.dat&quot;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%8.4e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="c1"># read 2KOC</span>
+<span class="n">df_calc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/calc/set_B/traj_temp_f_0_ccrr_calc.dat&quot;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot;\s+&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="c1"># merge</span>
+<span class="n">df_calc_ok</span> <span class="o">=</span> <span class="n">df_exp</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_calc</span><span class="p">,</span><span class="n">left_on</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+<span class="c1"># write to file</span>
+<span class="n">df_calc_ok</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_calc_ok</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">df_calc_ok</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:])])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">df_calc_ok</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;data/calc/set_B/CCRR.calc.dat&quot;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%8.4e</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1">#df_calc_2koc_ok = df_exp.merge(df_calc_2koc,left_on=&quot;label&quot;,right_index=True,how=&quot;left&quot;)</span>
+
+<span class="c1">#(df[[&quot;label&quot;,&quot;exp_val&quot;,0]]).to_csv(&quot;2koc_ccrr.dat&quot;,sep=&quot; &quot;,float_format=&#39;%.2f&#39;)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="RDC">RDC<a class="anchor-link" href="#RDC">&#182;</a></h2><p>32 RDC were taken from the .mr restraint file deposited on the PDB.
 For each samples, RDC are calculated using the software <a href="https://spin.niddk.nih.gov/bax/software/PALES/">pales</a></p>
 
@@ -13765,23 +13614,125 @@ For each samples, RDC are calculated using the software <a href="https://spin.ni
 <p>The ensemble average is then rescaled globally by a factor</p>
 <p>$L = \sum_i \text{exp}_i \text{avg}_i/\sum_i \text{avg}_i \text{avg}_i$</p>
 <p>Where the sum runs over the experimental data and $\text{avg}_i = \sum_j w_j F(x_j)$
-is the pales prediction $F(x)$ calculated by averaging over the configurations $x$.
+is the pales prediction $F(x_j)$ averaged over the configurations $x_j$.
 The error sigma was set to 1Hz.</p>
 <h1 id="Dataset-C">Dataset C<a class="anchor-link" href="#Dataset-C">&#182;</a></h1><p>RDC taken from "Simultaneous NMR characterisation of multiple minima in the free energy landscape of an RNA UUCG tetraloop" are devided in two sub-datasets, RDC_1 ( 39 datapoints) and RDC_2 (14 datapoints). Back-calculation was performed as in set B. The experimental error was set to 1.4Hz (RDC_1) and 2.2 Hz (RDC_2) as described in the original paper.</p>
 <h1 id="Dataset-D">Dataset D<a class="anchor-link" href="#Dataset-D">&#182;</a></h1><p>Solvent PRE data were obtained from the authors of the study  "RNA structure refinement using NMR solvent accessibility data. Sci Rep. 2017; 7: 5393." The back-calculation of experimental measure from structure was performed using the program from Chun Tang's lab, available <a href="http://www.tanglab.org/resources/programs">here</a> using a probe radius of 0.35 nm.</p>
+<p>Since RDC and sPRE calculations both require PDB files, we back calculate RDC in dataset B, dataset C and sPRE  in the code below (att! takes a looong time).</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+
+
+<span class="n">traj</span> <span class="o">=</span> <span class="s2">&quot;data/traj_temp_f_0.xtc&quot;</span>
+<span class="n">top</span> <span class="o">=</span> <span class="s2">&quot;data/PDB/2koc_gmx.pdb&quot;</span>
+<span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;H1&quot;</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">,</span><span class="s2">&quot;H3&quot;</span><span class="p">,</span><span class="s2">&quot;H41&quot;</span><span class="p">,</span><span class="s2">&quot;H42&quot;</span><span class="p">,</span><span class="s2">&quot;H61&quot;</span><span class="p">,</span><span class="s2">&quot;H62&quot;</span><span class="p">,</span><span class="s2">&quot;H5&quot;</span><span class="p">,</span><span class="s2">&quot;H21&quot;</span><span class="p">,</span><span class="s2">&quot;H22&quot;</span><span class="p">,</span><span class="s2">&quot;H3&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;H4&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;1H5&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;2H5&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;1H2&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;H1&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;H6&quot;</span><span class="p">,</span><span class="s2">&quot;H8&quot;</span><span class="p">]</span>
+<span class="n">pales_cmd</span> <span class="o">=</span> <span class="s2">&quot;/home/sbottaro/Software/pales/linux/pales&quot;</span>
+
+<span class="n">md_trj</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">do</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="n">pdb</span><span class="o">=</span><span class="s2">&quot;data/PDB/sample_</span><span class="si">%08d</span><span class="s2">.pdb&quot;</span> <span class="o">%</span> <span class="n">i</span>
+    <span class="n">out_B</span><span class="o">=</span><span class="s2">&quot;data/calc/set_B/sample_</span><span class="si">%08d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span>
+    <span class="n">out_C1</span><span class="o">=</span><span class="s2">&quot;data/calc/set_C/sample_</span><span class="si">%08d</span><span class="s2">_1&quot;</span> <span class="o">%</span> <span class="n">i</span>
+    <span class="n">out_C2</span><span class="o">=</span><span class="s2">&quot;data/calc/set_C/sample_</span><span class="si">%08d</span><span class="s2">_2&quot;</span> <span class="o">%</span> <span class="n">i</span>
+    <span class="n">out_D</span><span class="o">=</span><span class="s2">&quot;data/calc/set_D/sample_</span><span class="si">%08d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span>
+    <span class="n">md_trj</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">pdb</span><span class="p">)</span>
+    <span class="n">cmdB</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -pdb </span><span class="si">%s</span><span class="s2"> -inD data/exp/set_B/RDC.pales.exp.dat -outD </span><span class="si">%s</span><span class="s2"> -H -pf1 -wv 0.022&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pales_cmd</span><span class="p">,</span><span class="n">pdb</span><span class="p">,</span><span class="n">out_B</span><span class="p">)</span>
+    <span class="n">cmdC1</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -pdb </span><span class="si">%s</span><span class="s2"> -inD data/exp/set_C/RDC1_MD.pales.exp.dat -outD </span><span class="si">%s</span><span class="s2"> -H -pf1 -wv 0.022&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pales_cmd</span><span class="p">,</span><span class="n">pdb</span><span class="p">,</span><span class="n">out_C1</span><span class="p">)</span>
+    <span class="n">cmdC2</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -pdb </span><span class="si">%s</span><span class="s2"> -inD data/exp/set_C/RDC2_MD.pales.exp.dat -outD </span><span class="si">%s</span><span class="s2"> -H -pf1 -wv 0.022&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pales_cmd</span><span class="p">,</span><span class="n">pdb</span><span class="p">,</span><span class="n">out_C2</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmdB</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmdC1</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmdC2</span><span class="p">)</span>
+    <span class="c1">#for at in atoms:</span>
+    <span class="c1">#    ee = at.replace(&quot;&#39;&quot;,&quot;p&quot;)</span>
+    <span class="c1">#    cmdD = &quot;data/script/spre.x %s 3.5 0 \&quot;%s\&quot; &gt; %s_%s&quot;   % (pdb,at,out_D,ee)</span>
+    <span class="c1">#    os.system(cmdD)</span>
+    
+<span class="c1">#oo = Parallel(n_jobs=40)(delayed(do)(i) for i in range(len(md_trj)))</span>
+
+
+    
 </pre></div>
 
     </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># now do the above again for PDB files. Note that H naming is different in RDC1 and RDC2</span>
+
+<span class="n">lista</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;data/PDB/[2-6]*.pdb&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">lista</span><span class="p">:</span>
+    <span class="n">ii</span> <span class="o">=</span> <span class="n">pdb</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.pdb&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">out_B</span><span class="o">=</span><span class="s2">&quot;data/calc/set_B/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">ii</span>
+    <span class="n">out_C1</span><span class="o">=</span><span class="s2">&quot;data/calc/set_C/</span><span class="si">%s</span><span class="s2">_1&quot;</span> <span class="o">%</span> <span class="n">ii</span>
+    <span class="n">out_C2</span><span class="o">=</span><span class="s2">&quot;data/calc/set_C/</span><span class="si">%s</span><span class="s2">_2&quot;</span> <span class="o">%</span> <span class="n">ii</span>
+    <span class="n">out_D</span><span class="o">=</span><span class="s2">&quot;data/calc/set_D/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">ii</span>
+
+    <span class="n">cmdB</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -pdb </span><span class="si">%s</span><span class="s2"> -inD data/exp/set_B/RDC.pales.exp.dat -outD </span><span class="si">%s</span><span class="s2"> -H -pf1 -wv 0.022&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pales_cmd</span><span class="p">,</span><span class="n">pdb</span><span class="p">,</span><span class="n">out_B</span><span class="p">)</span>
+    <span class="n">cmdC1</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -pdb </span><span class="si">%s</span><span class="s2"> -inD data/exp/set_C/RDC1.pales.exp.dat -outD </span><span class="si">%s</span><span class="s2"> -H -pf1 -wv 0.022&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pales_cmd</span><span class="p">,</span><span class="n">pdb</span><span class="p">,</span><span class="n">out_C1</span><span class="p">)</span>
+    <span class="n">cmdC2</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> -pdb </span><span class="si">%s</span><span class="s2"> -inD data/exp/set_C/RDC2.pales.exp.dat -outD </span><span class="si">%s</span><span class="s2"> -H -pf1 -wv 0.022&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pales_cmd</span><span class="p">,</span><span class="n">pdb</span><span class="p">,</span><span class="n">out_C2</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmdB</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmdC1</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmdC2</span><span class="p">)</span>
+    <span class="c1">#for at in atoms:</span>
+    <span class="c1">#    ee = at.replace(&quot;&#39;&quot;,&quot;p&quot;)</span>
+    <span class="c1">#    cmdD = &quot;data/script/spre.x %s 3.5 0 \&quot;%s\&quot; &gt; %s_%s&quot;   % (pdb,at,out_D,ee)</span>
+    <span class="c1">#    os.system(cmdD)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># bash code below to reformat the output</span>
+
+<span class="c1"># for el in sample*; do echo -n ${el:7:9} &gt;&gt; RDC.calc.dat; tail -n 32 $el | awk &#39;{printf &quot;  &quot; $9 }END{printf &quot;\n&quot;}&#39; &gt;&gt; RDC.calc.dat ;done&quot;</span>
+<span class="c1"># for el in sample*_1; do echo -n ${el:7:8} &gt;&gt; RDC1.calc.dat; tail -n 39 $el | awk &#39;{printf &quot;  &quot; $9 }END{printf &quot;\n&quot;}&#39; &gt;&gt; RDC1.calc.dat ;done</span>
+<span class="c1"># for el in sample*_2; do echo -n ${el:7:8} &gt;&gt; RDC2.calc.dat; tail -n 14 $el | awk &#39;{printf &quot;  &quot; $9 }END{printf &quot;\n&quot;}&#39; &gt;&gt; RDC2.calc.dat ;done</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>for el in sample*; do echo -n ${el:7:9} &gt;&gt; data/calc/set_B/RDC.calc.dat; tail -n 32 $el | awk &#39;{printf &#34;  &#34; $9 }END{printf &#34;\n&#34;}&#39; &gt;&gt; data/calc/set_B/RDC.calc.dat ;done
+#
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
