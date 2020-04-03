@@ -13113,9 +13113,17 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Calculation-of-structural-properties">Calculation of structural properties<a class="anchor-link" href="#Calculation-of-structural-properties">&#182;</a></h1><p>In this notebook we calculate several structural properties from structure. We use the software <a href="https://github.com/srnas/barnaba">barnaba</a> to calculate RMSD, eRMSD and torsion angles.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">barnaba</span> <span class="k">as</span> <span class="nn">bb</span>
@@ -13143,7 +13151,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># calculate ermsd from 2KOC, full structure </span>
@@ -13174,10 +13182,37 @@ div#notebook {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/home/sbottaro/anaconda3/envs/py36/lib/python3.6/site-packages/mdtraj/formats/pdb/pdbfile.py:196: UserWarning: Unlikely unit cell vectors detected in PDB file likely resulting from a dummy CRYST1 record. Discarding unit cell vectors.
+  warnings.warn(&#39;Unlikely unit cell vectors detected in PDB file likely &#39;
+/home/sbottaro/anaconda3/envs/py36/lib/python3.6/site-packages/mdtraj/core/trajectory.py:419: UserWarning: top= kwarg ignored since file contains topology information
+  warnings.warn(&#39;top= kwarg ignored since file contains topology information&#39;)
+# Loaded reference data/PDB/2koc_gmx.pdb 
+# Loaded target data/PDB/2koc.pdb 
+# Loaded reference data/PDB/2koc_gmx.pdb 
+# Loaded target data/PDB/6by5.pdb 
+# Loaded reference data/PDB/2koc_gmx.pdb 
+# Loaded target data/traj_temp_f_0.xtc 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># calculate rmsd from 2KOC, full structure </span>
@@ -13208,10 +13243,30 @@ div#notebook {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre># found  294 atoms in common
+# found  294 atoms in common
+# found  294 atoms in common
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># calculate ermsd from 2KOC, stem only  </span>
@@ -13241,10 +13296,33 @@ div#notebook {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre># Loaded reference data/PDB/2koc_gmx.pdb 
+# Loaded target data/PDB/2koc.pdb 
+# Loaded reference data/PDB/2koc_gmx.pdb 
+# Loaded target data/PDB/6by5.pdb 
+# Loaded reference data/PDB/2koc_gmx.pdb 
+# Loaded target data/traj_temp_f_0.xtc 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># calculate ermsd from 2KOC, loop only  </span>
@@ -13275,10 +13353,33 @@ div#notebook {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre># Loaded reference data/PDB/2koc_gmx.pdb 
+# Loaded target data/PDB/2koc.pdb 
+# Loaded reference data/PDB/2koc_gmx.pdb 
+# Loaded target data/PDB/6by5.pdb 
+# Loaded reference data/PDB/2koc_gmx.pdb 
+# Loaded target data/traj_temp_f_0.xtc 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># calculate backbone angles  </span>
@@ -13309,10 +13410,30 @@ div#notebook {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre># Loading data/PDB/2koc.pdb 
+# Loading data/PDB/6by5.pdb 
+# Loading data/traj_temp_f_0.xtc 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># calculate vectors connecting the centers of the six-mbemberd rings</span>
@@ -13339,6 +13460,26 @@ div#notebook {
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre># Loading data/PDB/2koc.pdb 
+# Loading data/PDB/6by5.pdb 
+# Loading data/traj_temp_f_0.xtc 
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
