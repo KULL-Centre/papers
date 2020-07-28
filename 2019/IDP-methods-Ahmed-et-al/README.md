@@ -8,6 +8,8 @@ The folder `/notebook` contains a guide to generate data and figures from the ma
 
 The folder `/data` contains the input files for the notebook.
 
+The conformational ensembles that were used to generate the data are available at https://doi.org/10.5281/zenodo.3964622
+
 
 ### Requirements
 
