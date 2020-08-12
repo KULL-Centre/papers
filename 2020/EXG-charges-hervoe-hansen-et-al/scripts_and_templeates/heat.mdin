@@ -1,0 +1,15 @@
+Explicit solvent initial heating
+Using a linear temperature gradient from 10 to 300 Kelvin
+Langevin thermostating
+ &cntrl
+   imin=0, irest=0, ntx=1,
+   ntpr=1000, ntwx=1000, nstlim=200000,
+   dt=0.002, ntt=3, gamma_ln=5.0, ig=-1,
+   ntc=2, ntf=2, cut=8, ntb=1,
+   iwrap=1, ioutfm=1, nmropt=1,
+ /
+ &wt
+   TYPE='TEMP0', ISTEP1=0, ISTEP2=150000,
+   VALUE1=10.0, VALUE2=300.0,
+ /
+ &wt TYPE='END' /
