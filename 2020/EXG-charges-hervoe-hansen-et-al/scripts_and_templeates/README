@@ -1,0 +1,14 @@
+Amber input files:
+min.mdin: Minimization
+heat.mdin: Temperature equilibration
+equil.mdin: Temperature and pressure equilibration
+md_pH:templeate.mdin: Constant pH molecular dynamics
+
+Bash files:
+Flow.sh: Flow chart showing the individual steps to prepare input and run minimization and equilbiration on CPUs (read but do not run the script)
+min.sh: Runs minimization using `min.mdin` input on GPUs
+heat.sh: Runs temperature equilibration using `heat.mdin` input on GPUs
+equil.sh: Runs temperature and pressure equilbiration using `equil.mdin` input on GPUs
+Prepare_Production.sh: Creates a submit script for SLURM queue systems and prepares the indivial replica
+Titration_Analysis.sh: Script to extract degree of deprotonation on a residual resolution. Running average and cummlative averages are also extracted
+Prepare_MicroMacroData.sh: Script to extract conditional probabilities of protonation used for Bjerrum diagram.
