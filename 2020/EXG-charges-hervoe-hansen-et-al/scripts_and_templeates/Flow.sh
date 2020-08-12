@@ -6,7 +6,7 @@
 ##############
 
 # Source your amber.sh where AMBER is installed.
-source source /temp1/Software/amber16/amber.sh
+source /temp1/Software/amber16/amber.sh
 
 # Step 1
 # Modify the residue names of the residues you wish to titrate
