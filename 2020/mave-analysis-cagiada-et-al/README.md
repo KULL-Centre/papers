@@ -23,4 +23,4 @@ The static images of the proteins in the manuscript rendered can be visualized i
 ## CHIMERA scripts ##
 
 The chimera_scripts folder contains the chimera python scripts  necessary to create the protein renderings shown in the paper.
-Before running them you should download the structures (PDB entry 5LPG for NUDT15 and 1D5R for PTEN) from the PDB.
+The structures used (already embedded in the scripts) are PDB entry 5LPG for NUDT15 and 1D5R for PTEN.
