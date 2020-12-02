@@ -27,8 +27,9 @@ Rscript gmma05_analysis.r gmma_fit_global.rda
 
 Plot
 ----
-The results are included in the output directory. Note that we use the residue numbering of the
-original data which is shifted 2 positions compared to conventional numbering (uniprot, fpbase.org, etc).
+The results are included in the output directory. The .csv files should be excel-readable. Note that we 
+use the residue numbering of the original data which is shifted 2 positions compared to conventional 
+numbering (uniprot, fpbase.org, etc).
 
 Plot from the paper may be generated based on the content of the output directory using R-Studio
 notebook, plots.Rmd
