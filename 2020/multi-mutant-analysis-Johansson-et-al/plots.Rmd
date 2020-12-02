@@ -1,0 +1,361 @@
+---
+title: "Plot for Johansson, Lindorff-Larsen and Winther"
+output: html_notebook
+---
+
+Load  result of GMMA from gmma05_analysis.r
+```{r}
+require("igraph")
+
+load("output/gmma_graph.rda")
+# Loading this second will overwrite the subst data frame
+load("output/gmma_result.rda")
+
+nmut = length(mutant[,1])
+nsubst = length(subst[,1])
+nres = length(residue[,1])
+
+subst_sig = subst[which(! is.na(subst$rank)),]
+subst_sig = subst_sig[order(subst_sig$rank, decreasing=FALSE),]
+```
+
+Numbers used in the paper
+```{r}
+aa_one = c("A","C","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y")
+
+print("Accurate estimation (is.na(rank)) vs. stability verdict for all substitutions")
+print(table(is.na(subst$rank), subst$eff))
+print("")
+
+print("Distribution of amino acids on exposed/buried positions with percentage of estimated")
+for (aa in aa_one) {
+    t = table(residue[subst[which(subst$taa==aa),"resi"], "burial2"])
+    b_rank = subst[which(subst$taa==aa & residue[subst$resi,"burial2"]=="B"),"rank"]
+    e_rank = subst[which(subst$taa==aa & residue[subst$resi,"burial2"]=="E"),"rank"]
+    print(sprintf("For %3d substitutions to %s, %4.1f%% are buried (%4.1f%% of %2d uncertain) and %4.1f%% exposed (%4.1f%% of %2d uncertain)",
+                  sum(t), aa, t["B"]/sum(t)*100, sum(is.na(b_rank))/length(b_rank)*100, length(b_rank),
+                  t["E"]/sum(t)*100, sum(is.na(e_rank))/length(e_rank)*100, length(e_rank)))
+}
+print("")
+
+print("Accurate estimation (is.na(rank)) vs. burial for all substitutions")
+print(table(is.na(subst$rank), residue[subst$resi,"burial2"]))
+print("")
+
+print("Burial vs. effect for ranked substitutions")
+print(table(residue[subst_sig$resi,"burial2"], subst_sig$eff))
+print("")
+
+print("Stabilizing and destabilizing subst_sig per position with given wt amino acid")
+for (aa in aa_one) {
+    aa_resi = which(residue$wt == aa)
+    t =  table(subst_sig[which(subst_sig$resi %in% aa_resi),"eff"])
+    print(sprintf("For %3d substitutions on %2d positions with %s, %4.1f%% are stabilizing and %4.1f%% destabilizing",
+                  sum(t), length(aa_resi), aa, t["stab"]/sum(t)*100,t["destab"]/sum(t)*100))
+}
+print("")
+print("Same but only for exposed positions (2 category)")
+for (aa in aa_one) {
+    aa_resi = which(residue$wt == aa)
+    t =  table(subst_sig[which(subst_sig$resi %in% aa_resi & residue[subst_sig$resi,"burial2"] == "E"),"eff"])
+    print(sprintf("For %3d substitutions on %2d positions with %s, %4.1f%% are stabilizing and %4.1f%% destabilizing",
+                  sum(t), length(aa_resi), aa, t["stab"]/sum(t)*100,t["destab"]/sum(t)*100))
+}
+```
+
+
+Plot variant node degree distribution
+```{r}
+#tiff("library_composition_300dpi.tiff", width=6, heigh=4, units="cm", res=300, pointsize=7, 
+#     compression="lzw")
+mi_use = which(mutant$gmma=="use")
+t = table(mutant[mi_use,c("N_sub","active")])
+df = data.frame(nsub=as.numeric(rownames(t)), obs=(t[,"0"]+t[,"1"])/length(mi_use), 
+                act=t[,"1"]/(t[,"0"]+t[,"1"]))
+
+# Plot variant node degree distribution
+par(mar=c(4,4,1,2)+.1)
+plot(df$nsub[2:15], df$act[2:15], ylim=c(0,1), col="white", xlab="", ylab="")
+title(xlab="Substitutions per variant", ylab="Fraction", line=2.4)
+points(df$nsub[2:15], df$obs[2:15], pch=16, lwd=1.5, type="o", col=2)
+points(df$nsub[2:15], df$act[2:15], pch=15, lwd=1.5, type="o", col=4)
+legend("topright",c("Library composition","Fraction active"), pch=c(16,15), lty=1, lwd=1.5, col=c(2,4),
+       cex=0.9)
+#dev.off()
+```
+
+```{r}
+B_pred_init = function(dG) { e = exp(dG/settings$RT); (cp$B_max_init + cp$B_D_init*e) /(1.0+e) }
+B_pred_glob = function(dG) { e = exp(dG/settings$RT); (cp$B_max + cp$B_D*e) /(1.0+e) }
+
+use_mask = mutant$init == "use"
+df$signal_avg = sapply(df$nsub, function(n) { mean(mutant[which(mutant$N_sub == n & use_mask),"signal"]) })
+
+# Initial curve fit
+#tiff("fit_init_curve_300dpi.tiff", width=6, heigh=4, units="cm", res=300, pointsize=7, compression="lzw")
+par(mar=c(4,4,1,2)+.1)
+plot(df$nsub, df$signal_avg, ylim=c(cp$B_D-0.1,cp$B_max+0.2), xlim=c(0,12), col="white", xlab="", ylab="")
+title(xlab="N [Number of substitutions]", ylab="Brightness", line=2.4)
+jitter = rnorm(length(mutant$N_sub),0,.1)
+
+im_use = which(mutant$init=="use")
+points(mutant[im_use,"N_sub"]+jitter[im_use], mutant[im_use,"signal"], pch=16, cex=.2)
+N = seq(0,12,.1)
+lines(N, B_pred_init(fit_wt$par$dG_wt+N*fit_wt$par$ddG_avg), col=2, lwd=1.5)
+points(df$nsub, df$signal_avg, pch=19, col=2)
+#dev.off()
+
+# Initial stability effect fits
+plot_subst = c("V161A","L176V","C46S")
+plot_col =   c(     2 ,     3 ,    4 )
+names(plot_col) = plot_subst
+
+#tiff("fit_init_stab_300dpi.tiff", width=6, heigh=4, units="cm", res=300, pointsize=7, compression="lzw")
+par(mar=c(4,4,1,2)+.1)
+plot(0, wt$signal, col=1, pch=19, xlim=c(0,12), ylim=c(cp$B_D-0.1,cp$B_max+0.2), xlab="", ylab="")
+title(xlab="N [Number of substitutions]", ylab="Brightness", line=2.4)
+lines(N, B_pred_init(fit_wt$par$dG_wt+N*fit_wt$par$ddG_avg), col=1, lty=3, lwd=1.5)
+for (sn in plot_subst) {
+    mi = intersect(mi_use, subst_mut_indices[[subst[sn,"i"]]])
+    d = data.frame(table(mutant[mi,"N_sub"]))
+    colnames(d) = c("n_mut","obs")
+    rownames(d) = d$n_mut
+    d$n_mut = as.numeric(levels(d$n_mut)[d$n_mut])
+    d$signal_avg = sapply(d$n_mut, function(n) { mean(mutant[mi[which(mutant[mi,"N_sub"]==n)],"signal"]) })
+    points(d$n_mut, d$signal_avg, col=plot_col[sn], pch=19)
+    lines(N, B_pred_init(fit_wt$par$dG_wt+subst[sn,"init_ddG"]+(N-1)*fit_wt$par$ddG_avg), col=plot_col[sn], 
+          lwd=1.5)
+    print(sprintf("%-5s is observed in %d variants",sn,length(mi)))
+}
+legend("topright", c("WT","V163A","L178V","C48S"), col=c(1,plot_col), pch=c(NA,19,19,19), lty=c(3,1,1,1), lwd=1.5, cex=.75)
+#dev.off()
+
+# Global fit
+#tiff("fit_global_300dpi.tiff", width=6, heigh=4, units="cm", res=300, pointsize=7, compression="lzw")
+par(mar=c(4,4,1,2)+.1)
+
+x=seq(-20,20,.1)
+plot(mutant$dG_glob, mutant$signal, xlim=c(-8,12), ylim=c(cp$B_D-0.1,cp$B_max+0.2), pch=16, cex=.2, 
+     xlab="", ylab="")
+title(xlab=expression(paste(Delta,italic(G)[v]," [kcal/mol]")), ylab="Brightness", line=2.4) 
+lines(x, B_pred_glob(x), col="red", lwd=1.5)
+#dev.off()
+```
+
+
+Plot substitution node degree distribution
+```{r}
+#tiff("library_complexity_300dpi.tiff", width=6, heigh=4, units="cm", res=300, pointsize=7,
+#     compression="lzw")
+breaks = seq(0,1000,10)
+h  = hist(degree(graph_clean)[which(V(graph_clean)$type)], breaks=breaks, plot=F)
+
+# Degree dist
+par(mar=c(4,4,1,2)+.1)
+hi = which(h$counts > 0)
+plot(h$mids[hi], h$counts[hi], col="white", xlab="", ylab="", xlim=c(1,1000), log="y", yaxp=c(1,100,1))
+title(xlab="Variants per substitution", ylab="Counts [substitutions]", line=2.4)
+lines(h$mids[hi], h$counts[hi], type="o", pch=20, col=2)
+#dev.off()
+```
+
+Heatmap
+-------
+```{r fig.width=5, fig.height=14}
+# What2plot
+iss = which(substr(subst_sig$taa,1,1) != '*')
+subst_sig_nogap = subst_sig[iss,]
+wt_seq = as.character(residue$wt)
+wt_seq[117] = "L"
+wt_seq[118] = "V"
+
+# Order of amino acids
+aa2int = seq(20)
+names(aa2int) = strsplit("CDEKRHNQAGSTVMLIFYWP","")[[1]]
+
+# Colors for heatmap
+grad_range_min = -1
+grad_range_max = 3
+ns = abs(grad_range_min)*100
+nd = abs(grad_range_max)*100
+col_not_in_lib = "white"
+col_native     = "white"
+col_uncertain  = "gray80"
+col_destab = "#ff5a6b"
+col_neutral = "#ffff00"
+col_stab = "#079700"
+col_grad = c(colorRampPalette( c(col_stab, col_neutral), space="rgb")(ns), 
+             colorRampPalette( c(col_neutral,col_destab), space="rgb")(nd))
+col_breaks = seq(grad_range_min, grad_range_max, length.out=ns+nd+1)
+
+#tiff("heatmap_300dpi.tiff", width=8, heigh=20, units="cm", res=300, pointsize=9, compression="lzw")
+layout(matrix(c(1,1,3,2), ncol=2, ), width=c(4,1), height=c(3,1))
+par(mar=c(2,4,2,1)+.1)
+
+m = matrix(1, ncol=nres, nrow=20)
+image(m, xaxt="n", yaxt="n", col=col_not_in_lib, ylim=c(1+.7/nres,-.7/nres), xlim=c(-.03,1.08))
+axis(1, seq(0, 20, length=20)/20, names(aa2int), cex.axis=.8, las=1, gap.axis=0)
+axis(3, seq(0, 20, length=20)/20, names(aa2int), cex.axis=.8, las=1, gap.axis=0)
+first_resn = 3
+res_lab = paste(wt_seq, seq(first_resn,first_resn-1+length(wt_seq)), sep="")
+mask = rep_len(c(TRUE,FALSE), length.out=nres)
+axis(2,         (seq(0, nres, length=nres)/nres)[mask], labels=F, tcl=-.7, lwd=.6)
+axis(2,         (seq(0, nres, length=nres)/nres)[!mask], labels=F, tcl=-2.2, lwd=.6)
+axis(2,         (seq(0, nres, length=nres)/nres)[mask], res_lab[mask], cex.axis=.5, 
+     las=2, gap.axis=0, tick=F)
+axis(2, line=1.4, (seq(0, nres, length=nres)/nres)[!mask], res_lab[!mask], cex.axis=.5, 
+     las=2, gap.axis=0, tick=F)
+
+# Mark all substitutions in library
+m[] = NA
+m[cbind(aa2int[substr(subst$taa,1,1)], subst$resi)] = 1
+image(m, col=col_uncertain, add=T)
+
+# Mark native
+m[] = NA
+m[cbind(aa2int[wt_seq], seq(nres))] = 1
+image(m, col=col_native, add=T)
+
+# Mark stabilizing outside range
+m[] = NA
+ssi = which(subst_sig_nogap$ddG_glob < grad_range_min)
+if (length(ssi) > 0) {
+    m[cbind(aa2int[substr(subst_sig_nogap[ssi,'taa'],1,1)], subst_sig_nogap[ssi,'resi'])] = 1
+    image(m, col=col_stab, add=T)
+}
+
+# Mark destabilizing outside range
+m[] = NA
+si = which((subst$ddG_glob > grad_range_max & !is.na(subst$rank)) | 
+             (subst$ddG_glob > grad_range_max & subst$eff=="destab"))
+if (length(si) > 0) {
+    m[cbind(aa2int[substr(subst[si,'taa'],1,1)], subst[si,'resi'])] = 1
+    image(m, col=col_destab, add=T)
+}
+
+# Gradient color of low uncertainty subst
+m[] = NA
+m[cbind(aa2int[substr(subst_sig_nogap$taa,1,1)], subst_sig_nogap$resi)] = subst_sig_nogap$ddG_glob
+image(m, zlim=c(grad_range_min,grad_range_max), col=col_grad, breaks=col_breaks, add=T)
+
+# Extra column with burial
+col = c("black", col_uncertain, col_destab, col_neutral, col_stab)
+b2n = c(1,2)
+names(b2n) = c("B","E")
+image(x=c(1.03,1.08), y=seq(0,1,length.out=nres), z=as.matrix(t(b2n[residue$burial2])), 
+      breaks=c(0.5,1.5), col=1, add=T)
+abline(v=c(1.03,1.13))
+
+# Plot scale bar
+par(mar=c(3,1,1,3)+.1)
+image(t(col_breaks), zlim=c(grad_range_min,grad_range_max), col=col_grad, breaks=col_breaks, 
+      xaxt="n", yaxt="n")
+n = grad_range_max - (grad_range_min-1)
+axis(4,seq(0,n, length=n)/n, seq(grad_range_min,grad_range_max), las=2)
+mtext("kcal/mol", 1, 1, cex=.8)
+#dev.off()
+```
+
+```{r}
+get_si = function(tag, col="i", verbose=F) {
+    # put col="rank" to get subst_sig indices
+    ri = which(residue[,tag] != "-")
+    if (residue[117,tag] == "L") ri = ri[ri!=117]
+    if (residue[118,tag] == "V") ri = ri[ri!=118]
+    sn = unname(unlist(mapply(function(wt,i,s) { paste(wt,i,unlist(strsplit(s,"")),sep="") },
+                              residue[ri,'wt'], rownames(residue)[ri], residue[ri,tag])))
+    si = which(substr(rownames(subst),1,nchar(rownames(subst))-settings$taa_letters+1) %in% sn)
+    return(si)
+}
+```
+
+1-mutant plot
+-------------
+```{r}
+require("TeachingDemos")
+
+#tiff(file="single_mut.tiff", width=127, height=70, units="mm", res=300, compression="lzw", pointsize=7.5)
+par(mar=c(4,5,1,1)+.1)
+
+si = which(! is.na(subst$signal))
+plot(subst[si,'ddG_glob'], subst[si,'signal'], pch=1, 
+     xlab=expression(paste("GMMA ",Delta,Delta,italic(G)," [kcal/mol]")), ylab="Brightness", col="gray65")
+ssi = which(! is.na(subst_sig$signal))
+points(subst_sig[ssi,'ddG_glob'], subst_sig[ssi,'signal'])
+abline(v=0, h=wt$signal, col="gray65", lty=1)
+col = c("darkgray", "forestgreen", "cornflowerblue", "red2", "mediumorchid1", "orange")
+names(col) = c('pdb','do','now','sf','pross','ts')
+tag_list = c('pdb','now','pross','do','ts','sf')
+for (tag in tag_list) {
+    tsi = get_si(tag)
+    points(subst[tsi,'ddG_glob'], subst[tsi,'signal'], pch=20, col=col[tag])
+}
+
+plot_subst = c("S173T","R71L","P73H")
+for (mut in plot_subst) {
+    mut_split = strsplit(mut,"")
+    aa_prev = mut_split[[1]][1]
+    resi = as.numeric(paste(mut_split[[1]][2:(nchar(mut)-1)], collapse=""))
+    aa_post = mut_split[[1]][nchar(mut)]
+    mut_name = paste(aa_prev,resi+2,aa_post,sep="")
+    if (mut %in% c()) pos=1 else if (mut %in% c("R71L")) pos=2 else if (mut %in% c()) pos=4 else pos=3
+    shadowtext(subst[mut,'ddG_glob'], subst[mut,'signal'], mut_name, pos=pos, cex=.7, col=1, 
+               bg="white", font=2, r=0.1)
+}
+legend("bottomleft", 
+       c("Low uncertainty","High uncertainty","sfGFP","tsGFP","splitGFP","des11","nowGFP","PDB"),
+       pch = c(1,1,rep(20,6)), col=c("black","darkgray",col[c('sf','ts','do','pross','now','pdb')]), 
+       bg="white")
+#dev.off()
+```
+
+Insert graph
+```{r fig.width=4, fig.height=2.5}
+#tiff(file="single_mut_insert.tiff", width=70, height=42, units="mm", res=300, compression="lzw",
+#     bg="transparent", pointsize=7.5)
+par(mar=c(2,2,1,1)+.1)
+plot(subst[si,'ddG_glob'], subst[si,'signal'], pch=1, xlab="", ylab="", col="gray65", 
+     xlim=c(-1,.2), ylim=c(3.61,3.92))
+abline(v=0, h=wt$signal, col="gray65", lty=1)
+ssi = which(! is.na(subst_sig$signal))
+points(subst_sig[ssi,'ddG_glob'], subst_sig[ssi,'signal'])
+for (tag in tag_list) {
+    tsi = get_si(tag)
+    points(subst[tsi,'ddG_glob'], subst[tsi,'signal'], pch=20, col=col[tag])
+}
+
+plot_subst = c(rownames(subst_sig[1:11,]), "N142G", "N103C", "Y37N", "Y37S", "D17E",
+               "A108S","L176V","V161G","E30A","N103I","N103Y","T201I")
+for (mut in plot_subst) {
+    mut_split = strsplit(mut,"")
+    aa_prev = mut_split[[1]][1]
+    resi = as.numeric(paste(mut_split[[1]][2:(nchar(mut)-1)], collapse=""))
+    aa_post = mut_split[[1]][nchar(mut)]
+    mut_name = paste(aa_prev,resi+2,aa_post,sep="")
+    if (mut %in% c("S169V","I169V","E30A","N103I"))
+        pos=1
+    else if (mut %in% c("N103C","K164Q","E170A","S203T"))
+         pos=2
+    else if (mut %in% c("N142G","E4K","Y37S","A108S","H23Q","T60S","T41N","V161G","T201I","N103Y"))
+        pos=4
+    else
+        pos=3
+    shadowtext(subst[mut,'ddG_glob'], subst[mut,'signal'], mut_name, pos=pos, cex=.7, col=1, 
+               bg="white", font=2, r=0.1)
+}
+#dev.off()
+```
+
+```{r}
+cs = cumsum(subst_sig$assign!="" & subst_sig$assign!=" pdb")
+cs_pdb = cumsum(subst_sig$assign!="")
+#tiff(file="known_subst_300dpi.tiff", width=90, height=60, units="mm", res=300, compression="lzw", 
+#     pointsize=8)
+par(mar=c(4,5,2,2)+.1)
+plot(subst_sig$rank, cs/max(cs)*100, col="white", 
+     xlab="Top ranking substitutions", ylab="Pct. cummulated known substitutions")
+lines(seq(max(cs)), seq(max(cs))/max(cs)*100, lty=2, col=1)
+lines(subst_sig$rank, cs/max(cs)*100, col=1, lwd=2)
+#dev.off()
+```
+
