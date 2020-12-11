@@ -1,0 +1,60 @@
+MOLINFO STRUCTURE=SL1_ext_gmx.pdb MOLTYPE=rna
+
+# ermsd from helix 1. the large cutoff is used for pulling, the default cutoff for monitoring 
+ermsd0_p1: ERMSD REFERENCE=SL1_target_p1.pdb ATOMS=@lcs-1,@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-24,@lcs-25,@lcs-26,@lcs-27,@lcs-28,@lcs-29
+ermsd1_p1: ERMSD REFERENCE=SL1_target_p1.pdb ATOMS=@lcs-1,@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-24,@lcs-25,@lcs-26,@lcs-27,@lcs-28,@lcs-29 CUTOFF=12
+
+# ermsd from helix 2
+ermsd0_p2: ERMSD REFERENCE=SL1_target_p2.pdb ATOMS=@lcs-8,@lcs-9,@lcs-10,@lcs-11,@lcs-12,@lcs-17,@lcs-18,@lcs-19,@lcs-20,@lcs-21
+ermsd1_p2: ERMSD REFERENCE=SL1_target_p2.pdb ATOMS=@lcs-8,@lcs-9,@lcs-10,@lcs-11,@lcs-12,@lcs-17,@lcs-18,@lcs-19,@lcs-20,@lcs-21 CUTOFF=12
+
+# calculate distances between ring centers
+c1: CENTER ATOMS=@lcs-1
+c2: CENTER ATOMS=@lcs-2
+c3: CENTER ATOMS=@lcs-3
+c4: CENTER ATOMS=@lcs-4
+c5: CENTER ATOMS=@lcs-5
+c6: CENTER ATOMS=@lcs-6
+
+c24: CENTER ATOMS=@lcs-24
+c25: CENTER ATOMS=@lcs-25
+c26: CENTER ATOMS=@lcs-26
+c27: CENTER ATOMS=@lcs-27
+c28: CENTER ATOMS=@lcs-28
+c29: CENTER ATOMS=@lcs-29
+
+c8: CENTER ATOMS=@lcs-8
+c9: CENTER ATOMS=@lcs-9
+c10: CENTER ATOMS=@lcs-10
+c11: CENTER ATOMS=@lcs-11
+c12: CENTER ATOMS=@lcs-12
+
+c17: CENTER ATOMS=@lcs-17
+c18: CENTER ATOMS=@lcs-18
+c19: CENTER ATOMS=@lcs-19
+c20: CENTER ATOMS=@lcs-20
+c21: CENTER ATOMS=@lcs-21
+
+dp1_1: DISTANCE ATOMS=c1,c29
+dp1_2: DISTANCE ATOMS=c2,c28
+dp1_3: DISTANCE ATOMS=c3,c27
+dp1_4: DISTANCE ATOMS=c4,c26
+dp1_5: DISTANCE ATOMS=c5,c25
+dp1_6: DISTANCE ATOMS=c6,c24
+
+dp2_1: DISTANCE ATOMS=c8,c21
+dp2_2: DISTANCE ATOMS=c9,c20
+dp2_3: DISTANCE ATOMS=c10,c19
+dp2_4: DISTANCE ATOMS=c11,c18
+dp2_5: DISTANCE ATOMS=c12,c17
+
+# ABMD: spring constant is set to 2 kj/mol, and stops acting when reaches 1
+ABMD ... 
+ARG=ermsd1_p1,ermsd1_p2
+KAPPA=2,2
+TO=1,1 
+LABEL=qq 
+... ABMD
+
+PRINT FILE=DIST_2 ARG=ermsd0_p1,ermsd0_p2,ermsd1_p1,ermsd1_p2,qq.bias,dp1_1,dp1_2,dp1_3,dp1_4,dp1_5,dp1_6,dp2_1,dp2_2,dp2_3,dp2_4,dp2_5 STRIDE=5000
+
