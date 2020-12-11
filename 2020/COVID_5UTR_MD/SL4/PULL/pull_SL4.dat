@@ -1,0 +1,119 @@
+RESTART
+MOLINFO STRUCTURE=SL4_ext_gmx.pdb MOLTYPE=rna
+
+# calculate eRMSD for each helical template
+ermsd0_p1: ERMSD REFERENCE=SL4_target_p1.pdb ATOMS=@lcs-1,@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-7,@lcs-8,@lcs-37,@lcs-38,@lcs-39,@lcs-40,@lcs-41,@lcs-42,@lcs-43,@lcs-44
+ermsd1_p1: ERMSD REFERENCE=SL4_target_p1.pdb ATOMS=@lcs-1,@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-7,@lcs-8,@lcs-37,@lcs-38,@lcs-39,@lcs-40,@lcs-41,@lcs-42,@lcs-43,@lcs-44 CUTOFF=12
+
+ermsd0_p2: ERMSD REFERENCE=SL4_target_p2.pdb ATOMS=@lcs-10,@lcs-11,@lcs-34,@lcs-35
+ermsd1_p2: ERMSD REFERENCE=SL4_target_p2.pdb ATOMS=@lcs-10,@lcs-11,@lcs-34,@lcs-35 CUTOFF=12
+
+ermsd0_p3: ERMSD REFERENCE=SL4_target_p3.pdb ATOMS=@lcs-13,@lcs-14,@lcs-15,@lcs-16,@lcs-30,@lcs-31,@lcs-32,@lcs-33
+ermsd1_p3: ERMSD REFERENCE=SL4_target_p3.pdb ATOMS=@lcs-13,@lcs-14,@lcs-15,@lcs-16,@lcs-30,@lcs-31,@lcs-32,@lcs-33 CUTOFF=12
+
+ermsd0_p4: ERMSD REFERENCE=SL4_target_p4.pdb ATOMS=@lcs-18,@lcs-19,@lcs-20,@lcs-26,@lcs-27,@lcs-28
+ermsd1_p4: ERMSD REFERENCE=SL4_target_p4.pdb ATOMS=@lcs-18,@lcs-19,@lcs-20,@lcs-26,@lcs-27,@lcs-28 CUTOFF=12
+
+# print the distance between different bases 
+c1: CENTER ATOMS=@lcs-1
+c2: CENTER ATOMS=@lcs-2
+c3: CENTER ATOMS=@lcs-3
+c4: CENTER ATOMS=@lcs-4
+c5: CENTER ATOMS=@lcs-5
+c6: CENTER ATOMS=@lcs-6
+c7: CENTER ATOMS=@lcs-7
+c8: CENTER ATOMS=@lcs-8
+
+c10: CENTER ATOMS=@lcs-10
+c11: CENTER ATOMS=@lcs-11
+
+c13: CENTER ATOMS=@lcs-13
+c14: CENTER ATOMS=@lcs-14
+c15: CENTER ATOMS=@lcs-15
+c16: CENTER ATOMS=@lcs-16
+
+c18: CENTER ATOMS=@lcs-18
+c19: CENTER ATOMS=@lcs-19
+c20: CENTER ATOMS=@lcs-20
+
+c26: CENTER ATOMS=@lcs-26
+c27: CENTER ATOMS=@lcs-27
+c28: CENTER ATOMS=@lcs-28
+
+c30: CENTER ATOMS=@lcs-30
+c31: CENTER ATOMS=@lcs-31
+c32: CENTER ATOMS=@lcs-32
+c33: CENTER ATOMS=@lcs-33
+
+c34: CENTER ATOMS=@lcs-34
+c35: CENTER ATOMS=@lcs-35
+
+
+c37: CENTER ATOMS=@lcs-37
+c38: CENTER ATOMS=@lcs-38
+c39: CENTER ATOMS=@lcs-39
+c40: CENTER ATOMS=@lcs-40
+c41: CENTER ATOMS=@lcs-41
+c42: CENTER ATOMS=@lcs-42
+c43: CENTER ATOMS=@lcs-43
+c44: CENTER ATOMS=@lcs-44
+
+
+dp1_1: DISTANCE ATOMS=c1,c44
+dp1_2: DISTANCE ATOMS=c2,c43
+dp1_3: DISTANCE ATOMS=c3,c42
+dp1_4: DISTANCE ATOMS=c4,c41
+dp1_5: DISTANCE ATOMS=c5,c40
+dp1_6: DISTANCE ATOMS=c6,c39
+dp1_7: DISTANCE ATOMS=c7,c38
+dp1_8: DISTANCE ATOMS=c8,c37
+
+dp2_1: DISTANCE ATOMS=c10,c35
+dp2_2: DISTANCE ATOMS=c11,c34
+
+dp3_1: DISTANCE ATOMS=c13,c33
+dp3_2: DISTANCE ATOMS=c14,c32
+dp3_3: DISTANCE ATOMS=c15,c31
+dp3_4: DISTANCE ATOMS=c16,c30
+
+dp4_1: DISTANCE ATOMS=c18,c28
+dp4_2: DISTANCE ATOMS=c19,c27
+dp4_3: DISTANCE ATOMS=c20,c26
+
+
+# here we instatiate 4 different ABMD. This is identical to one ABMD with 4 arguments,
+# with the only difference that we can print the bias of each spring individually
+ABMD ... 
+ARG=ermsd1_p1
+KAPPA=4
+TO=1
+LABEL=qq1 
+... ABMD
+
+ABMD ... 
+ARG=ermsd1_p2
+KAPPA=4
+TO=1
+LABEL=qq2
+... ABMD
+
+ABMD ... 
+ARG=ermsd1_p3
+KAPPA=4
+TO=1
+LABEL=qq3 
+... ABMD
+
+ABMD ... 
+ARG=ermsd1_p4
+KAPPA=4
+TO=1
+LABEL=qq4 
+... ABMD
+
+PRINT FILE=Q_YYY ARG=qq1.bias,qq2.bias,qq3.bias,qq4.bias STRIDE=5000
+PRINT FILE=ERMSD_YYY ARG=ermsd0_p1,ermsd0_p2,ermsd0_p3,ermsd0_p4,ermsd1_p1,ermsd1_p2,ermsd1_p3,ermsd1_p4 STRIDE=5000
+PRINT FILE=DIST_YYY ARG=dp1_1,dp1_2,dp1_3,dp1_4,dp1_5,dp1_6,dp1_7,dp1_8,dp2_1,dp2_2,dp3_1,dp3_2,dp3_3,dp3_4,dp4_1,dp4_2 STRIDE=5000
+
+
+
