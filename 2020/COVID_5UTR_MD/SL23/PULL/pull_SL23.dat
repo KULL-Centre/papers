@@ -1,0 +1,60 @@
+RESTART
+MOLINFO STRUCTURE=SL_23_ext_gmx.pdb MOLTYPE=rna
+
+ermsd_full: ERMSD REFERENCE=SL_23_stem2_gmx.pdb ATOMS=@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-7,@lcs-8,@lcs-9,@lcs-10,@lcs-11,@lcs-12,@lcs-13,@lcs-14,@lcs-15,@lcs-16 
+
+ermsd_sl2: ERMSD REFERENCE=SL_23_stem2_gmx.pdb ATOMS=@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-7,@lcs-12,@lcs-13,@lcs-14,@lcs-15,@lcs-16 
+
+ermsd_sl2_target: ERMSD REFERENCE=SL_23_stem2_gmx.pdb ATOMS=@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-12,@lcs-13,@lcs-14,@lcs-15,@lcs-16 CUTOFF=12
+
+ermsd_sl3: ERMSD REFERENCE=SL_23_stem3_gmx.pdb ATOMS=@lcs-18,@lcs-19,@lcs-20,@lcs-21,@lcs-29,@lcs-30,@lcs-31,@lcs-32
+
+ermsd_sl3_target: ERMSD REFERENCE=SL_23_stem3_gmx.pdb ATOMS=@lcs-18,@lcs-19,@lcs-20,@lcs-21,@lcs-29,@lcs-30,@lcs-31,@lcs-32 CUTOFF=12
+
+
+
+c2: CENTER ATOMS=@lcs-2
+c3: CENTER ATOMS=@lcs-3
+c4: CENTER ATOMS=@lcs-4
+c5: CENTER ATOMS=@lcs-5
+c6: CENTER ATOMS=@lcs-6
+c7: CENTER ATOMS=@lcs-7
+
+c10: CENTER ATOMS=@lcs-10
+c12: CENTER ATOMS=@lcs-12
+c13: CENTER ATOMS=@lcs-13
+c14: CENTER ATOMS=@lcs-14
+c15: CENTER ATOMS=@lcs-15
+c16: CENTER ATOMS=@lcs-16
+
+c18: CENTER ATOMS=@lcs-2
+c19: CENTER ATOMS=@lcs-3
+c20: CENTER ATOMS=@lcs-4
+c21: CENTER ATOMS=@lcs-5
+
+c29: CENTER ATOMS=@lcs-12
+c30: CENTER ATOMS=@lcs-13
+c31: CENTER ATOMS=@lcs-14
+c32: CENTER ATOMS=@lcs-15
+
+
+d1: DISTANCE ATOMS=c2,c16
+d2: DISTANCE ATOMS=c3,c15
+d3: DISTANCE ATOMS=c4,c14
+d4: DISTANCE ATOMS=c5,c13
+d5: DISTANCE ATOMS=c6,c12
+d6: DISTANCE ATOMS=c7,c10
+d7: DISTANCE ATOMS=c18,c32
+d8: DISTANCE ATOMS=c19,c31
+d9: DISTANCE ATOMS=c20,c30
+d10: DISTANCE ATOMS=c21,c29
+
+ABMD ... 
+ARG=ermsd_sl2_target,ermsd_sl3_target
+KAPPA=YY,YY 
+TO=1,1 
+LABEL=qq 
+... ABMD
+
+PRINT FILE=DIST_K_YY_XX ARG=ermsd_full,ermsd_sl2,ermsd_sl2_target,ermsd_sl3,ermsd_sl3_target STRIDE=5000
+PRINT FILE=OT_K_YY_XX  ARG=rg,qq.bias,d1,d2,d3,d4,d5,d6,d7,d8,d9,d10 STRIDE=5000
