@@ -1,1 +1,13 @@
+This folder contains trajectories, input files and analysis script from the manuscript:
+Conformational Ensembles of Non-Coding Elements in the SARS-CoV-2 Genome from Molecular Dynamics Simulations
+By Sandro Bottaro,Giovanni Bussi, and Kresten Lindorff-Larsen1
+For each RNA element (SL1, SL2, SL2+SL3,SL4,SL5A) the following files are included:
 
+- SLX/PULL/pull_SLX.dat             : PLUMED file for pulling simulations
+- SLX/PULL/*.pdb                    : Template pdb files 
+- SLX/ANALYSIS/annotate_SLX.ipynb   : Perform annotation of trajectories
+- SLX/ANALYSIS/cluster_SLX.ipynb    : Perform cluster analysis
+- SLX/ANALYSIS/center*.pdb          : Cluster centroids
+- SLX/REST/processed.top            : Processed topology file
+- SLX/REST/topol.tpr                : tpr file 
+- SLX/REST/traj_SLX.5K.xtc          : REST simulation, 5000 frames from RUN1 and RUN2
