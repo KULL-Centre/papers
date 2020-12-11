@@ -1,0 +1,83 @@
+RESTART
+MOLINFO STRUCTURE=SL5a_ext_gmx.pdb MOLTYPE=rna
+
+
+ermsd0_p1: ERMSD REFERENCE=SL5a_H1_template.pdb ATOMS=@lcs-1,@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-7,@lcs-27,@lcs-28,@lcs-29,@lcs-30,@lcs-31,@lcs-32,@lcs-33
+ermsd1_p1: ERMSD REFERENCE=SL5a_H1_template.pdb ATOMS=@lcs-1,@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-7,@lcs-27,@lcs-28,@lcs-29,@lcs-30,@lcs-31,@lcs-32,@lcs-33 CUTOFF=12
+
+ermsd0_p2: ERMSD REFERENCE=SL5a_H2_template.pdb ATOMS=@lcs-9,@lcs-10,@lcs-11,@lcs-12,@lcs-13,@lcs-20,@lcs-21,@lcs-22,@lcs-23,@lcs-24
+ermsd1_p2: ERMSD REFERENCE=SL5a_H2_template.pdb ATOMS=@lcs-9,@lcs-10,@lcs-11,@lcs-12,@lcs-13,@lcs-20,@lcs-21,@lcs-22,@lcs-23,@lcs-24 CUTOFF=12
+
+
+# HELIX1 
+c1: CENTER ATOMS=@lcs-1
+c2: CENTER ATOMS=@lcs-2
+c3: CENTER ATOMS=@lcs-3
+c4: CENTER ATOMS=@lcs-4
+c5: CENTER ATOMS=@lcs-5
+c6: CENTER ATOMS=@lcs-6
+c7: CENTER ATOMS=@lcs-7
+
+c27: CENTER ATOMS=@lcs-27
+c28: CENTER ATOMS=@lcs-28
+c29: CENTER ATOMS=@lcs-29
+c30: CENTER ATOMS=@lcs-30
+c31: CENTER ATOMS=@lcs-31
+c32: CENTER ATOMS=@lcs-32
+c33: CENTER ATOMS=@lcs-33
+
+# HELIX2
+c9: CENTER ATOMS=@lcs-9
+c10: CENTER ATOMS=@lcs-10
+c11: CENTER ATOMS=@lcs-11
+c12: CENTER ATOMS=@lcs-12
+c13: CENTER ATOMS=@lcs-13
+
+c20: CENTER ATOMS=@lcs-20
+c21: CENTER ATOMS=@lcs-21
+c22: CENTER ATOMS=@lcs-22
+c23: CENTER ATOMS=@lcs-23
+c24: CENTER ATOMS=@lcs-24
+
+
+dp1_1: DISTANCE ATOMS=c1,c33
+dp1_2: DISTANCE ATOMS=c2,c32
+dp1_3: DISTANCE ATOMS=c3,c31
+dp1_4: DISTANCE ATOMS=c4,c30
+dp1_5: DISTANCE ATOMS=c5,c29
+dp1_6: DISTANCE ATOMS=c6,c28
+dp1_7: DISTANCE ATOMS=c7,c27
+
+dp2_1: DISTANCE ATOMS=c9,c24
+dp2_2: DISTANCE ATOMS=c10,c23
+dp2_3: DISTANCE ATOMS=c11,c22
+dp2_4: DISTANCE ATOMS=c12,c21
+dp2_5: DISTANCE ATOMS=c13,c20
+
+
+# other 
+c8: CENTER ATOMS=@lcs-8
+c14: CENTER ATOMS=@lcs-14
+c15: CENTER ATOMS=@lcs-15
+c18: CENTER ATOMS=@lcs-18
+c19: CENTER ATOMS=@lcs-19
+c25: CENTER ATOMS=@lcs-25
+c26: CENTER ATOMS=@lcs-26
+
+D8_25: DISTANCE ATOMS=c8,c25
+D8_26: DISTANCE ATOMS=c8,c26
+D14_19: DISTANCE ATOMS=c14,c19
+D15_18: DISTANCE ATOMS=c15,c18
+
+chi: TORSION ATOMS=@chi-18
+
+ABMD ... 
+ARG=ermsd1_p1,ermsd1_p2
+KAPPA=1,1
+TO=1,1 
+LABEL=qq 
+... ABMD
+
+PRINT FILE=ERMSD_YYY ARG=ermsd0_p1,ermsd0_p2,ermsd1_p1,ermsd1_p2,qq.bias STRIDE=5000
+PRINT FILE=DIST_YYY ARG=dp1_1,dp1_2,dp1_3,dp1_4,dp1_5,dp1_6,dp1_7,dp2_1,dp2_2,dp2_3,dp2_4,dp2_5,D8_25,D8_26,D14_19,D15_18,chi STRIDE=5000
+
