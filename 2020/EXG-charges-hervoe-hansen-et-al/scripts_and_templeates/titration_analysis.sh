@@ -1,5 +1,5 @@
 #!/bin/sh
-#
+# Stefan H. Hansen & Yong Wang
 
 cpin=../EXG.cpin
 

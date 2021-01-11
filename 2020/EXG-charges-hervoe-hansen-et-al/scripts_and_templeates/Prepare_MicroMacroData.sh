@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+# Stefan H. Hansen & Yong Wang
 # Collecting conditional probabilities of the various protonation state combinations
 
 echo "% pH      PD         PP         DP         DD         Total       Site1       Site2" >data_Ullmann.dat

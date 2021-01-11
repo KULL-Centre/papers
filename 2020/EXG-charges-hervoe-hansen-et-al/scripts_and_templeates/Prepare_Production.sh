@@ -1,5 +1,5 @@
 #!/bin/sh
-#
+# Stefan H. Hansen & Yong Wang
 
 parm="../EXG.explicit.parm7"
 cpin="../EXG.cpin"
