@@ -1,4 +1,9 @@
 
+Deprecated version
+==================
+
+This is a static deprecated version - a maintained version is available at https://github.com/KULL-Centre/ProteinUnfolding2D.git
+
 Analysis of protein 2D unfolding data
 =====================================
 

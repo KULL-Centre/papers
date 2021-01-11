@@ -1,0 +1,39 @@
+RESTART
+MOLINFO STRUCTURE=SL2_ref.pdb MOLTYPE=rna
+
+# in this case we can monitor the distance from the reference NMR structure
+ermsd0: ERMSD REFERENCE=SL2_NMR_template.pdb ATOMS=@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-7,@lcs-8,@lcs-9,@lcs-10,@lcs-11,@lcs-12,@lcs-13,@lcs-14,@lcs-15,@lcs-16 
+
+ermsd_target: ERMSD REFERENCE=SL2_match.pdb ATOMS=@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-12,@lcs-13,@lcs-14,@lcs-15,@lcs-16 CUTOFF=12
+ermsd_target0: ERMSD REFERENCE=SL2_match.pdb ATOMS=@lcs-2,@lcs-3,@lcs-4,@lcs-5,@lcs-6,@lcs-12,@lcs-13,@lcs-14,@lcs-15,@lcs-16
+
+c2: CENTER ATOMS=@lcs-2
+c3: CENTER ATOMS=@lcs-3
+c4: CENTER ATOMS=@lcs-4
+c5: CENTER ATOMS=@lcs-5
+c6: CENTER ATOMS=@lcs-6
+c7: CENTER ATOMS=@lcs-7
+
+c10: CENTER ATOMS=@lcs-10
+c12: CENTER ATOMS=@lcs-12
+c13: CENTER ATOMS=@lcs-13
+c14: CENTER ATOMS=@lcs-14
+c15: CENTER ATOMS=@lcs-15
+c16: CENTER ATOMS=@lcs-16
+
+d1: DISTANCE ATOMS=c2,c16
+d2: DISTANCE ATOMS=c3,c15
+d3: DISTANCE ATOMS=c4,c14
+d4: DISTANCE ATOMS=c5,c13
+d5: DISTANCE ATOMS=c6,c12
+d6: DISTANCE ATOMS=c7,c10
+
+ABMD ... 
+ARG=ermsd_target 
+KAPPA=2.0
+TO=1
+LABEL=qq0 
+... ABMD
+
+
+PRINT FILE=DIST_YYY ARG=ermsd0,ermsd_target,ermsd_target0,d1,d2,d3,d4,d5,d6,ermsd_s1,ermsd_s2,qq0.bias STRIDE=5000
