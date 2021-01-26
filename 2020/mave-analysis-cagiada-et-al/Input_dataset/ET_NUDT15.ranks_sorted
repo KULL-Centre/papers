@@ -1,0 +1,173 @@
+% Note: in this file % is a comment sign.% etc version Jan2010.
+% File produced on Thu Sep 10 06:19:15 2015
+% The command line was: wetc -p 5bonA.msf -x query_5bonA query_5bonA.pdb -c -realval -o ET_5bonA -m blosum62 
+%
+%
+%	 Column details:
+%
+% alignment# is the alignment position in the MSA. 
+% residue# is the residue position in the query protein. 
+% type is the one letter amino acid name in the query protein. 
+% coverage is the relative importance position for each residue. Low coverage implies evolutionary importance.
+% variability shows the residue variation in the column of the MSA. 
+% Evolutionary scores for residues are calculated with rvET method. Low score implies evolutionary importance.
+% Mihalek I, Res I, Lichtarge O. (2004). A Family of Evolution-Entropy Hybrid Methods for Ranking of Protein Residues by Importance. J. Mol. Bio. 336(5): 1265-82.
+%
+%	 RESIDUE RANKS: 
+alignment#  residue#   AA type  coverage              variability       Score(rvET)   
+       163       54          E   0.01282    1                          E      1.00
+       177       67          E   0.01282    1                          E      1.00
+       172       62          R   0.01923    2                         RK      1.08
+       173       63          E   0.02564    2                         EA      1.15
+       176       66          E   0.03205    4                       SEQD      1.62
+       126       48          G   0.03846    5                      GDE.S      2.14
+       125       47          G   0.04487    6                     SGAK.C      7.52
+       123       46          P   0.05128    9                  PVAFIMT.S     10.86
+        69       34          R   0.05769   12               RKHP.NVSETQG     11.37
+       423      122          W   0.06410   10                 WYFTRSLAVI     15.41
+        64       30          L   0.07051   10                 LTFAVICYRM     18.76
+       142       51          E   0.07692    9                  ADRKEQH.N     19.29
+       127       49          H   0.08333   14             ARLHKGFYTWS.NE     22.99
+       293       91          H   0.08974   16           .HPNEQDYIVASRTKG     23.95
+       409      116          K   0.09615   18         REDVATYHIK.SPNQLFM     25.46
+        86       41          G   0.10256   15            .GCDNTLIKPSAEHF     25.53
+       246       88          E   0.10897   17          .MDEIQSCRAKVPLTGN     26.24
+       180       70          L   0.11538    7                    LVIMCYA     26.27
+       162       53          G   0.12179   18         GNDPSEQFHWMTAKYRCL     26.49
+       170       60          A   0.12821    9                  AILVTMSGC     26.85
+       335      102          D   0.13462   17          .AENHDKGVPILTRQCS     28.34
+       169       59          C   0.14103    7                    ACTGSVM     28.88
+       405      113          E   0.14744   19        VSRKETDPAYNLF.GQHCI     29.34
+       178       68          A   0.15385    9                  LVAFTCSIM     30.65
+        17       15          G   0.16026   14             AGVIRT.DSYFLPQ     31.05
+       337      104          T   0.16667   18         .PDKVTFYNASGECLQIR     31.08
+        84       39          G   0.17308   17          .HFKLENGYAWDRQPSC     31.10
+       294       92          Y   0.17949   20       .LKVDYCFWTSGMIRHNAEQ     32.41
+       121       45          L   0.18590   16           FLMSGVIYTAP.CHNK     32.51
+       128       50          L   0.19231   10                 LIVCMAQ.YT     33.44
+       410      117          N   0.19872   17          IVPTENHKYCAM.LQSF     33.47
+       416      120          W   0.20513   13              CV.IMLYFAWRTS     34.45
+        81       38          V   0.21154   18         .VKSLFYARPHGDQMITN     35.16
+       120       44          Q   0.21795   17          KSALEYVINHQCWTGD.     35.49
+        65       31          L   0.22436   10                 LMIFTYAVCS     36.59
+       520      135          F   0.23077   18         LHEFMAVTINGYQP.SWK     37.17
+       301       94          T   0.23718   20       HTYKM.CEQDGISRVNFPLA     37.46
+       242       87          K   0.24359   18         .YESDHNKQTAGVPRLFM     37.85
+       179       69          A   0.25000   16           SGWNATHCDFEQKRML     37.96
+        19       17          G   0.25641   18         AGLVC.TYIHSKREQNPD     38.07
+        66       32          G   0.26282   13              VTELAIHGSMCQK     38.10
+       406      114          P   0.26923   16           PKLTGREHNSA.QDMV     38.28
+        18       16          V   0.27564   17          KCVAGI.ESLTNPMFDR     40.24
+       233       82          N   0.28205   19        QSEPRITADLVMFHYNG.C     40.51
+       119       43          F   0.28846   11                WMVLYFHIQR.     41.69
+        63       29          V   0.29487    9                  VLIYTAFMC     42.04
+       307       97          M   0.30128   13              FVAPYIMLTSCHW     43.79
+       288       90          Y   0.30769   20       .KHETGAQLRYFDWVSNIMC     43.91
+       469      130          P   0.31410   20       S.KGPDQNLITAVERYMFCW     44.42
+       306       96          L   0.32051   18         LVEFYAISRHTNGQCMWD     45.34
+       165       55          T   0.32692   12               ASTPLRDNGEKF     45.51
+       468      129          P   0.33333   13              L.IMVAPFESTKR     46.18
+       397      109          P   0.33974   17          .PQKDLAVIESTMFGHY     46.27
+        71       36          G   0.34615   18         GIC.DNPEKARQVSLHTY     46.55
+        20       18          V   0.35256   17          T.VAYLSPRFMQIGCDK     46.57
+        14       12          P   0.35897   17          PAMQL.FKGSTIRVEDN     46.65
+       374      107          S   0.36538   18         GS.TNKDRPAQIVEHLCM     46.83
+       300       93          V   0.37179   16           LGIV.YFRMNTASCHK     47.08
+       523      138          L   0.37821   19        TERILAVKGDYHFNMSC.W     47.24
+        16       14          V   0.38462   15            RTALVIYN.PSFGDW     48.57
+       426      125          W   0.39103   16           WLIPKCYVFNRMEAQH     49.66
+       234       83          S   0.39744   21      VTKFHRSDMAWYIGQCPNL.E     50.10
+        73       37          S   0.40385   16           GSLV.ADQRTPEKICN     50.53
+       519      134          L   0.41026   21      MLVAPKDRQSEHNICTGF.WY     50.69
+        67       33          K   0.41667   14             RKNQELMVHFYTIW     51.37
+        21       19          V   0.42308   17          I.LVRPEQDTFYMGACS     51.63
+       522      137          G   0.42949   19        PARQEDKVIMHSC.GTLNF     51.75
+       568      154          N   0.43590   21      QD.VELNPTAKSFGYRIHMWC     51.89
+       305       95          I   0.44231   17          HSTVPA.YFLMRQICGN     52.08
+       185       72          L   0.44872   14             CLVIYTAG.SFPQM     52.37
+       407      115          E   0.45513   16           GDRKECTSAMHNQVL.     52.40
+        22       20          V   0.46154   15            I.LVSMTPRHFCGAD     52.95
+       167       57          E   0.46795   18         ISEQADRTGKVWFCYLPM     53.08
+       174       64          T   0.47436   10                 LGAIVTSYMC     53.36
+       235       84          F   0.48077   20       GILATS.PFVREQHWMDYNK     53.88
+       118       42          S   0.48718   19        KQDALYWRNE.MTGVSFCH     54.09
+       227       77          F   0.49359   20       IVRSLFKYQEGCWHPANMD.     54.67
+       232       81          V   0.50000   21      VMFHI.ETLNSWQDPGCARYK     55.12
+       403      111          N   0.50641   16           RDVTNESAPIKLG.CH     55.85
+       310       99          G   0.51282   14             TSVICALGEFM.ND     55.87
+       285       89          N   0.51923   16           .NSGTEKDFAHIYRQP     56.01
+        70       35          K   0.52564   19        KTNEYHRG.ACQSPDLIMV     56.07
+       547      146          Y   0.53205   21      .YSLRKEAHFPVCWTNIMGQD     56.34
+       531      141          L   0.53846   19        DHTYIVFL.SMAWQGCKEP     56.37
+       166       56          W   0.54487   14             PYLDSAIFVETMWR     57.96
+       570      156          L   0.55128   20       LQ.SIDVGATFWKPHYNCER     57.98
+       228       78          A   0.55769   18         ALMNIKFVYCSPGQR.WH     58.07
+       424      123          V   0.56410   15            VIFTLQYWHAMCKER     58.24
+        39       22          S   0.57051   20       TQGSKECND.ARMVPFYHWL     58.67
+       543      144          Q   0.57692   21      .KLISFTNVPRYMAEQDGCWH     58.89
+       411      118          E   0.58333   18         EDAQSGRCKHL.TYVMIF     59.12
+       230       80          V   0.58974   18         TVF.EILMQHRASNYCWP     59.15
+        15       13          G   0.59615   19        VPSDHL.REKQTCIYAGMN     59.47
+       532      142          K   0.60256   18         LVKPQSIY.FATMERCHW     59.48
+       569      155          H   0.60897   19        QS.LHIVTARPDFKNYCGE     60.10
+       567      153          L   0.61538   20       DSLG.IEQKPTRNYHFCAVM     60.74
+       236       85          I   0.62179   20       KSLFI.YDEQPNGVRTAHMC     61.70
+       545      145          G   0.62821   20       .PGESARVKIHCLFMYTQND     62.12
+       521      136          W   0.63462   21      KGHTPAYRWIVLMQNFSDE.C     62.34
+        85       40          A   0.64103   19        .KASDGECVYRNQPHFTLI     62.59
+       562      148          P   0.64744   19        SP.RLGDQNTVHAKCFIEY     62.80
+       548      147          D   0.65385   20       .FYIHRLEVDAKTNSWCQGP     63.05
+       414      119          S   0.66026   17          ASYGCETP.DRHQNKVW     63.65
+       229       79          S   0.66667   19        GDP.AHYTRSCFNVIQEKW     64.14
+       504      133          Q   0.67308   21      TLP.YCKDEHASRGMQNIVFW     65.91
+       563      149          F   0.67949   21      LC.IENFYWVHTDGKQARSPM     66.21
+       143       52          F   0.68590   20       APKLIGMHSDQECVYFNRW.     67.11
+       566      152          D   0.69231   20       FTDG.QSHLEAPKNIVMYCR     67.80
+       175       65          W   0.69872   18         WLHMFRQEYKATCDINSV     68.42
+       309       98          K   0.70513   19        SIVRKGTLHCMFA.QYWED     68.66
+       168       58          E   0.71154   16           VQDEHATGCYKSLNRI     69.73
+        47       24          K   0.71795   16           D.RPEANTGQVSKHYW     70.58
+        57       28          C   0.72436   16           KCHRSLED.QGNATYM     70.74
+       565      151          E   0.73077   20       RFN.SQEGDYIMKAVLHTPC     71.13
+       389      108          E   0.73718   18         C.DMTIQENRVKPASHLG     71.22
+       524      139          R   0.74359   21      ATRPDFEVCNKYGQWSHILM.     71.32
+        13       11          R   0.75000   21      RP.DATEMWQSNGKIYVLHCF     71.45
+       404      112          V   0.75641   18         VAPELFTIRDSNMQ.KGC     71.58
+       237       86          E   0.76282   20       IAEKT.NHFDVQPSLRYGMW     72.72
+       417      121          E   0.76923   19        RQFI.VHEGDALKTYMWSN     73.66
+       503      132          D   0.77564   20       PAE.IKSQYFDRHNTGMVLW     74.40
+       525      140          C   0.78205   21      AQGRIKMVYHLSEDFNPTC.W     75.72
+       171       61          Q   0.78846   16           AQLIKRVEDTMSFYGH     75.82
+        38       21          T   0.79487   20       CFWID.VTAPNSQHRELMKY     76.33
+       312      101          V   0.80128   21      IEAVTWCDSNHRQKFY.PLGM     77.90
+       564      150          K   0.80769   20       VC.IDHKEAQSNFTRPLGWY     77.93
+       225       75          V   0.81410   20       LYHKEDIMVCQGPFWTSAR.     78.38
+       398      110          K   0.82051   19        .TVISKRQEAPYDLNHMCG     78.74
+       224       74          N   0.82692   20       SQIMLVKADETGRH.PNYFW     79.86
+       431      127          E   0.83333   16           QNDSEKAHRCYVGTLF     80.84
+        11        9          G   0.83974   20       KLS.RGPTEHNQFAVYDIMC     81.41
+       425      124          P   0.84615   15            AHNPDRTSQEGKLYV     81.67
+        12       10          R   0.85256   21      HSQ.PKMEATFNYWRDLGIVC     82.67
+       226       76          H   0.85897   18         HEGRNDQSAKVITLFC.P     83.52
+       372      106          D   0.86538   20       PL.FMIYVWDSKENATQRHG     85.35
+       430      126          E   0.87179   17          GSNDQETAHRKVCPFLI     86.26
+       181       71          H   0.87821   20       HFTNEASRLKDIQPVYGC.M     89.80
+       186       73          K   0.88462   21      SHRKDYC.AELVTNQPGWFMI     90.36
+       311      100          E   0.89103   20       DHAGIRMSQTEYVLP.FKNC     92.04
+        41       23          C   0.89744   20       NMPTDGQSKA.EHIFLRCYV     94.10
+        54       25          H   1.00000   14             .SQIKDHGNYETPF     95.88
+        55       26          P   1.00000   13              .GKENIPLSQDTA     95.88
+        56       27          R   1.00000   15            .HNEGVFQRSIDATP     95.88
+       336      103          V   1.00000   15            .CQEPADTNKLGSMV     95.88
+       338      105          H   1.00000    9                  .SYHQKFDW     95.88
+       467      128          L   1.00000   10                 .PAKWLFSHG     95.88
+       470      131          L   1.00000   17          .KSPMDNEGHRQATVLI     95.88
+       533      143          E   1.00000   17          SRYQKNMEADLVTGPH.     95.88
+       571      157          V   1.00000   19        VD.IELRNAGHQWMTSKPF     95.88
+       572      158          G   1.00000   20       .HADSEYGWILFNKTVQRPM     95.88
+       573      159          Y   1.00000   19        .YLDHTMAGKVEQNRCSIP     95.88
+       574      160          K   1.00000   18         .QKESGTRPVACINLWDY     95.88
+       575      161          G   1.00000   17          .QDERTILVSKYNAPGH     95.88
+       576      162          N   1.00000   16           .PIYDFKRSEQAHGNV     95.88
+       577      163          H   1.00000   16           .HLVETAFSKNRDIQY     95.88
+       578      164          L   1.00000   16           .HLVPIRKEQDNSFAG     95.88
