@@ -10,22 +10,22 @@ print("PyMOL IDP COMPLEX SURFACE AREA SCRIPT")
 
 DATABASE = 'id_complex_database.txt'	#Database path (path relative to working dir)
 MINIMUMLENGTH = 4 			#Minimum IDP chain length
-QUALITY = 2				#Surface calculation resolution (0 = very fast, 4 = very slow, higher accuracy. Default = 2) 
+QUALITY = 2				#Surface calculation resolution (0 = very fast, 4 = very slow, higher accuracy. Default = 2)
+SOLVENTRADIUS = 1.4			#Solvent molecular radius (1.4 Å is standard water molecule size)
 
 #Define function to get surface area of structure
 def SASA():
-	#Set variables (1.4 Å is standard water molecule size)
-	cmd.do("set solvent_radius, 1.4")
+	#Set variables 
+	cmd.do("set solvent_radius, " + str(SOLVENTRADIUS))
 	cmd.do("set dot_density, " + str(QUALITY))
 
-	#Prepare molecule
+	#Prepare molecule/clean structure
 	cmd.do("remove hydro") 		#remove hydrogens
 	cmd.do("remove solvent") 	#remove water solvent
 	cmd.do("select s, hetatm") 	#select non-protein atoms
 	cmd.do("remove s") 		#remove non-protein selection
 	cmd.do("show dots") 		#prepare protein calculation surface 
 	cmd.do("set dot_solvent, on")	#approximate solvent size
-
 	
 	#Count models
 	states = cmd.count_states("all")
