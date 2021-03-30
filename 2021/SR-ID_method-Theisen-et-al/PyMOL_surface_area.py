@@ -6,10 +6,10 @@
 #Database format example: “1AXC	B”
 #Set active folder: cd <folder path>
 
-print("PyMOL IDP COMPLEX SURFACE AREA SCRIPT")
+print("PyMOL ID INTERACTION COMPLEX SURFACE AREA SCRIPT")
 
 DATABASE = 'id_complex_database.txt'	#Database path (path relative to working dir)
-MINIMUMLENGTH = 4 			#Minimum IDP chain length
+MINIMUMLENGTH = 4 			#Minimum ID component chain length
 QUALITY = 2				#Surface calculation resolution (0 = very fast, 4 = very slow, higher accuracy. Default = 2)
 SOLVENTRADIUS = 1.4			#Solvent molecular radius (1.4 Å is standard water molecule size)
 
@@ -73,24 +73,24 @@ for i in range(0, len(lines)):
 	#Fetch molecule
 	cmd.fetch(pdbid)
 
-	#Get IDP chain identifier
+	#Get ID component chain identifier
 	disorderedchainref = line[5:].strip()
 	
-	#Select IDP with only visible amino acids and save as "idp"
+	#Select ID component with only visible amino acids and save as "idp"
 	cmd.do("select idp, chain " + disorderedchainref + ", 0, 1, 0, 1")
-	#Get IDP sequence and remove chain ID string (selection string, state = only visible, quiet = yes)
+	#Get ID sequence and remove chain ID string (selection string, state = only visible, quiet = yes)
 	sequence = cmd.get_fastastr("idp")[5:].strip().replace("\n","")
 
-	#Skip the complex if the IDP contains modified or non-standard residues
+	#Skip the complex if the ID component contains modified or non-standard residues
 	if '?' in sequence: continue
 
-	#Filters short IDP chains
+	#Filters short ID chains
 	if len(sequence) < MINIMUMLENGTH: continue
 
 	#Get complex surface (SASA defined in function, returns array containing total, polar and nonpolar surface area)
 	surface_complex = SASA()
 
-	#Remove IDP
+	#Remove ID component
 	cmd.do("remove chain " + str(disorderedchainref))
 
 	#Get folded protein surface
@@ -102,7 +102,7 @@ for i in range(0, len(lines)):
 print("")
 print("Calculations completed")
 print("Results: " + str(len(output)))
-print("Results format: PDB, IDP seq, folded domain (fd) total surface, fd polar, fd non-polar, complex total, complex polar, complex non-polar")
+print("Results format: PDB, ID seq, folded domain (fd) total surface, fd polar, fd non-polar, complex total, complex polar, complex non-polar")
 print("Saving results to file...")
 
 f = open('output.txt', 'w+')
