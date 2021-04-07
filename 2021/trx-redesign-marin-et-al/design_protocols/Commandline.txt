@@ -1,0 +1,12 @@
+/Path/To/Rosetta/Rosetta_2018_Oct_d557f8/source/bin/rosetta_scripts.default.linuxgccrelease \
+-database /Path/To/Rosetta/Rosetta_2018_Oct_d557f8/database \
+-s $PDB \ 
+-parser:protocol $protocol \
+-in:file:native $nativePDB \
+-jd2::delete_old_poses true \
+-packing:linmem_ig 10 \
+-holes::dalphaball /Path/To/Rosetta/Rosetta_2018_Feb_aa1fff/source/external/DAlpahBall/DAlphaBall.gcc \
+-ex1 -ex2 \
+-out:prefix $Iteration \
+-out:file:scorefile $name \
+-parser:script_vars chain=$chain \

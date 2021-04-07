@@ -1,0 +1,81 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="r15_for_cart"  weights="ref2015_cart">
+      </ScoreFunction>
+    </SCOREFXNS>
+
+  <RESIDUE_SELECTORS>
+    <Layer name="core_layer" select_core="true" use_sidechain_neighbors="true" core_cutoff="3.9" surface_cutoff="1.6" />
+  #select entire pose 
+    <True name="full_pose" />
+# get all network residues as output by HBNet
+    <ResiduePDBInfoHasLabel name="hbnet_residues" property="HBNet" />
+  # select everything within 5A around the network residues
+    <Neighborhood name="around_hbnet" selector="hbnet_residues" distance="5.0" />
+  # select only the buried residues within this set
+    <Layer name="hbnet_core" select_core="true" core_cutoff="3.9" />  # select core us
+ing sidechain neighbors (don’t use SASA because of potential voids!)
+    <And name="core_around_hbnet" selectors="hbnet_core,around_hbnet"/>
+    </RESIDUE_SELECTORS>
+
+  <TASKOPERATIONS>
+     <InitializeFromCommandline name="ex_flags" />
+    <LimitAromaChi2 name="limit_aroma_chi"/>
+   <OperateOnResidueSubset name="no_cys" selector="full_pose" >
+     <RestrictAbsentCanonicalAASRLT aas="AFDEGHIKLMNPQRSTVWY" />
+   </OperateOnResidueSubset>
+    </TASKOPERATIONS>
+
+  <FILTERS>
+    <BuriedUnsatHbonds name="Unsatisfied_hbonds_core" residue_selector="core_layer" report_bb_heavy_atom_unsats="true" scorefxn="r15_for_cart" ignore_surface_res="true" print_out_info_to_pdb="true" confidence="0.0"/>
+    <BuriedUnsatHbonds name="buns_bb_heavy" residue_selector="core_layer" report_bb_heavy_atom_unsats="true" scorefxn="r15_for_cart" cutoff="4" ignore_surface_res="true" print_out_info_to_pdb="true" />
+    <BuriedUnsatHbonds name="buns_sc_heavy" residue_selector="core_layer" report_sc_heavy_atom_unsats="true" scorefxn="r15_for_cart" cutoff="0"  ignore_surface_res="true" print_out_info_to_pdb="true" />
+
+    <SequenceRecovery name="recovery_of_og_seq" rate_threshold="0.0" task_operations="limit_aroma_chi,ex_flags" report_mutations="0" scorefxn="r15_for_cart" confidence="0.0"/>
+    <Rmsd name="rmsd_to_input" chains="%%chain%%" threshold="15" superimpose="1" confidence="0.0">
+      <span begin_res_num="1" end_res_num="104" />
+    </Rmsd>
+
+    <PackStat chain="0" confidence="0" name="pack_stat" repeats="2" threshold="0.65"/>
+    <Rmsd name="rmsd_filter" chains="%%chain%%" threshold="1.5" superimpose="1" confidence="1">
+      <span begin_res_num="1" end_res_num="104" />
+    </Rmsd>
+    <ExposedHydrophobics name="exposed_hydrophobics" threshold="-1" confidence="0.0" />
+    <Holes name="full_holes" threshold="1.8" confidence="0"/>
+  # holes score only around h-bond networks
+    <Holes name="network_holes" threshold="1.8" residue_selector="core_around_hbnet" normalize_per_atom="true" exclude_bb_atoms="true" confidence="0"/>
+    </FILTERS>
+
+  <MOVERS>
+
+    <FastDesign name="fastdes_all" scorefxn="r15_for_cart"  task_operations="limit_aroma_chi,ex_flags,no_cys" repeats="2" ramp_down_constraints="0" />
+
+
+    <ParsedProtocol name="parsed_protocol">
+      <Add mover_name="fastdes_all" />
+      <Add filter="buns_sc_heavy"/> 
+      <Add filter="buns_bb_heavy" />
+      <Add filter="rmsd_filter" />
+      </ParsedProtocol>
+   
+ <LoopOver name="loop_over_protocol" mover_name="parsed_protocol" filter_name="buns_sc_heavy" iterations="40" drift="false" ms_whenfail="FAIL_DO_NOT_RETRY" />   
+   
+    </MOVERS>
+
+  <APPLY_TO_POSE>
+
+    </APPLY_TO_POSE>
+  <PROTOCOLS>
+   <Add mover_name="loop_over_protocol" />
+   <Add filter="pack_stat" />
+   <Add filter="Unsatisfied_hbonds_core"/>
+   <Add filter="exposed_hydrophobics" />
+   <Add filter="full_holes" />
+   <Add filter="network_holes" />
+   <Add filter="recovery_of_og_seq"/>
+    </PROTOCOLS>
+
+  <OUTPUT scorefxn="r15_for_cart" />
+</ROSETTASCRIPTS>
+
+

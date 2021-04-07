@@ -1,0 +1,68 @@
+<ROSETTASCRIPTS>
+        <SCOREFXNS>
+                <ScoreFunction name="r15_for_cart" weights="ref2015_cart"/>
+        </SCOREFXNS>
+        <RESIDUE_SELECTORS>
+                <Layer core_cutoff="3.9" name="core_layer" select_core="true" surface_cutoff="1.6" use_sidechain_neighbors="true"/>
+                <Layer core_cutoff="3.9" name="boundary_layer" select_boundary="true" surface_cutoff="1.6" use_sidechain_neighbors="true"/>
+                <Layer core_cutoff="3.9" name="surface_layer" select_surface="true" surface_cutoff="1.6" use_sidechain_neighbors="true"/>
+                <ResiduePDBInfoHasLabel name="hbnet_residues" property="HBNet"/>
+                <Neighborhood distance="5.0" name="around_hbnet" selector="hbnet_residues"/>
+                <Layer core_cutoff="3.9" name="hbnet_core" select_core="true"/>
+                <And name="core_around_hbnet" selectors="hbnet_core,around_hbnet"/>
+                <Index name="terminals" resnums="1A,104A"/>
+        </RESIDUE_SELECTORS>
+        <TASKOPERATIONS>
+                <InitializeFromCommandline name="ex_flags"/>
+                <LimitAromaChi2 name="limit_aroma_chi"/>
+                <OperateOnResidueSubset name="terminal_design" selector="terminals">
+                        <RestrictAbsentCanonicalAASRLT aas="AFDEGHIKLMNPQRSTVWY"/>
+                </OperateOnResidueSubset>
+                <OperateOnResidueSubset name="core_design" selector="core_layer">
+                        <RestrictAbsentCanonicalAASRLT aas="VILMFYWGAP"/>
+                </OperateOnResidueSubset>
+                <OperateOnResidueSubset name="boundary_design" selector="boundary_layer">
+                        <RestrictAbsentCanonicalAASRLT aas="PAVILYWDENQKRSTG"/>
+                </OperateOnResidueSubset>
+                <OperateOnResidueSubset name="surface_design" selector="surface_layer">
+                        <RestrictAbsentCanonicalAASRLT aas="DENQKRSTHPG"/>
+                </OperateOnResidueSubset>
+        </TASKOPERATIONS>
+        <FILTERS>
+                <BuriedUnsatHbonds confidence="0.0" ignore_surface_res="true" name="Unsatisfied_hbonds_core" print_out_info_to_pdb="true" report_bb_heavy_atom_unsats="true" residue_selector="core_layer" scorefxn="r15_for_cart"/>
+                <BuriedUnsatHbonds cutoff="4" ignore_surface_res="true" name="buns_bb_heavy" print_out_info_to_pdb="true" report_bb_heavy_atom_unsats="true" residue_selector="core_layer" scorefxn="r15_for_cart"/>
+                <BuriedUnsatHbonds cutoff="0" ignore_surface_res="true" name="buns_sc_heavy" print_out_info_to_pdb="true" report_sc_heavy_atom_unsats="true" residue_selector="core_layer" scorefxn="r15_for_cart"/>
+                <SequenceRecovery confidence="0.0" name="recovery_of_og_seq" rate_threshold="0.0" report_mutations="0" scorefxn="r15_for_cart" task_operations="limit_aroma_chi,ex_flags"/>
+                <Rmsd chains="%%chain%%" confidence="0.0" name="rmsd_to_input" superimpose="1" threshold="15">
+                        <span begin_res_num="1" end_res_num="104"/>
+                </Rmsd>
+                <PackStat chain="0" confidence="0" name="pack_stat" repeats="2" threshold="0.65"/>
+                <Rmsd chains="%%chain%%" confidence="1" name="rmsd_filter" superimpose="1" threshold="1.5">
+                        <span begin_res_num="1" end_res_num="104"/>
+                </Rmsd>
+                <ExposedHydrophobics confidence="0.0" name="exposed_hydrophobics" threshold="-1"/>
+                <Holes confidence="0" name="full_holes" threshold="1.8"/>
+                <Holes confidence="0" exclude_bb_atoms="true" name="network_holes" normalize_per_atom="true" residue_selector="core_around_hbnet" threshold="1.8"/>
+        </FILTERS>
+        <MOVERS>
+                <FastDesign name="fastdes_all" ramp_down_constraints="0" scorefxn="r15_for_cart" task_operations="limit_aroma_chi,ex_flags,core_design,boundary_design,surface_design,terminal_design"/>
+                <ParsedProtocol name="parsed_protocol">
+                        <Add mover_name="fastdes_all"/>
+                        <Add filter="buns_sc_heavy"/>
+                        <Add filter="buns_bb_heavy"/>
+                        <Add filter="rmsd_filter"/>
+                </ParsedProtocol>
+                <LoopOver name="loop_over_protocol" drift="false" filter_name="buns_sc_heavy" iterations="40" mover_name="parsed_protocol" ms_whenfail="FAIL_DO_NOT_RETRY"/>
+        </MOVERS>
+        <APPLY_TO_POSE/>
+        <PROTOCOLS>
+                <Add mover_name="loop_over_protocol"/>
+                <Add filter="pack_stat"/>
+                <Add filter="Unsatisfied_hbonds_core"/>
+                <Add filter="exposed_hydrophobics"/>
+                <Add filter="full_holes"/>
+                <Add filter="network_holes"/>
+                <Add filter="recovery_of_og_seq"/>
+        </PROTOCOLS>
+        <OUTPUT scorefxn="r15_for_cart"/>
+</ROSETTASCRIPTS>
