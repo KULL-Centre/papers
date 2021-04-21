@@ -19,7 +19,7 @@ warnings.filterwarnings('ignore')
 
 class ABSURDer:
 
-    def __init__( self, rex, rmd, eex = '', out = 'results', thetas = np.array([100,1000,10000]), idx = [], methyl_list = None ):
+    def __init__( self, rex, rmd, eex = '', out = 'results', thetas = np.array([100,1000,10000]), idx = [], methyl_list = None, verbose = True ):
 
         """
         Class constructor
@@ -51,24 +51,25 @@ class ABSURDer:
         self.rmd = self.load_rates( rmd, "simulated" )       # simulated rates
         if eex == '' and len(self.rex.shape) == 3:
             self.build_toyexp()                              # no errors provided: build a toy model from rex
-            print("# No experimental errors provided: toy model built.")
+            if verbose:
+                print("# No experimental errors provided: toy model built.")
         elif eex == '' and len(self.rex.shape) != 3:         # no errors and no blocks provided
-            raise ValueError('Experimental errors not provided, but the size of rex is not compatible with the construction of a toy model.' )
+            raise ValueError(f'Experimental errors not provided, but the size of rex is not compatible with the construction of a toy model (current shape is {self.rex.shape}.' )
         else:
             self.eex = self.load_rates( eex, "errors on" )   # experimental errors
         self.idx = idx
 
         # consistency checks
         if len(self.rex.shape) != 2:
-            raise ValueError("rex dimension has to be nrates x nmethyls")
+            raise ValueError(f"rex dimension has to be nrates x nmethyls (current shape is {self.rex.shape})")
         if len(self.eex.shape) != 2:
-            raise ValueError("eex dimension has to be nrates x nmethyls")
+            raise ValueError(f"eex dimension has to be nrates x nmethyls (current shape is {self.eex.shape})")
         if len(self.rmd.shape) != 3:
-            raise ValueError("rmd dimension has to be nrates x nmethyls x nblocks")
+            raise ValueError(f"rmd dimension has to be nrates x nmethyls x nblocks (current shape is {self.rmd.shape})")
         if self.rex.shape[0] != self.eex.shape[0] or self.rex.shape[0] != self.rmd.shape[0]:
-            raise ValueError("The number of rates must be identical in rex, eex and rmd")
+            raise ValueError(f"The number of rates must be identical in rex ({self.rex.shape[0]}), eex ({self.eex.shape[0]}) and rmd ({self.rmd.shape[0]})")
         if self.rex.shape[1] != self.eex.shape[1] or self.rex.shape[1] != self.rmd.shape[1]:
-            raise ValueError("The number of methyl groups must be identical in rex, eex and rmd")
+            raise ValueError(f"The number of methyl groups must be identical in rex ({self.rex.shape[1]}), eex ({self.eex.shape[1]}) and rmd ({self.rmd.shape[1]})")
 
         if methyl_list != None:
             self.load_methyl_list(methyl_list)
@@ -96,12 +97,15 @@ class ABSURDer:
         for r in range(self.r):
             self.ix2.append( self.chi2r(r, self.w0) )
         self.ix2.append( self.chi2r(-1, self.w0) )
+        self._shift()
 
-        print("\n# INFO ON THE DATASET")
-        print(f"# Number of methyls:  {self.m}")
-        print(f"# Number of rates:    {self.r}")
-        print(f"# Number of blocks:   {self.b}")
-        print(f"# Overall chi square: {self.ix2[-1]:.2f}" )
+        if verbose:
+            print("\n# INFO ON THE DATASET")
+            print(f"# Number of methyls:  {self.m}")
+            print(f"# Number of rates:    {self.r}")
+            print(f"# Number of blocks:   {self.b}")
+            print(f"# Overall chi square: {self.ix2[-1]:.2f}")
+            print(f"# Average shift:      {self.shift:.2f}")
     #----------------------------------------------------------------------------------------------------------------
 
     def load_rates( self, r, tp = "" ):
@@ -184,6 +188,34 @@ class ABSURDer:
         self.rmd = rmd
     #----------------------------------------------------------------------------------------------------------------
 
+    def _shift( self, include_r2 = False ):
+
+        """
+        Computes the average shift of the simulated rates with respect to the experimental ones
+        as 1 - m_fit, where m_fit is obtained by a linear fit with fixed null intercept.
+
+        Parameters
+        ----------
+        include_r2 : bool
+                     if True, R2 is included in the calculation of the average
+        """
+
+        if include_r2:
+            rng = [0,1,2]
+        else:
+            rng = [0,2]
+
+        s_av = 0
+        for r in rng:
+            x = self.rex[r][:, np.newaxis]
+            y = self.rav[r]
+            a, _, _, _ = np.linalg.lstsq(x, y)
+            s = 1 - a[0]
+            s_av += s / len(rng)
+
+        self.shift = s_av
+    # ----------------------------------------------------------------------------------------------------------------
+
     def _chi2( self, r, w ):
 
         """
@@ -222,15 +254,25 @@ class ABSURDer:
             array of weights.
         """
 
-        #rrw = np.average( self.rmd, weights = w, axis = -1 )
         rrw = np.dot( self.rmd, w[:,np.newaxis] )[:,:,0] #removes last, useless axis
         if r == -1:
-            #er2 = self.eex**2 + self.emd**2
             return np.sum( (self.rex - rrw)**2 )
         else:
-            #er2 = self.eex[r]**2 + self.emd[r]**2
             return np.sum( (self.rex[r] - rrw[r])**2 )
     #----------------------------------------------------------------------------------------------------------------
+
+    def delta_rmsd( self, phi_ref ):
+
+        irmsd = 0.5 * ( self._rmsd(0, self.w0) + self._rmsd(2, self.w0) )  # initial rmsd excluding R2
+
+        self.phix2r(-1)  # get phi_eff from overall chi2
+        idx = self.get_theta_idx( phi_ref )
+        opt = self.res[self.ths[idx]]
+
+        rrmsd = 0.5 * ( self._rmsd(0, opt) + self._rmsd(2, opt) )  # average R1-R3 RMSD after RW
+        rmsd_diff = (irmsd - rrmsd) / irmsd * 100  # relative change in RMSD
+        return rmsd_diff
+    # ----------------------------------------------------------------------------------------------------------------
 
     def chi2r( self, r, w ):
 
@@ -275,6 +317,27 @@ class ABSURDer:
         phi  = np.exp( -srel )
         return phi
     #----------------------------------------------------------------------------------------------------------------
+
+    def get_theta_idx( self, phi_eff ):
+
+        """
+        Get the index of theta closeset to a given value of phi effective.
+
+        Parameters
+        ----------
+        phi_eff : float
+                  value of phi effective
+
+        Returns
+        -------
+        idx : int
+              index of the corresponding value of theta
+        """
+
+        idx = (np.abs( np.array(self.phi) - phi_eff)).argmin()
+        return idx
+
+    # ----------------------------------------------------------------------------------------------------------------
 
     def _penalty( self, w, r, theta ):
 
@@ -1195,6 +1258,8 @@ class ABSURDer:
 
         plt.suptitle(idx, fontsize=18, weight='bold')
         plt.tight_layout(rect=[0, 0, 1, 0.95])
+
+        return hist_md, hist_rw, h
     #------------------------------------------------------------------------------------------------------------------
 
     def phi_psi_rmsd( self, ang, nblocks, block_size, ntrajs, opt_theta ):
