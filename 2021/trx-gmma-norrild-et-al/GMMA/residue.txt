@@ -1,0 +1,74 @@
+"# Global Multi-Mutant Analysis per position"
+"# wt: Wild-type amino acid at position"
+"# subst: Attempted substitutions at position"
+"# active: Number of active variants with this position mutated"
+"# inactive: Number of inactive variants with this position mutated"
+"# av: Amino acid in Aequorea victoria (even-wilder type)"
+"# sf,do,now: Amino acid in SuperFolderGFP, Do & Boxer split-GFP and Sarkisyan & Kondrashov NowGFP"
+"# pdb: Amino acid observed in homologs from the PDB"
+"# opt: Optimal amino acid according to GMMA"
+"# opt0: Optimal amino acid according to initial fit"
+"# ifs: Amino acids (among attempted) that inactivates irreversibly at this position "
+"# fit: Amino acids (among attempted) that resulted in an reliable GMMA fit"
+"# top: Min rank among substitutions"
+"# n_max: Max number of substitutions among active variants"
+"# cat: Mutational category of position:"
+"#     9   Hot-spot: All stabilizing, no IFS"
+"#     8   Half or more stabilizing, no IFS"
+"#     7   Less than half stabilizing and possible some IFS but most variant are active"
+"#     6   At lest one stabilizing substitution"
+"#     5   Nothing is known"
+"#     4   No fitted substitutions but some IFS"
+"#     3   Nothing is known but few active"
+"#     2   Less than half are very destabilizing and some variants are active"
+"#     1   Not all very destabilizing"
+"#     0   Conserved: All fitted substitutions are very detabilizing"
+"resi" "wt" "subst" "N_mut" "active" "inactive" "init" "ifs" "fit" "opt" "opt0" "top" "n_max" "cat"
+"48" 48 "G" "DV" 2 0 2 "DV" "" "" "-" "-" NA 0 5
+"49" 49 "L" "MPQR" 22 3 19 "MPQR" "" "" "-" "-" NA 11 0
+"50" 50 "I" "ACFHLMNPQRSTVY" 446 54 392 "ACFHLMNPQRSTVY" "" "ST" "-" "Y" 273 15 0
+"51" 51 "M" "*AEFGIKLNPQRSTVWY" 2379 459 1920 "*AEFGIKLNPQRSTVWY" "" "IKLRTV" "R" "E" 3 15 9
+"52" 52 "V" "*ACDEFGHIKLMNPQRSTY" 2554 395 2159 "*ACDEFGHIKLMNPQRSTY" "" "ADFGIL" "F" "C" 23 15 8
+"53" 53 "F" "*ACDEGHILMNPQRSTVWY" 3366 618 2748 "*ACDEGHILMNPQRSTVWY" "" "CILSVY" "E" "E" 21 16 9
+"54" 54 "E" "*ACDFGHIKLMNPQRSTVWY" 3713 593 3120 "*ACDFGHIKLMNPQRSTVWY" "" "ADGKQRVY" "Y" "L" 9 18 9
+"55" 55 "L" "*ACDEFGHIKMNPQRSTVWY" 2658 327 2331 "*ACDEFGHIKMNPQRSTVWY" "" "HMPQRV" "V" "D" 12 18 8
+"56" 56 "D" "*ACEFGHIKLMNPQRSTVWY" 4155 570 3585 "*ACEFGHIKLMNPQRSTVWY" "" "AEGHNPSVY" "-" "-" 134 19 0
+"57" 57 "T" "*ACDEFGHIKLMNPQRSVWY" 3065 500 2565 "*ACDEFGHIKLMNPQRSVWY" "" "AIKLMNPRS" "I" "I" 6 19 8
+"58" 58 "N" "*ACDEFGHIKLMPQRSTVY" 4180 710 3470 "*ACDEFGHIKLMPQRSTVY" "" "DHIKRSTY" "D" "C" 26 19 9
+"59" 59 "K" "*ACDEFGHILMNPQRSTVWY" 4465 714 3751 "*ACDEFGHILMNPQRSTVWY" "" "EHILMNQRST" "I" "L" 17 19 9
+"60" 60 "A" "*CDEGHIKLNPQRSTVWY" 3136 443 2693 "*CDEGHIKLNPQRSTVWY" "H" "EGPSTV" "-" "N" 56 19 0
+"61" 61 "P" "*ACDEGHIKLMNQRSTVWY" 2782 409 2373 "*ACDEGHIKLMNQRSTVWY" "" "ALQRST" "-" "H" 74 19 0
+"62" 62 "E" "*ACDGHIKLMNPQRSTVWY" 4453 624 3829 "*ACDGHIKLMNPQRSTVWY" "" "ADGHKQVY" "-" "W" 36 19 0
+"63" 63 "I" "*ACDEFGHKLMNPQRSTVY" 4054 533 3521 "*ACDEFGHKLMNPQRSTVY" "" "AFLMNSTV" "L" "C" 35 19 8
+"64" 64 "A" "*CDEFGHIKLMPQRSTVWY" 2864 398 2466 "*CDEFGHIKLMPQRSTVWY" "" "EGLPSTV" "-" "I" 115 19 0
+"65" 65 "K" "*ADEGHILMNPQRSTVWY" 4269 615 3654 "*ADEGHILMNPQRSTVWY" "" "EILNPQRST" "-" "W" 40 19 0
+"66" 66 "K" "*ACDEFGHILMNPQRSTVWY" 4474 696 3778 "*ACDEFGHILMNPQRSTVWY" "" "EHIMNQRST" "S" "S" 18 16 8
+"67" 67 "Y" "*ACDEFGHIKLMNPQRSTVW" 4231 421 3810 "*ACDEFGHIKLMNPQRSTVW" "" "CDFHNS" "-" "L" 169 19 0
+"68" 68 "N" "*ACDEFGHIKLMPQRSTVWY" 4115 560 3555 "*ACDEFGHIKLMPQRSTVWY" "" "DHIKPQRSTY" "-" "G" 99 19 0
+"69" 69 "I" "*ACDFGHKLMNPQRSTVY" 3025 356 2669 "*ACDFGHKLMNPQRSTVY" "" "FLMNSTV" "-" "C" 77 19 0
+"70" 70 "T" "ACDEFGHIKLMNPQRSVY" 1934 270 1664 "ACDEFGHIKLMNPQRSVY" "" "AINPS" "-" "Q" 95 19 0
+"71" 71 "T" "ACDFGHIKLMNPQRSVY" 1726 249 1477 "ACDFGHIKLMNPQRSVY" "" "AINPS" "-" "C" 87 19 0
+"72" 72 "T" "AHNPSY" 108 3 105 "AHNPSY" "" "" "-" "P" NA 19 5
+"73" 73 "P" "LQRT" 43 0 43 "LQRT" "L" "" "-" "-" NA 0 0
+"74" 74 "T" "*ACDEFGHIKLMNPRSVY" 2927 315 2612 "*ACDEFGHIKLMNPRSVY" "" "AINS" "A" "C" 25 15 8
+"75" 75 "V" "*ACDEFGHIKLMNPQRSTWY" 2345 147 2198 "*ACDEFGHIKLMNPQRSTWY" "" "AFIL" "-" "W" 90 15 0
+"76" 76 "A" "*CDEFGHIKLNPQRSTVWY" 2257 174 2083 "*CDEFGHIKLNPQRSTVWY" "H" "GSTV" "-" "C" 93 15 0
+"77" 77 "F" "*ACDEGHIKLMNPQRSTVWY" 3227 343 2884 "*ACDEGHIKLMNPQRSTVWY" "" "CILSVY" "I" "-" 31 18 8
+"78" 78 "F" "*ACDEGHILMNPQRSTVWY" 3285 261 3024 "*ACDEGHILMNPQRSTVWY" "" "CILSVY" "-" "-" 197 18 0
+"79" 79 "K" "*ACDEFGHILMNPQRSTVY" 4441 615 3826 "*ACDEFGHILMNPQRSTVY" "" "EHILNQRSTY" "H" "V" 11 19 8
+"80" 80 "N" "*ACDEFGHIKLMPQRSTVWY" 4189 484 3705 "*ACDEFGHIKLMPQRSTVWY" "" "DHIKQSTY" "-" "A" 57 19 0
+"81" 81 "G" "*ACDEFHIKLNPRSTVWY" 2053 123 1930 "*ACDEFHIKLNPRSTVWY" "" "ACDRSV" "-" "-" 230 13 0
+"82" 82 "E" "*ACDFGHIKLMNPQRSTVWY" 3361 427 2934 "*ACDFGHIKLMNPQRSTVWY" "" "ADGKQV" "-" "F" 98 18 0
+"83" 83 "V" "*ACDEFGHILMNPQRSTY" 2417 285 2132 "*ACDEFGHILMNPQRSTY" "" "ADFGIL" "L" "C" 14 18 8
+"84" 84 "K" "*ACDEFGHILMNPQRSTVWY" 4368 563 3805 "*ACDEFGHILMNPQRSTVWY" "" "EHILMNQRSTY" "-" "H" 19 15 0
+"85" 85 "S" "*ACDEFGHIKLMNPQRTVWY" 3797 536 3261 "*ACDEFGHIKLMNPQRTVWY" "" "CGINRT" "-" "D" 137 18 0
+"86" 86 "V" "*ACDEFGHIKLMNPQRSTWY" 2455 300 2155 "*ACDEFGHIKLMNPQRSTWY" "" "ADFGIL" "I" "R" 28 18 8
+"87" 87 "L" "*ACDEFGHIKMNPQRSTVWY" 2639 355 2284 "*ACDEFGHIKMNPQRSTVWY" "*" "FIMPQRV" "F" "C" 7 14 8
+"88" 88 "I" "*ACDEFGHKLMNPQRSTVWY" 3449 698 2751 "*ACDEFGHKLMNPQRSTVWY" "" "FLMNSTV" "T" "W" 4 18 9
+"89" 89 "G" "*ACDEFHIKLMNPRSTVWY" 2134 176 1958 "*ACDEFHIKLMNPRSTVWY" "" "ACDRSV" "-" "T" 145 16 0
+"90" 90 "A" "*CDEFGHKLMNPQRSTVW" 2155 401 1754 "*CDEFGHKLMNPQRSTVW" "" "EGPSTV" "-" "H" 45 19 6
+"91" 91 "I" "*ACDEFGHKLMNPRSTVY" 2859 460 2399 "*ACDEFGHKLMNPRSTVY" "" "FLMNRSTV" "-" "P" 38 16 0
+"92" 92 "P" "*ADEFGHIKLNQRSTVWY" 2967 672 2295 "*ADEFGHIKLNQRSTVWY" "" "ALQRST" "D" "V" 1 16 9
+"93" 93 "K" "*ADEFGHILMNPQRSTVWY" 2553 250 2303 "*ADEFGHILMNPQRSTVWY" "" "EINQRT" "-" "V" 153 18 0
+"94" 94 "D" "*AEFGHIKLNPQSTVY" 1331 237 1094 "*AEFGHIKLNPQSTVY" "" "AEGHNVY" "-" "P" 47 14 6
+"95" 95 "Q" "*EHKLPRSTW" 252 24 228 "*EHKLPRSTW" "" "K" "-" "R" 82 13 0
