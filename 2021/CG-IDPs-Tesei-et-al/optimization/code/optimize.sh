@@ -1,0 +1,75 @@
+#!/bin/bash 
+#SBATCH --job-name=1_10_AVG
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=64
+#SBATCH --exclusive
+#SBATCH --mem-per-cpu=3000
+#SBATCH -t 72:00:00
+#SBATCH -o opt.out
+#SBATCH -e opt.err
+#SBATCH --partition=sbinlab
+
+# The program that starts the threads
+source /groups/sbinlab/giulio/.bashrc
+conda activate hoomd
+
+declare -a proteins_list=(OPN FUS FUS12E Sic1 aSyn A2 ht40 A1 Hst5 aSyn140 PNt Hst52 ACTR RNaseA p15PAF OPN220 Sic92 FhuA CoRNID ColNT hNL3cyt p53 K10 K27 K25 K32 K23 K44 M12FP12Y P7FM7Y M9FP6Y M8FP4Y M9FP3Y M10R M6R P2R P7R M3RP3K M6RP6K M10RP10K M4D P4D P8D P12D P12E P7KP12D P7KP12Db M12FP12YM10R M10FP7RP12D)
+declare -a proteinsPRE_list=(OPN FUS FUS12E Sic1 aSyn A2 ht40)
+
+rm log
+for name in ${proteins_list[@]}
+do
+rm -r $name
+mkdir $name
+done
+
+for name in ${proteinsPRE_list[@]}
+do
+cp -r ../expPREs/$name/expPREs $name
+done
+
+cp *.py $SCRATCH
+cp *.pkl $SCRATCH
+
+for name in ${proteins_list[@]}
+do
+cp -r $name $SCRATCH
+echo $name
+done
+
+echo $SLURM_CPUS_PER_TASK
+
+cd $SCRATCH
+
+start=$(date +%s.%N)
+
+echo $SLURM_CPUS_ON_NODE
+
+for cycle in {o5,}
+do
+
+for name in ${proteins_list[@]}
+do
+mkdir $name/$cycle
+done
+
+python ./simulate.py --outdir $cycle --num_cpus $SLURM_CPUS_PER_TASK
+
+cp -r * $SLURM_SUBMIT_DIR
+
+for name in ${proteinsPRE_list[@]}
+do
+python ./pulchra.py --name $name --num_cpus $SLURM_CPUS_PER_TASK --pulchra /groups/sbinlab/giulio/pulchra_306/pulchra
+sleep 20
+done
+
+python ./optimize.py --log $SLURM_SUBMIT_DIR --cycle $cycle --num_cpus $SLURM_CPUS_PER_TASK
+
+cp -r * $SLURM_SUBMIT_DIR
+
+done
+
+duration=$(echo "$(date +%s.%N) - $start" | bc)
+execution_time=`printf "%.2f seconds" $duration`
+
+echo $execution_time

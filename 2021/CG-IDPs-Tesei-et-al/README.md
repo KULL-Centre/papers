@@ -1,1 +1,26 @@
-Data and scripts for Tesei et al.
+
+# Accurate model of liquid-liquid phase behavior of intrinsically-disordered proteins from data-driven optimization of single-chain properties
+
+This repository contains [Jupyter](http://jupyter.org) Notebooks and simulation data for reproducing the work of the scientific paper _Accurate model of liquid-liquid phase behavior of intrinsically-disordered proteins from data-driven optimization of single-chain properties_by G. Tesei, T. Klarsø Schulze, R. Crehuet, and K. Lindorff-Larsen.
+
+### Layout
+
+- `analyses_and_figures.ipynb` Jupyter Notebook to analyze all the simulation data and generate plots
+- `calcKd.ipynb` Jupyter Notebook to calculate $B_{22}$ and $K_d$ from two-chain simulations
+- `calcConc.ipynb` Jupyter Notebook to calculate $c_{sat}$ and $c_{con}$ from multi-chain molecular simulations in slab geometry
+- `analysis_HP_scales.ipynb` Jupyter Notebook to carry out the analysis of the hydrophobicity scales collected by Simm et al. [DOI: 10.1186/s40659-016-0092-5](https://doi.org/10.1186/s40659-016-0092-5)
+- `single-chain/code/` Python code to simulate and analyze simulations of a single IDP of a given sequence using [HOOMD-blue](https://hoomd-blue.readthedocs.io/en/latest/) 
+- `two-chain/code/` Python code to perform two-chain simulations and trajectory analyses of the optimized CG-IDPs model using HOOMD-blue
+- `optimization/code/` Python code and bash scripts to optimize the CG-IDPs model against experimental gyration radii and intramolecular PRE data
+- `multi-chain/code/` Python code to simulate and analyze multi-chain simulations of the CG-IDPs model in slab geometry
+
+### Usage
+
+To open the Notebooks, install python via [Miniconda](https://conda.io/miniconda.html) and make sure all required packages are loaded
+by issuing the following terminal commands
+
+```bash
+    conda env create -f environment.yml
+    source activate cg-idps
+    jupyter-notebook
+```
