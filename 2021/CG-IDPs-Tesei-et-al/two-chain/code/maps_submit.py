@@ -4,7 +4,7 @@ import time
 from jinja2 import Template
 from analyse import *
 
-proteins = initProteinsDimers()
+proteins = initProteins()
 proteins.to_pickle('proteins.pkl')
 
 submission = Template("""#!/bin/bash

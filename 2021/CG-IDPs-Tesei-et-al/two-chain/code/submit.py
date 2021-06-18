@@ -3,7 +3,7 @@ import os
 import subprocess
 from jinja2 import Template
 
-proteins = initProteinsDimers()
+proteins = initProteins()
 proteins.to_pickle('proteins.pkl')
 
 submission = Template("""#!/bin/bash

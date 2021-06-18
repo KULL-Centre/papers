@@ -20,21 +20,23 @@ conda activate hoomd
 
 python ./simulate.py --name {{name}}""")
 
-def initProteinsDF():
-    proteins = pd.DataFrame(index=['A1','A1NLS'],
+def initProteins():
+    proteins = pd.DataFrame(index=['A1','A1NLS','NEWSEQ'],
             columns=['temp','pH','ionic','fasta'])
     fasta_A1 = """GSMASASSSQRGRSGSGNFGGGRGGGFGGNDNFGRGGNFSGRGGFGGSRGGGGYGGSGDGYNGFGNDGSNFGGGGSYNDFGNYNNQ
 SSNFGPMKGGNFGGRSSGGSGGGGQYFAKPRNQGGYGGSSSSSSYGSGRRF""".replace('\n', '')
     fasta_A1NLS = """GSMASASSSQRGRSGSGNFGGGRGGGFGGNDNFGRGGNFSGRGGFGGSRGGGGYGGSGDGYNGFGNDGSNFGGGGSYNDFGNYNNQ
 SSNFGPMKGGNFGGRSSGPYGGGGQYFAKPRNQGGYGGSSSSSSYGSGRRF""".replace('\n', '')
+    fasta_NEWSEQ = """INSERT YOUR SEQUENCE HERE""".replace('\n', '')
     proteins.loc['A1'] = dict(temp=298,pH=7.0,fasta=list(fasta_A1),ionic=0.15)
     proteins.loc['A1NLS'] = dict(temp=298,pH=7.0,fasta=list(fasta_A1NLS),ionic=0.15)
+    proteins.loc['NEWSEQ'] = dict(temp=298,pH=7.0,fasta=list(fasta_NEWSEQ),ionic=0.15)
     return proteins
 
 proteins = initProteinsDF()
 proteins.to_pickle('proteins.pkl')
 
-for name in proteins.index:
+for name in ['NEWSEQ']: # or proteins.index: to simulate all the sequences in initProteins()
     if not os.path.isdir(name):
         os.mkdir(name)
     with open('{:s}.sh'.format(name), 'w') as submit:

@@ -3,7 +3,7 @@ import numpy as np
 import mdtraj as md
 import itertools
 
-def initProteinsDimers():
+def initProteins():
     proteins = pd.DataFrame(index=['FUS','FUS12E','A2','aSyn','ht40','p15PAF'], columns=['labels','eps_factor','wh','L','temp','obs','pH','ionic','expPREs','fasta','path'])
     fasta_FUS = """MASNDYTQQATQSYGAYPTQPGQGYSQQSSQPYGQQSYSGYSQSTDTSGYGQSSYSSYGQ
 SQNTGYGTQSTPQGYGSTGGYGSSQSSQSSYGQQSSYPGYGQQPAPSSTSGSYGSSSQSS

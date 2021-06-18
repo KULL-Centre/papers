@@ -3,7 +3,7 @@ import subprocess
 from jinja2 import Template
 
 submission = Template("""#!/bin/bash
-#SBATCH --job-name={{ff}}
+#SBATCH --job-name={{name}}
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH -t 20:00:00
@@ -18,5 +18,5 @@ conda activate hoomd
 python ./calc.py""")
 
 with open('calc.sh', 'w') as submit:
-    submit.write(submission.render(ff='A1NLS'))
+    submit.write(submission.render(name='analysis'))
 subprocess.run(['sbatch','calc.sh'])
