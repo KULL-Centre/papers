@@ -23,6 +23,7 @@ args = parser.parse_args()
 logging.basicConfig(filename=args.log_path+'/log',level=logging.INFO)
 
 dp = 0.05
+# set the confidence parameter
 theta = 0.1
 
 os.environ["NUMEXPR_MAX_THREADS"]="1"
@@ -40,6 +41,7 @@ proc_PRE = [(label,name) for name,prot in proteins.iterrows() for label in prot.
  
 ray.init(num_cpus=args.num_cpus)
 
+# function to calculate PRE data from all-atom trajectories using DEER-PREdict
 @ray.remote
 def evaluatePRE(n, label, name, prot):
     prefix = prot.path+'/calcPREs/res'
@@ -55,6 +57,7 @@ def evaluatePRE(n, label, name, prot):
     PRE = PREpredict(u, label, log_file = args.log_path+'/'+name+'/log', temperature = prot.temp, atom_selection = 'N', sigma_scaling = 1.0)
     PRE.run(output_prefix = prefix, weights = prot.weights, load_file = load_file, tau_t = 1e-10, tau_c = prot.tau_c*1e-09, r_2 = 10, wh = prot.wh)
 
+# to speed-up reweighting, sum up the terms that are unaffected by changes in the lambda values and store them in a hdf5 data container
 @ray.remote
 def calcDistSums(df,name,prot):
     traj = md.load_dcd(prot.path+"/{:s}.dcd".format(name),prot.path+"/{:s}.pdb".format(name))
@@ -102,6 +105,7 @@ def calcDistSums(df,name,prot):
                           axis=1, arr=n)
     f.close()
 
+# calculate per-frame AH energies (non-electrostatic, nonbonded) using the current lambda set
 def calcLJenergy(df,name,prot):
     f = h5py.File(prot.path+'/dist_sums.hdf5', "r")
     unique = f.get('unique')[()].astype(str)
@@ -128,6 +132,7 @@ def calcLJenergy(df,name,prot):
     f.close()
     return lj_energy1 + lj_energy2
 
+# calculate weights based on the total per-frame AH energies calculated with the current lambda set and with the lambda set used for the simulations
 @ray.remote
 def calcWeights(df,name,prot):
     new_lj_energy = calcLJenergy(df,name,prot)
@@ -139,10 +144,10 @@ def calcWeights(df,name,prot):
     eff = np.exp(-np.sum(weights*np.log(weights*weights.size)))
     return (name,weights,eff)
 
+# reweight the trajectory to estimate average observables for the current lambda set
 def reweight(dp,df,dfprior,proteins,proteinsRgs):
     trial_proteins = proteins.copy()
     trial_proteinsRgs = proteinsRgs.copy()
-    # trial_proteins.loc[:,'eps_factor'] += np.random.normal(0,dp)
     trial_df = df.copy()
     res_sel = np.random.choice(trial_df.index[:-2], 7, replace=False)
     trial_df.loc[res_sel,'lambdas'] += np.random.normal(0,dp,res_sel.size)
@@ -160,7 +165,7 @@ def reweight(dp,df,dfprior,proteins,proteinsRgs):
         out_of_prior = f_out_of_prior(trial_df.iloc[:-2],dfprior)
 
     prior = dfprior.lookup(trial_df.one[:-2],trial_df.lambdas[:-2])
-    # calculate LJ energies, weights and fraction of effective frames    
+    # calculate AH energies, weights and fraction of effective frames    
     weights = ray.get([calcWeights.remote(trial_df,name,prot) for name,prot in pd.concat((trial_proteins,trial_proteinsRgs),sort=True).iterrows()])
     for name,w,eff in weights:
         if name in trial_proteins.index:
@@ -171,7 +176,6 @@ def reweight(dp,df,dfprior,proteins,proteinsRgs):
             trial_proteinsRgs.at[name,'eff'] = eff
     # skip all sets of lambdas if the fraction of effective frames is too low
     if np.any(trial_proteins.eff < 0.3) or np.any(trial_proteinsRgs.eff < 0.3):
-        # logging.info('Eff '+str({name: prot.eff for name, prot in trial_proteins.iterrows()}))
         return False, df, proteins, proteinsRgs, prior
     else:
         # calculate PREs and cost function
@@ -189,9 +193,11 @@ def reweight(dp,df,dfprior,proteins,proteinsRgs):
             trial_proteinsRgs.at[name,'chi2_rg'] = chi2_rg
         return True, trial_df, trial_proteins, trial_proteinsRgs, prior
 
+# load the initial lambda set and check that it is equal to AVG
 df = pd.read_pickle('residues.pkl')
 logging.info(df.lambdas-df.average)
 
+# load the experimental NMR PRE data
 for name in proteins.index:
     proteins.at[name,'expPREs'] = loadExpPREs(name,proteins.loc[name])
 
@@ -201,6 +207,7 @@ logging.info('Timing evaluatePRE {:.3f}'.format(time.time()-time0))
 
 ray.get([calcDistSums.remote(df,name,prot) for name,prot in pd.concat((proteins,proteinsRgs),sort=True).iterrows()])
 
+# initialize the protein DataFrames with the initial conformational properties
 for name in proteins.index:
     lj_energy = calcLJenergy(df,name,proteins.loc[name])
     np.savetxt(proteins.loc[name].path+'/{:s}_LJenergy.dat'.format(name),lj_energy)
@@ -237,18 +244,13 @@ dfprior = pd.read_pickle('prior.pkl')
 dfchi2 = pd.DataFrame(columns=['chi2_pre','chi2_rg','prior'])
 dflambdas = pd.DataFrame(columns=['chi2_pre','chi2_rg','spearman','lambdas'])
 
-if args.cycle=='o1':
-    kT0 = 2
-if args.cycle=='o2':
-    kT0 = 2
-if args.cycle=='o4':
-    kT0 = 1
-if args.cycle=='o5':
-    kT0 = 1
+# set the initial value for the control parameter of simulated annealing
+if (args.cycle=='o1' or args.cycle=='o2'):
+    kT0 = 2 
 else:
     kT0 = 0.1
-
 kT = kT0
+
 theta_prior = theta * np.log(dfprior.lookup(df.one[:-2],df.lambdas[:-2])).sum()
 
 logging.info('Initial theta*prior {:.2f}'.format(theta_prior))
@@ -257,19 +259,24 @@ dfchi2.loc[0] = [proteins.chi2_pre.mean(),proteinsRgs.chi2_rg.mean(),theta_prior
 
 variants = ['A1','M12FP12Y','P7FM7Y','M9FP6Y','M8FP4Y','M9FP3Y','M10R','M6R','P2R','P7R','M3RP3K','M6RP6K','M10RP10K','M4D','P4D','P8D','P12D','P12E','P7KP12D','P7KP12Db','M12FP12YM10R','M10FP7RP12D']
 
+# start simulated annealing
 for k in range(2,5002):
 
+    # interrupt simulated annealing when the control parameter drops below 1e-15
     if (kT<1e-15):
         logging.info('kT {:.2f}'.format(kT))
         break
 
+    # scale the control parameter
     kT = kT * .99
     passed, trial_df, trial, trialRgs, prior = reweight(dp,df,dfprior,proteins,proteinsRgs)
+    # passed if the effective fraction of frames exceeds 0.3
     if passed:
         theta_prior = theta * np.log(prior).sum()
         delta1 = trial.chi2_pre.mean() + trialRgs.chi2_rg.mean() - theta_prior
         delta2 = proteins.chi2_pre.mean() + proteinsRgs.chi2_rg.mean() - theta*dfchi2.iloc[-1]['prior']
         delta = delta1 - delta2
+        # Metropolis criterion for accepting trial lambda set
         if ( np.exp(-delta/kT) > np.random.rand() ):
             proteins = trial.copy()
             proteinsRgs = trialRgs.copy()
