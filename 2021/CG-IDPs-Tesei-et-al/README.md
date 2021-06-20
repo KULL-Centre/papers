@@ -10,7 +10,7 @@ This repository contains [Jupyter](http://jupyter.org) Notebooks and simulation 
 - `analysis_HP_scales.ipynb` Jupyter Notebook to carry out the analysis of the hydrophobicity scales collected by Simm et al. [DOI: 10.1186/s40659-016-0092-5](https://doi.org/10.1186/s40659-016-0092-5)
 - `single-chain/code/` Python code to simulate and analyze simulations of a single IDP of a given sequence using [HOOMD-blue](https://hoomd-blue.readthedocs.io/en/latest/) 
 - `two-chain/code/` Python code to perform two-chain simulations and trajectory analyses of the optimized CG-IDPs model using HOOMD-blue
-- `optimization/code/` Python code and bash scripts to optimize the CG-IDPs model against experimental gyration radii and intramolecular PRE data
+- `optimization/code/` Python code and bash script to optimize the CG-IDPs model against experimental gyration radii and intramolecular NMR PRE data
 - `multi-chain/code/` Python code to simulate and analyze multi-chain simulations of the CG-IDPs model in slab geometry
 
 ### Usage

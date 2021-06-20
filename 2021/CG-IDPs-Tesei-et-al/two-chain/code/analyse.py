@@ -24,12 +24,12 @@ VQIVYKPVDLSKVTSKCGSLGNIHHKPGGGQVEVKSEKLDFKDRVQSKIGSLDNITHVPGGGNKKIETHKLTFRENAKAK
 HGAEIVYKSPVVSGDTSPRHLSNVSSTGSIDMVDSPQLATLADEVSASLAKQGL""".replace('\n', '') 
     fasta_p15PAF = """MVRTKADSVPGTYRKVVAARAPRKVLGSSTSATNSTSVSSRKAENKYAGGNPVCVRPTPK
 WQKGIGEFFRLSPKDSEKENQIPEEAGSSGLGKAKRKACPLQPDHTNDEKE""".replace('\n', '') 
-    proteins.loc['FUS'] = dict(labels=[16, 86, 142],eps_factor=0.2,L=40.5,wh=850,temp=298,obs='rate',pH=5.5,fasta=list(fasta_FUS),ionic=0.15,path='ff') 
-    proteins.loc['FUS12E'] = dict(labels=[16, 86, 142],eps_factor=0.2,L=40.5,wh=850,temp=298,obs='rate',pH=5.5,fasta=list(fasta_FUS12E),ionic=0.15,path='ff')
-    proteins.loc['A2'] = dict(labels=[99, 143],eps_factor=0.2,L=48,wh=850,temp=298,obs='rate',pH=5.5,fasta=list(fasta_A2),ionic=0.005,path='ff')
-    proteins.loc['aSyn'] = dict(eps_factor=0.2,temp=283,pH=7.4,ionic=0.125,L=25.5,fasta=list(fasta_aSyn),path='ff')
-    proteins.loc['ht40'] = dict(eps_factor=0.2,temp=278,pH=6.8,ionic=0.100,L=48.0,fasta=list(fasta_ht40),path='ff')
-    proteins.loc['p15PAF'] = dict(eps_factor=0.2,temp=298,pH=7.0,ionic=0.150,L=34.0,fasta=list(fasta_p15PAF),path='ff')
+    proteins.loc['FUS'] = dict(labels=[16, 86, 142],eps_factor=0.2,L=40.5,wh=850,temp=298,obs='rate',pH=5.5,fasta=list(fasta_FUS),ionic=0.15,path='./') 
+    proteins.loc['FUS12E'] = dict(labels=[16, 86, 142],eps_factor=0.2,L=40.5,wh=850,temp=298,obs='rate',pH=5.5,fasta=list(fasta_FUS12E),ionic=0.15,path='./')
+    proteins.loc['A2'] = dict(labels=[99, 143],eps_factor=0.2,L=48,wh=850,temp=298,obs='rate',pH=5.5,fasta=list(fasta_A2),ionic=0.005,path='./')
+    proteins.loc['aSyn'] = dict(eps_factor=0.2,temp=283,pH=7.4,ionic=0.150,L=25.5,fasta=list(fasta_aSyn),path='./')
+    proteins.loc['ht40'] = dict(eps_factor=0.2,temp=278,pH=6.8,ionic=0.100,L=48.0,fasta=list(fasta_ht40),path='./')
+    proteins.loc['p15PAF'] = dict(eps_factor=0.2,temp=298,pH=7.0,ionic=0.150,L=34.0,fasta=list(fasta_p15PAF),path='./')
     return proteins
 
 def genParamsLJ(df,name,prot):
