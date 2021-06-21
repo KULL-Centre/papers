@@ -15,8 +15,8 @@ conda activate ML-variants
 
 ## NOTEBOOKS
 
-figures.ipynb generates the main manuscript figures.
-supp.ipynb generates supplementary figures.
+- figures.ipynb: generates the main manuscript figures
+- supp.ipynb: generates supplementary figures.
 
 ## PRE-PROCESSING AND TRAINING
 
