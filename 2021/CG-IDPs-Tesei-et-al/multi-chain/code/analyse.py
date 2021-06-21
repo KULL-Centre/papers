@@ -131,6 +131,8 @@ def genParamsDH(df,name,prot,temp):
     r = df.copy()
     # Set the charge on HIS based on the pH of the protein solution
     r.loc['H','q'] = 1. / ( 1 + 10**(prot.pH-6) )
+    r.loc['X'] = r.loc[prot.fasta[0]]
+    r.loc['Z'] = r.loc[prot.fasta[-1]]
     r.loc['X','q'] = r.loc[prot.fasta[0],'q'] + 1.
     r.loc['Z','q'] = r.loc[prot.fasta[-1],'q'] - 1.
     # Calculate the prefactor for the Yukawa potential

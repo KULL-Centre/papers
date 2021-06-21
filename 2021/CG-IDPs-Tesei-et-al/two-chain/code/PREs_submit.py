@@ -19,7 +19,7 @@ conda activate hoomd
 
 start=$(date +%s.%N)
 
-python ./calcPREs.py --name {{name}} --ff {{ff}} --run {{run}}
+python ./PREs_calc.py --name {{name}} --ff {{ff}} --run {{run}}
 
 duration=$(echo "$(date +%s.%N) - $start" | bc)
 execution_time=`printf "%.2f seconds" $duration`
@@ -29,7 +29,7 @@ echo $execution_time""")
 for name in ['A2','FUS']:
     for i in [1,2,3]:
         for k in [10]:
-            with open('PRE_{:s}_ff{:d}0_{:d}.sh'.format(name,i,k), 'w') as submit:
+            with open('PRE_{:s}_M{:d}_{:d}.sh'.format(name,i,k), 'w') as submit:
                 submit.write(submission.render(name=name,ff='M{:d}'.format(i),run=k))
             subprocess.run(['sbatch','--partition','sbinlab','PRE_{:s}_M{:d}_{:d}.sh'.format(name,i,k)])
             time.sleep(2)

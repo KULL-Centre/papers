@@ -8,7 +8,7 @@
 
 ### Usage
 
-To run a single-chain simulation, install [Miniconda](https://conda.io/miniconda.html) and make sure all the required packages are installed by issuing the following terminal commands
+To run the optimization procedure, install [Miniconda](https://conda.io/miniconda.html) and make sure all the required packages are installed by issuing the following terminal commands
 
 ```bash
     conda env create -f environment.yml

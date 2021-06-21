@@ -32,9 +32,9 @@ execution_time=`printf "%.2f seconds" $duration`
 echo $execution_time""")
 
 for name in ['ht40']:
-    for i in [1,5,6]:
+    for i in [1,2,3]:
         for k in [1,2]:
-            with open('maps_{:s}_ff{:d}0_{:d}.sh'.format(name,i,k), 'w') as submit:
-                submit.write(submission.render(name=name,ff='{:d}0'.format(i),run=k))
-            subprocess.run(['sbatch','--partition','qgpu','maps_{:s}_ff{:d}0_{:d}.sh'.format(name,i,k)])
+            with open('maps_{:s}_M{:d}_{:d}.sh'.format(name,i,k), 'w') as submit:
+                submit.write(submission.render(name=name,ff='M{:d}'.format(i),run=k))
+            subprocess.run(['sbatch','--partition','qgpu','maps_{:s}_{:d}_{:d}.sh'.format(name,i,k)])
             time.sleep(2)

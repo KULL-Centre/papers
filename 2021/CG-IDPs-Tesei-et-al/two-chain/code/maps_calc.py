@@ -40,7 +40,7 @@ def calcContactMap(traj,df,prot,name,contact_map,energies,lambdamap,sigmamap,lj_
 
 def trajCM(df,proteins,name,ff,run):
     # this function finds the index of the chain at the center of the slab for each frame
-    path = '{:s}/ff{:s}/run{:d}/'.format(name,ff,run)
+    path = '{:s}/{:s}/run{:d}/'.format(name,ff,run)
     prot = proteins.loc[name]
     masses = df.loc[prot.fasta,'MW'].values
     masses[0] += 2                                                                                                   
@@ -81,7 +81,6 @@ def trajCM(df,proteins,name,ff,run):
 
     contact_map = np.zeros(len(prot.fasta)*len(prot.fasta))
     energies = np.empty(0)
-    #for traj in :
     n_chunks = 8
     len_chunk = t.n_frames//n_chunks
     print(t.n_frames,len_chunk*n_chunks,lambdamap.shape,sigmamap.shape,lj_eps)
@@ -95,7 +94,7 @@ def trajCM(df,proteins,name,ff,run):
     return contact_map, energies
 
 df = pd.read_pickle('residues.pkl').set_index('one')
-df.lambdas = df['ff{:s}'.format(args.ff)]
+df.lambdas = df[args.ff]
 proteins = pd.read_pickle('proteins.pkl')
 prot = proteins.loc[args.name]
 
