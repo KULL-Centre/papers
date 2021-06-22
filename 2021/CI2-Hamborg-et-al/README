@@ -1,4 +1,13 @@
-# by Daniele Granata and Kresten Lindorff-Larsen
+Scripts and data (by Daniele Granata) for MSA-based calculations in
+
+Hamborg et al,
+Synergistic stabilization of a double mutant in chymotrypsin inhibitor 2 from a library screen
+
+For the CI2 analysis, the following files are present
+red95_CI2.fa - the MSA used in the analysis
+model_red95_CI2.mdl - a precomputed model based on the above MSA
+mut_screen_model_red95_CI2.mdl_ci2.txt - precomputed variant scores in a saturation scan of CI2
+
 
 The *.sh code in this directory performs sequence analisis (scoring, full mutagenesis) building a statistical model based on plmDCA. In particular:
 
@@ -13,10 +22,5 @@ All the files contains a detailed HELP describing the inputs and the outputs and
 The run_*.sh can accept the sequence model for input in two ways : implicitly, specifying the MSA to use to create_PLMDCA_model_from_MSA (the relative program is called automatically), or explicitly, specifying the .mdl file outputted by create_PLMDCA_model_from_MSA in a previous instance.
 
 N.B. : all the programs have to be run in the folder where your MSA and sequence to analyze are.
-Also, you will need to update paths to run this locally
+Also, you will need to update paths to run this locally and link to matlab
 
-For the CI2 analysis, the following files are present
-red95_CI2.fa - the MSA used in the analysis
-model_red95_CI2.mdl - a precomputed model based on the above MSA
-mut_screen_model_red95_CI2.mdl_ci2.txt - precomputed variant scores in a
-saturation scan of CI2
