@@ -2,7 +2,7 @@
 
 # CG model of liquid-liquid phase behaviour of IDPs
 
-This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks and simulation data for reproducing the work of the scientific paper _Accurate model of liquid-liquid phase behaviour of intrinsically-disordered proteins from data-driven optimization of single-chain properties_ by G. Tesei, T. Klarsø Schulze, R. Crehuet, and K. Lindorff-Larsen.
+This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks and simulation data for reproducing the work of the scientific paper _Accurate model of liquid-liquid phase behaviour of intrinsically-disordered proteins from data-driven optimization of single-chain properties_ by G. Tesei, T. K. Schulze, R. Crehuet, and K. Lindorff-Larsen.
 
 ### Layout
 
