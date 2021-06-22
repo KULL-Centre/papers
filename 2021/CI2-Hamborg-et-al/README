@@ -1,0 +1,22 @@
+# by Daniele Granata and Kresten Lindorff-Larsen
+
+The *.sh code in this directory performs sequence analisis (scoring, full mutagenesis) building a statistical model based on plmDCA. In particular:
+
+create_PLMDCA_model_from_MSA.sh         computes the a statistical model built by plmDCA from a MSA given in input
+
+run_saturation_mutagenesis.sh           computes the energy-score and runs full mutagenesis for the sequence(s) in input using
+                                        a statistical model built by plmDCA from a MSA given in input
+
+
+All the files contains a detailed HELP describing the inputs and the outputs and a usage example, to be call with option "-h" or none.
+
+The run_*.sh can accept the sequence model for input in two ways : implicitly, specifying the MSA to use to create_PLMDCA_model_from_MSA (the relative program is called automatically), or explicitly, specifying the .mdl file outputted by create_PLMDCA_model_from_MSA in a previous instance.
+
+N.B. : all the programs have to be run in the folder where your MSA and sequence to analyze are.
+Also, you will need to update paths to run this locally
+
+For the CI2 analysis, the following files are present
+red95_CI2.fa - the MSA used in the analysis
+model_red95_CI2.mdl - a precomputed model based on the above MSA
+mut_screen_model_red95_CI2.mdl_ci2.txt - precomputed variant scores in a
+saturation scan of CI2
