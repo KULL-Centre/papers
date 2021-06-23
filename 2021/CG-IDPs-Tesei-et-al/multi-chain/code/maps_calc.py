@@ -75,6 +75,7 @@ def trajCM(df,proteins,name,temp):
         chain = top.add_chain()
         residue = top.add_residue('C{:d}'.format(chain.index), chain, resSeq=chain.index)
         for i,resname in enumerate(prot.fasta):
+            # add an element with unique name to the dictionary. the letter A is prepended to avoid doubles (e.g. cysteine and carbon)
             element.Element._elements_by_symbol.pop('A'+resname, None)
             el = element.Element.__new__(element.Element, 1, 'A'+resname, 'A'+resname, masses[i], radii[i])
             atom = top.add_atom('A'+resname, element=el, residue=residue)
