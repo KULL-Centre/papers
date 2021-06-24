@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5005954.svg)](https://doi.org/10.5281/zenodo.5005954)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5024539.svg)](https://doi.org/10.5281/zenodo.5024539)
 
 # CG model of liquid-liquid phase behaviour of IDPs
 
