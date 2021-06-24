@@ -1,25 +1,22 @@
 name: cg-idps
-channels:
-  - conda-forge
-  - defaults
 dependencies:
+  - python=3.8
   - jinja2
   - matplotlib
-  - mdtraj
   - notebook
   - numpy
   - openpyxl
   - pandas
-  - python=3.8
   - scikit-learn
   - scipy
   - xlrd
-  - hoomd
+  - cython
   - pip
+  - conda-forge::hoomd
+  - conda-forge::mdtraj
+  - conda-forge::mdanalysis==1.0
   - pip:
     - biopython
-    - cython
-    - mdanalysis==1.0
     - ray==1.1
     - PeptideBuilder
     - DEERPREdict
