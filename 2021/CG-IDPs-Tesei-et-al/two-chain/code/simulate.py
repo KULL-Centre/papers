@@ -21,7 +21,7 @@ def simulate(residues,name,prot,ff,run):
     hoomd.context.initialize("--mode=gpu"); 
     hoomd.option.set_notice_level(0) 
     n_chains = 2
-    pairs, lj_eps, lj_lambda, lj_sigma, fasta, types = genParamsLJ(residues,name,prot)
+    pairs, lj_eps, lj_lambda, lj_sigma, fasta, type, MWs = genParamsLJ(residues,name,prot)
     yukawa_eps, yukawa_kappa = genParamsDH(residues,name,prot)
     N = len(fasta)
     L = 30
@@ -76,8 +76,8 @@ def simulate(residues,name,prot,ff,run):
         snapshot.particles.position[begin:end] = [[xyz[i,0]+x,xyz[i,1]+y,xyz[i,2]] for i in range(N)];
         snapshot.particles.typeid[begin:end] = [types.index(a) for a in fasta]
         snapshot.particles.mass[begin:end] = [residues.loc[a].MW for a in prot.fasta]
-        snapshot.particles.mass[0] += 2
-        snapshot.particles.mass[-1] += 16
+        snapshot.particles.mass[begin] += 2
+        snapshot.particles.mass[end-1] += 16
     
         snapshot.bonds.group[begin-j:end-j-1] = [[i,i+1] for i in range(begin,end-1)];
         snapshot.bonds.typeid[begin-j:end-j-1] = [0] * (N-1)
@@ -105,8 +105,8 @@ def simulate(residues,name,prot,ff,run):
 
     integrator_mode = hoomd.md.integrate.mode_standard(dt=0.005);
     integrator = hoomd.md.integrate.langevin(group=hoomd.group.all(),kT=kT,seed=np.random.randint(100));
-    for a in types:
-        integrator.set_gamma(a, residues.loc[a].MW/100)
+    for a,mw in zip(types,MWs):
+        integrator.set_gamma(a, mw/100)
     # run to sample initial chain collapse to make chain fit into new box
     hoomd.run(2e5) 
     # update box size and start new run
@@ -117,7 +117,7 @@ def simulate(residues,name,prot,ff,run):
     hoomd.run(4e8) # 7e8
     genDCD(residues,name,prot,'{:s}/{:s}/run{:d}'.format(name,ff,run),'prod',n_chains)
 
-residues = pd.read_pickle('residues.pkl')    
+residues = pd.read_csv('residues.csv').set_index('three',drop=False)
 residues.lambdas = residues['M1']
 proteins = pd.read_pickle('proteins.pkl')
 

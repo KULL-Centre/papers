@@ -151,7 +151,7 @@ def simulate(residues,name,prot,temp):
     hoomd.run(Nsteps)
     genDCD(residues,name,prot,temp,n_chains)
 
-residues = pd.read_csv('residues.csv').set_index('three')
+residues = pd.read_csv('residues.csv').set_index('three',drop=False)
 proteins = pd.read_pickle('proteins.pkl')
 print(args.name,args.temp)
 t0 = time.time()

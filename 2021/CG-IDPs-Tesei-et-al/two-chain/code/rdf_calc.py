@@ -114,8 +114,7 @@ parser.add_argument('--ff',dest='ff',type=str,required=True)
 args = parser.parse_args()    
 
 proteins = pd.read_pickle('proteins.pkl')
-residues = pd.read_pickle('residues.pkl')
-residues = residues.set_index('one')
+residues = pd.read_csv('residues.csv').set_index('one')
 
 # create directory to save files in
 if not os.path.isdir('rdfs'):

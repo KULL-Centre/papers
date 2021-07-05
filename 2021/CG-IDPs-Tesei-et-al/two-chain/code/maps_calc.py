@@ -93,7 +93,7 @@ def trajCM(df,proteins,name,ff,run):
 
     return contact_map, energies
 
-df = pd.read_pickle('residues.pkl').set_index('one')
+df = pd.read_csv('residues.csv').set_index('one')
 df.lambdas = df[args.ff]
 proteins = pd.read_pickle('proteins.pkl')
 prot = proteins.loc[args.name]
