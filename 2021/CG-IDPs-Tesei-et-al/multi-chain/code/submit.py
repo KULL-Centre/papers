@@ -28,9 +28,9 @@ echo $SLURM_JOB_NODELIST
 
 python ./simulate.py --name {{name}} --temp {{temp}}""")
 
-r = pd.read_pickle('residues.pkl')
+r = pd.read_csv('residues.csv').set_index('three')
 r.lambdas = r['M1']
-r.to_pickle('residues.pkl')
+r.to_csv('residues.csv')
 
 for name,prot in proteins.loc[['P4D','P7R','M6R','P7FM7Y','M8FP4Y','M10R']].iterrows():
     if not os.path.isdir(name):

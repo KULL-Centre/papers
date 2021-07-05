@@ -29,11 +29,11 @@ echo $SLURM_JOB_NODELIST
 
 python ./restart.py --name {{name}} --temp {{temp}}""")
 
-r = pd.read_pickle('residues.pkl')
+r = pd.read_csv('residues.csv').set_index('three')
 r.lambdas = r['M1']
-r.to_pickle('residues.pkl')
+r.to_csv('residues.csv')
 
-for name,prot in proteins.loc[['P7KP12D','M3RP3K','P2R','P12D','P4D','FUS','P7R','M10R','M6R','M12FP12Y','A1','P7FM7Y','M8FP4Y','M9FP3Y','P8D','M4D']].iterrows():
+for name,prot in proteins.loc[['P4D','P7R','M6R','P7FM7Y','M8FP4Y','M10R']].iterrows():
     if not os.path.isdir(name):
         os.mkdir(name)
     for temp in [323]:
