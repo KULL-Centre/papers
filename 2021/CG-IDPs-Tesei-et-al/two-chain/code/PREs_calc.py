@@ -50,4 +50,4 @@ def evaluatePRE(n, label, name, prot):
 time0 = time.time()
 ray.get([evaluatePRE.remote(n,label,name,proteins.loc[name]) for n,(label,name) in enumerate(proc_PRE)])
 print(args.name,args.ff,args.run)
-print('Timing {:.3f}'.format(time.time()-t0))
+print('Timing {:.3f}'.format(time.time()-time0))

@@ -27,21 +27,24 @@ def simulate(residues,name,prot,temp):
     N = len(fasta)
     
     L = 15.
+    margin = 2
     if N > 400:
         L = 25.
         Lz = 300.
+        margin = 8
         Nsteps = 2e7
     elif N > 200:
         L = 17.
         Lz = 300.
+        margin = 4
         Nsteps = 6e7
     else:
         Lz = 10*L
         Nsteps = 6e7
     
     xy = np.empty(0)
-    xy = np.append(xy,np.random.rand(2)*(L-2)-(L-2)/2).reshape((-1,2))
-    for x,y in np.random.rand(1000,2)*(L-2)-(L-2)/2:
+    xy = np.append(xy,np.random.rand(2)*(L-margin)-(L-margin)/2).reshape((-1,2))
+    for x,y in np.random.rand(1000,2)*(L-margin)-(L-margin)/2:
         x1 = x-L if x>0 else x+L
         y1 = y-L if y>0 else y+L
         if np.all(np.linalg.norm(xy-[x,y],axis=1)>.7):
