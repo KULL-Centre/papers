@@ -5,10 +5,6 @@ import time
 import os
 import sys
 from argparse import ArgumentParser
-from mdtraj.utils.rotation import rotation_matrix_from_quaternion
-from PeptideBuilder import Geometry
-import PeptideBuilder
-import Bio.PDB
 
 parser = ArgumentParser()
 parser.add_argument('--name',nargs='?',const='', type=str)
