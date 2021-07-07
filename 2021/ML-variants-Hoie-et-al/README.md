@@ -5,7 +5,7 @@ This repository contains all the necessary notebooks and scripts to run the anal
 ## DOWNLOAD AND SETUP ENVIRONMENT
 
 ```bash
-git clone https://github.com/KULL-Centre/papers/tree/master/2021/ML-variants-Hoie-et-al
+svn export https://github.com/KULL-Centre/papers/trunk/2021/ML-variants-Hoie-et-al
 cd ML-variants-Hoie-et-al
 unzip data.zip
 
