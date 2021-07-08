@@ -165,7 +165,8 @@ def genDCD(residues,name,prot,temp,n_chains):
 
     t = md.load(name+'/{:d}'.format(temp)+'/{:s}.gsd'.format(name))
     t.top = top
-    # express positions in Å to facilitate calculation of concentration profile (bin width = 1 Å)
+    # convert particle positions and box side lengths to Å to simplify operations to center the slab in the box
+    # the bin width of the number density profiles is 1 Å
     t.xyz *= 10
     t.unitcell_lengths *= 10
     lz = t.unitcell_lengths[0,2]
