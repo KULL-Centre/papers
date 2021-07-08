@@ -159,12 +159,13 @@ def genDCD(residues,name,prot,temp,n_chains):
         chain = top.add_chain()
         for resname in prot.fasta:
             residue = top.add_residue(residues.loc[resname,'three'], chain)
-            top.add_atom(residues.loc[resname,'three'], 
+            top.add_atom('CA', 
                          element=md.element.carbon, residue=residue)
         for i in range(chain.n_atoms-1):
             top.add_bond(chain.atom(i),chain.atom(i+1))
 
-    t = md.load(name+'/{:d}'.format(temp)+'/{:s}.gsd'.format(name), top)
+    t = md.load(name+'/{:d}'.format(temp)+'/{:s}.gsd'.format(name))
+    t.top = top
     t.xyz *= 10
     t.unitcell_lengths *= 10
     lz = t.unitcell_lengths[0,2]
