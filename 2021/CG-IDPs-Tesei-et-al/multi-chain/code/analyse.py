@@ -165,8 +165,6 @@ def genDCD(residues,name,prot,temp,n_chains):
             top.add_bond(chain.atom(i),chain.atom(i+1))
 
     t = md.load(name+'/{:d}'.format(temp)+'/{:s}.gsd'.format(name), top)
-    t.xyz *= 10
-    t.unitcell_lengths *= 10
     lz = t.unitcell_lengths[0,2]
     edges = np.arange(-lz/2.,lz/2.,1)
     dz = (edges[1]-edges[0])/2.
