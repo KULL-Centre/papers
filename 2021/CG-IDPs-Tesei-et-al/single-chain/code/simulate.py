@@ -88,6 +88,8 @@ def genParamsLJ(df,name,prot):
     # Rename termini as X and Z
     r.loc['X'] = r.loc[fasta[0]]
     r.loc['Z'] = r.loc[fasta[-1]]
+    r.loc['X','MW'] += 2
+    r.loc['Z','MW'] += 16
     fasta[0] = 'X'
     fasta[-1] = 'Z'
     types = list(np.unique(fasta))

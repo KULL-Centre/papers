@@ -8,7 +8,7 @@ from MDAnalysis import transformations
 
 def initProteins():
     proteins = pd.DataFrame(index=['ht40','FUS','M10R','P7FM7Y','M8FP4Y','M4D','P4D','M6R','P8D','M9FP6Y','M12FP12Y','M9FP3Y','A1','AroP','AroM','AroMM','Ddx4WT','Ddx4CS','Ddx4RK','Ddx4FA','A2','A2NS','M10FP7RP12D','M6RP6K','P7R','M3RP3K','P7KP12D','P2R','P12D','A1NLS'],
-            columns=['eps_factor','temp','expRg','expRgErr','Rg','rgarray','eff','chi2_rg','weights','pH','ionic','fasta'])
+            columns=['eps_factor','pH','ionic','fasta'])
     fasta_ht40 = """MAEPRQEFEVMEDHAGTYGLGDRKDQGGYTMHQDQEGDTDAGLKESPLQTPTEDGSEEP
 GSETSDAKSTPTAEDVTAPLVDEGAPGKQAAAQPHTEIPEGTTAEEAGIGDTPSLEDEAAGHVTQARMVSKSKDGTGSDDKK
 AKGADGKTKIATPRGAAPPGQKGQANATRIPAKTPPAPKTPPSSGEPPKSGDRSGYSSPGSPGTPGSRSRTPSLPTPPTREP
@@ -80,33 +80,33 @@ SSNYGPMKGGNYGGRSSGGSGGGGQYYAKPRNQGGYGGSSSSSSYGSGRRY""".replace('\n', '')
     fasta_M9FP3Y = """GSMASASSSQRGRSGSGNFGGGRGGGYGGNDNGGRGGNYSGRGGFGGSRGGGGYGGSGDGYNGGGNDGSNYGGGGSYNDSGNGNNQ
 SSNFGPMKGGNYGGRSSGGSGGGGQYGAKPRNQGGYGGSSSSSSYGSGRRS""".replace('\n', '')
         
-    proteins.loc['FUS'] = dict(eps_factor=0.2,temp=277,expRg=3.32,expRgErr=0.07,pH=5.5,fasta=list(fasta_FUS),ionic=0.15)
-    proteins.loc['A1'] = dict(eps_factor=0.2,temp=296,expRg=2.61,expRgErr=0.11,pH=7.0,fasta=list(fasta_A1),ionic=0.15)
-    proteins.loc['A1NLS'] = dict(eps_factor=0.2,temp=296,expRg=2.61,expRgErr=0.11,pH=7.0,fasta=list(fasta_A1NLS),ionic=0.15)
-    proteins.loc['P12D'] = dict(eps_factor=0.2,temp=296,expRg=2.801,expRgErr=0.11,pH=7.0,fasta=list(fasta_P12D),ionic=0.15)
-    proteins.loc['M10FP7RP12D'] = dict(eps_factor=0.2,temp=296,expRg=2.86,expRgErr=0.11,pH=7.0,fasta=list(fasta_M10FP7RP12D),ionic=0.15)
-    proteins.loc['M6RP6K'] = dict(eps_factor=0.2,temp=296,expRg=2.787,expRgErr=0.11,pH=7.0,fasta=list(fasta_M6RP6K),ionic=0.15)
-    proteins.loc['M4D'] = dict(eps_factor=0.2,temp=296,expRg=2.787,expRgErr=0.11,pH=7.0,fasta=list(fasta_M4D),ionic=0.15)
-    proteins.loc['P4D'] = dict(eps_factor=0.2,temp=296,expRg=2.787,expRgErr=0.11,pH=7.0,fasta=list(fasta_P4D),ionic=0.15)
-    proteins.loc['M6R'] = dict(eps_factor=0.2,temp=296,expRg=2.787,expRgErr=0.11,pH=7.0,fasta=list(fasta_M6R),ionic=0.15)
-    proteins.loc['M10R'] = dict(eps_factor=0.2,temp=296,expRg=2.787,expRgErr=0.11,pH=7.0,fasta=list(fasta_M10R),ionic=0.15)
-    proteins.loc['P8D'] = dict(eps_factor=0.2,temp=296,expRg=2.787,expRgErr=0.11,pH=7.0,fasta=list(fasta_P8D),ionic=0.15)
-    proteins.loc['M9FP6Y'] = dict(eps_factor=0.2,temp=296,expRg=2.787,expRgErr=0.11,pH=7.0,fasta=list(fasta_M9FP6Y),ionic=0.15)
-    proteins.loc['M9FP3Y'] = dict(eps_factor=0.2,temp=296,expRg=2.787,expRgErr=0.11,pH=7.0,fasta=list(fasta_M9FP3Y),ionic=0.15)
-    proteins.loc['M12FP12Y'] = dict(eps_factor=0.2,temp=296,expRg=2.787,expRgErr=0.11,pH=7.0,fasta=list(fasta_M12FP12Y),ionic=0.15)
-    proteins.loc['M8FP4Y'] = dict(eps_factor=0.2,temp=296,expRg=2.787,expRgErr=0.11,pH=7.0,fasta=list(fasta_M8FP4Y),ionic=0.15)
-    proteins.loc['P7FM7Y'] = dict(eps_factor=0.2,temp=296,expRg=2.787,expRgErr=0.11,pH=7.0,fasta=list(fasta_P7FM7Y),ionic=0.15)
-    proteins.loc['P7R'] = dict(eps_factor=0.2,temp=296,expRg=2.706,expRgErr=0.11,pH=7.0,fasta=list(fasta_P7R),ionic=0.15)
-    proteins.loc['P2R'] = dict(eps_factor=0.2,temp=296,expRg=2.706,expRgErr=0.11,pH=7.0,fasta=list(fasta_P2R),ionic=0.15)
-    proteins.loc['P7KP12D'] = dict(eps_factor=0.2,temp=296,expRg=2.706,expRgErr=0.11,pH=7.0,fasta=list(fasta_P7KP12D),ionic=0.15)
-    proteins.loc['M3RP3K'] = dict(eps_factor=0.2,temp=296,expRg=2.706,expRgErr=0.11,pH=7.0,fasta=list(fasta_M3RP3K),ionic=0.15)
-    proteins.loc['Ddx4WT'] = dict(eps_factor=0.2,temp=303,expRg=0,expRgErr=0,pH=6.5,fasta=list(fasta_Ddx4WT),ionic=0.13)
-    proteins.loc['Ddx4CS'] = dict(eps_factor=0.2,temp=303,expRg=0,expRgErr=0,pH=6.5,fasta=list(fasta_Ddx4CS),ionic=0.13)
-    proteins.loc['Ddx4RK'] = dict(eps_factor=0.2,temp=303,expRg=0,expRgErr=0,pH=6.5,fasta=list(fasta_Ddx4RK),ionic=0.13)
-    proteins.loc['Ddx4FA'] = dict(eps_factor=0.2,temp=303,expRg=0,expRgErr=0,pH=6.5,fasta=list(fasta_Ddx4FA),ionic=0.13)
-    proteins.loc['A2'] = dict(eps_factor=0.2,temp=298,expRg=0,expRgErr=0,pH=5.5,fasta=list(fasta_A2WT),ionic=0.010)
-    proteins.loc['ht40'] = dict(eps_factor=0.2,temp=298,expRg=0,expRgErr=0,pH=7.4,fasta=list(fasta_ht40),ionic=0.005)
-    proteins.loc['A2NS'] = dict(eps_factor=0.2,temp=298,expRg=0,expRgErr=0,pH=5.5,fasta=list(fasta_A2NS),ionic=0.010)
+    proteins.loc['FUS'] = dict(eps_factor=0.2,pH=5.5,fasta=list(fasta_FUS),ionic=0.15)
+    proteins.loc['A1'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_A1),ionic=0.15)
+    proteins.loc['A1NLS'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_A1NLS),ionic=0.15)
+    proteins.loc['P12D'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_P12D),ionic=0.15)
+    proteins.loc['M10FP7RP12D'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_M10FP7RP12D),ionic=0.15)
+    proteins.loc['M6RP6K'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_M6RP6K),ionic=0.15)
+    proteins.loc['M4D'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_M4D),ionic=0.15)
+    proteins.loc['P4D'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_P4D),ionic=0.15)
+    proteins.loc['M6R'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_M6R),ionic=0.15)
+    proteins.loc['M10R'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_M10R),ionic=0.15)
+    proteins.loc['P8D'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_P8D),ionic=0.15)
+    proteins.loc['M9FP6Y'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_M9FP6Y),ionic=0.15)
+    proteins.loc['M9FP3Y'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_M9FP3Y),ionic=0.15)
+    proteins.loc['M12FP12Y'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_M12FP12Y),ionic=0.15)
+    proteins.loc['M8FP4Y'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_M8FP4Y),ionic=0.15)
+    proteins.loc['P7FM7Y'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_P7FM7Y),ionic=0.15)
+    proteins.loc['P7R'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_P7R),ionic=0.15)
+    proteins.loc['P2R'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_P2R),ionic=0.15)
+    proteins.loc['P7KP12D'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_P7KP12D),ionic=0.15)
+    proteins.loc['M3RP3K'] = dict(eps_factor=0.2,pH=7.0,fasta=list(fasta_M3RP3K),ionic=0.15)
+    proteins.loc['Ddx4WT'] = dict(eps_factor=0.2,pH=6.5,fasta=list(fasta_Ddx4WT),ionic=0.13)
+    proteins.loc['Ddx4CS'] = dict(eps_factor=0.2,pH=6.5,fasta=list(fasta_Ddx4CS),ionic=0.13)
+    proteins.loc['Ddx4RK'] = dict(eps_factor=0.2,pH=6.5,fasta=list(fasta_Ddx4RK),ionic=0.13)
+    proteins.loc['Ddx4FA'] = dict(eps_factor=0.2,pH=6.5,fasta=list(fasta_Ddx4FA),ionic=0.13)
+    proteins.loc['A2'] = dict(eps_factor=0.2,pH=5.5,fasta=list(fasta_A2WT),ionic=0.010)
+    proteins.loc['ht40'] = dict(eps_factor=0.2,pH=7.4,fasta=list(fasta_ht40),ionic=0.005)
+    proteins.loc['A2NS'] = dict(eps_factor=0.2,pH=5.5,fasta=list(fasta_A2NS),ionic=0.010)
     return proteins
 
 
@@ -159,26 +159,29 @@ def genDCD(residues,name,prot,temp,n_chains):
         chain = top.add_chain()
         for resname in prot.fasta:
             residue = top.add_residue(residues.loc[resname,'three'], chain)
-            top.add_atom('CA', 
-                         element=md.element.carbon, residue=residue)
+            top.add_atom('CA',element=md.element.carbon, residue=residue)
         for i in range(chain.n_atoms-1):
             top.add_bond(chain.atom(i),chain.atom(i+1))
 
     t = md.load(name+'/{:d}'.format(temp)+'/{:s}.gsd'.format(name))
     t.top = top
+    # express positions in Å to facilitate calculation of concentration profile (bin width = 1 Å)
     t.xyz *= 10
     t.unitcell_lengths *= 10
     lz = t.unitcell_lengths[0,2]
     edges = np.arange(-lz/2.,lz/2.,1)
     dz = (edges[1]-edges[0])/2.
     z = edges[:-1]+dz
+    # calculate per-frame number density profiles
     h = np.apply_along_axis(lambda a: np.histogram(a,bins=edges)[0], 1, t.xyz[:,:,2])
-    #np.savetxt('{:s}_{:d}_na.dat'.format(name,temp),h)
+    # find midpoint of protein-rich region
     zmid = np.apply_along_axis(lambda a: z[a>np.quantile(a,.98)].mean(), 1, h)
+    # find atom closest to midpoint in each frame
     indices = np.argmin(np.abs(t.xyz[:,:,2]-zmid[:,np.newaxis]),axis=1)
     t[0].save_pdb(name+"/{:d}".format(temp)+'/top.pdb')
     t.save_dcd(name+"/{:d}".format(temp)+'/traj2.dcd')
 
+    # translate each frame so that atom closest to midpoint is at z = 0
     u = MDAnalysis.Universe(name+"/{:d}".format(temp)+'/top.pdb',name+'/{:d}'.format(temp)+'/traj2.dcd')
     ag = u.atoms
     with MDAnalysis.Writer(name+'/{:d}'.format(temp)+'/traj1.dcd', ag.n_atoms) as W:
@@ -196,9 +199,12 @@ def genDCD(residues,name,prot,temp,n_chains):
     z = edges[:-1]+dz
     h = np.apply_along_axis(lambda a: np.histogram(a,bins=edges)[0], 1, t.xyz[:,:,2])
     h1 = np.mean(h[500:],axis=0)
+    # find displacement along z that maximizes correlation function
+    # between instantaneous and time-averaged profiles
     maxoverlap = np.apply_along_axis(lambda a: np.correlate(h1,np.histogram(a,
                 bins=edges)[0], 'full').argmax()-h1.size+dz, 1, t.xyz[:,:,2])
 
+    # translate by displacement along z that maximizes correlation function
     u = MDAnalysis.Universe(name+'/{:d}'.format(temp)+'/top.pdb',name+'/{:d}'.format(temp)+'/traj1.dcd')
     ag = u.atoms
     with MDAnalysis.Writer(name+'/{:d}'.format(temp)+'/traj.dcd', ag.n_atoms) as W:
@@ -213,4 +219,8 @@ def genDCD(residues,name,prot,temp,n_chains):
     np.save('{:s}_{:d}.npy'.format(name,temp),h,allow_pickle=False)
     os.remove(name+'/{:d}'.format(temp)+'/traj1.dcd')
     os.remove(name+'/{:d}'.format(temp)+'/traj2.dcd')
-
+    # convert to nanometers and save
+    t.xyz /= 10
+    t.unitcell_lengths /= 10
+    t[0].save_pdb(name+'/{:d}'.format(temp)+'/top.pdb')
+    t.save_dcd(name+'/{:d}'.format(temp)+'/traj.dcd')

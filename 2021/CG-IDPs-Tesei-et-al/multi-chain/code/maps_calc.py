@@ -83,8 +83,6 @@ def trajCM(df,proteins,name,temp):
             top.add_bond(chain.atom(i),chain.atom(i+1))
 
     t = md.load_dcd(path+'traj.dcd',top)
-    t.xyz /= 10
-    t.unitcell_lengths /= 10
     t.xyz -= t.unitcell_lengths[0,:]/2
     t.make_molecules_whole(inplace=True)
     t = t[1200:] # skip first 0.3 us
