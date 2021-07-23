@@ -6,9 +6,6 @@ import os
 import sys
 from argparse import ArgumentParser
 from mdtraj.utils.rotation import rotation_matrix_from_quaternion
-from PeptideBuilder import Geometry
-import PeptideBuilder
-import Bio.PDB
 
 parser = ArgumentParser()
 parser.add_argument('--name',nargs='?',const='', type=str)
@@ -21,7 +18,7 @@ def simulate(residues,name,prot,ff,run):
     hoomd.context.initialize("--mode=gpu"); 
     hoomd.option.set_notice_level(0) 
     n_chains = 2
-    pairs, lj_eps, lj_lambda, lj_sigma, fasta, type, MWs = genParamsLJ(residues,name,prot)
+    pairs, lj_eps, lj_lambda, lj_sigma, fasta, types, MWs = genParamsLJ(residues,name,prot)
     yukawa_eps, yukawa_kappa = genParamsDH(residues,name,prot)
     N = len(fasta)
     L = 30
@@ -42,29 +39,6 @@ def simulate(residues,name,prot,ff,run):
                                 particle_types=types,
                                 bond_types=['polymer']);
 
-    geo = Geometry.geometry(prot.fasta[0])
-    geo.phi = -120
-    geo.psi_im1 = 150
-    structure = PeptideBuilder.initialize_res(geo)
-    for residue in prot.fasta[1:]:
-        structure = PeptideBuilder.add_residue(structure, residue, geo.phi, geo.psi_im1)
-    out = Bio.PDB.PDBIO()
-    out.set_structure(structure)
-    xyz = []
-    for atom in out.structure.get_atoms():
-        if atom.name == 'CA':
-            xyz.append([atom.coord[0]/10.,atom.coord[1]/10.,atom.coord[2]/10.])
-    xyz = np.array(xyz)
-    v = xyz[-1] - xyz[0]
-    u = np.array([0,0,1])
-    a = np.cross(v,u) 
-    a = a / np.linalg.norm(a,keepdims=True)
-    b = np.arccos( np.dot(v,u) / np.linalg.norm(v) )
-    quaternion = np.insert(np.sin(-b/2).reshape(-1,1)*a,0,np.cos(-b/2),axis=1)
-    newxyz = xyz - np.mean(xyz,axis=0)
-    newxyz = np.matmul(newxyz,rotation_matrix_from_quaternion(quaternion)) 
-    xyz = np.array(newxyz[0])
-
     fst = ''.join(prot.fasta)
 
     snapshot.bonds.resize(n_chains*(N-1));
@@ -73,7 +47,7 @@ def simulate(residues,name,prot,ff,run):
         begin = j*N
         end = j*N+N
         
-        snapshot.particles.position[begin:end] = [[xyz[i,0]+x,xyz[i,1]+y,xyz[i,2]] for i in range(N)];
+        snapshot.particles.position[begin:end] = [[x,y,(i-N/2.)*.38] for i in range(N)]
         snapshot.particles.typeid[begin:end] = [types.index(a) for a in fasta]
         snapshot.particles.mass[begin:end] = [residues.loc[a].MW for a in prot.fasta]
         snapshot.particles.mass[begin] += 2

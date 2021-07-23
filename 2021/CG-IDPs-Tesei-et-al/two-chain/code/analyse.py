@@ -85,10 +85,14 @@ def genDCD(residues,name,prot,path,run_type,n_chains):
         for resname in prot.fasta:
             residue = top.add_residue(residues.loc[resname,'three'], chain)
             top.add_atom(residues.loc[resname,'three'], element=md.element.carbon, residue=residue)
+        for i in range(chain.n_atoms-1):
+            top.add_bond(chain.atom(i),chain.atom(i+1))
     traj = md.load_dcd(path+"/{:s}.dcd".format(run_type), top)
     traj.center_coordinates()
     traj.xyz *= 10
     traj.unitcell_lengths *= 10
     traj.xyz += traj.unitcell_lengths[0,0]/2
+    traj = traj.image_molecules(inplace=False, anchor_molecules=[set(traj.top.chain(0).atoms)],
+           other_molecules=[set(traj.top.chain(1).atoms)], make_whole=False)
     traj[:].save_dcd(path+"/{:s}.dcd".format(name))
     traj[0].save_pdb(path+"/{:s}.pdb".format(name))

@@ -69,7 +69,7 @@ def trajCM(df,proteins,name,ff,run):
 
     pairs = np.array(list(itertools.product(prot.fasta,prot.fasta)))
     pairs = np.core.defchararray.add(pairs[:,0],pairs[:,1])
-    _, lj_eps, lj_lambda, lj_sigma, _, _ = genParamsLJ(df,name,prot)
+    _, lj_eps, lj_lambda, lj_sigma, _, _, _ = genParamsLJ(df,name,prot)
     dflambda = lj_lambda.unstack()
     dflambda.index = dflambda.index.map('{0[0]}{0[1]}'.format)
     dfsigma = lj_sigma.unstack()

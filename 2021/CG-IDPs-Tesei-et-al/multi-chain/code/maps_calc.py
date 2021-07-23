@@ -109,7 +109,7 @@ def trajCM(df,proteins,name,temp):
 
     pairs = np.array(list(itertools.product(prot.fasta,prot.fasta)))
     pairs = np.core.defchararray.add(pairs[:,0],pairs[:,1])
-    _, lj_eps, lj_lambda, lj_sigma, _, _ = genParamsLJ(df,name,prot)
+    _, lj_eps, lj_lambda, lj_sigma, _, _, _ = genParamsLJ(df,name,prot)
     dflambda = lj_lambda.unstack()
     dflambda.index = dflambda.index.map('{0[0]}{0[1]}'.format)
     dfsigma = lj_sigma.unstack()
@@ -128,7 +128,7 @@ def trajCM(df,proteins,name,temp):
     ecmap = ecmap.reshape(len(prot.fasta),len(prot.fasta)) / t.n_frames
     return cmap, ecmap, rgsC.flatten(), rgsD.flatten()
 
-df = pd.read_pickle('residues.pkl').set_index('one')
+df = pd.read_csv('residues.csv').set_index('three',drop=False).set_index('one')
 proteins = pd.read_pickle('proteins.pkl')
 prot = proteins.loc[args.name]
 
