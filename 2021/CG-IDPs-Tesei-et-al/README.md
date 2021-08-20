@@ -13,7 +13,7 @@ This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks an
 - `single-chain/code/` Python code to simulate and analyze simulations of a single IDP of a given sequence using [HOOMD-blue](https://hoomd-blue.readthedocs.io/en/latest/) 
 - `two-chain/code/` Python code to perform two-chain simulations and trajectory analyses of the optimized CG-IDPs model using HOOMD-blue
 - `optimization/code/` Python code and bash script to optimize the CG-IDPs model against experimental radii of gyration and intramolecular NMR PRE data
-- `multi-chain/code/` Python code to simulate and analyze multi-chain simulations of the CG-IDPs model in slab geometry
+- `multi-chain/code/` Python code to simulate (using HOOMD-blue or openMM) and analyze multi-chain simulations of the CG-IDPs model in slab geometry
 
 ### Usage
 
