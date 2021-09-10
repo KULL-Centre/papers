@@ -7,5 +7,7 @@ https://www.biorxiv.org/content/10.1101/2021.05.29.446281v1
 The conformational ensembles can be found at https://doi.org/10.5281/zenodo.4817583
 
 ### List of content
+- **SAXS_data**: Experimental SAXS data used in this work.
 - **GRID_scripts**: Bash scripts and python scripts to run Pepsi-SAXS/FoXS and iBME.
 - **test_iBME_GRIDSCAN**: Contains files for generating the syntehtic experimental SAXS data and the synthetic priors used in the test of iBME and grid scanning, as well as the notebooks that shows how the synthetic data were generated and how tests and analyses were done.
+- **Results_and_analyses**: Contains the grids calculated with both Pepsi-SAXS and FoXS, toghether with the jupyter notebook that shows how they have been analyzed.
