@@ -7,7 +7,7 @@ gl=$4
 
 ens_size=`find $structures/ -name "frame*pdb" | wc -l`
 
-grid_point=`grep -v "#" GRID | sed -n $gl'p' | awk '{print $1}'`
+grid_point=`grep -v "#" GRID_FoXS | sed -n $gl'p' | awk '{print $1}'`
 echo "FoXS in GP"$grid_point
 mkdir GP$grid_point
 c2=`grep -v "#" GRID | sed -n $gl'p' | awk '{print $2}'`
