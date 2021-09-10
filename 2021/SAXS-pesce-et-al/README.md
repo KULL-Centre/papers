@@ -4,7 +4,7 @@ Supporting data and scripts for:
 Refining conformational ensembles of flexible proteins against small-angle X-ray scattering data\
 https://www.biorxiv.org/content/10.1101/2021.05.29.446281v1
 
-The conformational ensembles can be found at https://doi.org/10.5281/zenodo.4817583
+The conformational ensembles can be found at https://doi.org/10.5281/zenodo.4804381
 
 ### List of content
 - **SAXS_data**: Experimental SAXS data used in this work.
