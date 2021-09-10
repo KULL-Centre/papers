@@ -8,7 +8,7 @@ ens_size=`find $structures/ -name "frame*pdb" | wc -l`
 
 gl=$4
 
-grid_point=`grep -v "#" GRID | sed -n $gl'p' | awk '{print $1}'`
+grid_point=`grep -v "#" GRID_Pepsi-SAXS | sed -n $gl'p' | awk '{print $1}'`
 echo "Pepsi-SAXS in GP"$grid_point
 mkdir GP$grid_point
 dro=`grep -v "#" GRID | sed -n $gl'p' | awk '{print $2}'`
