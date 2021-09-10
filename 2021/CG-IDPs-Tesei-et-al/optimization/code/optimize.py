@@ -62,9 +62,9 @@ def evaluatePRE(n, label, name, prot):
 def calcDistSums(df,name,prot):
     traj = md.load_dcd(prot.path+"/{:s}.dcd".format(name),prot.path+"/{:s}.pdb".format(name))
     
-    _, _, _, lj_sigma, fasta, _ = genParamsLJ(df.set_index('one'),name,prot,True)
+    _, _, _, lj_sigma, fasta, _, _ = genParamsLJ(df.set_index('one'),name,prot)
     pairs = traj.top.select_pairs('all','all')
-    mask = np.abs(pairs[:,0]-pairs[:,1])>2 # exclude bonds and angles
+    mask = np.abs(pairs[:,0]-pairs[:,1])>1 # exclude bonds
     pairs = pairs[mask]
     d = md.compute_distances(traj,pairs).astype(np.float32)
     d[d>4.] = np.inf # cutoff
@@ -110,7 +110,7 @@ def calcLJenergy(df,name,prot):
     f = h5py.File(prot.path+'/dist_sums.hdf5', "r")
     unique = f.get('unique')[()].astype(str)
 
-    _, lj_eps, lj_lambda, lj_sigma, _, _ = genParamsLJ(df.set_index('one'),name,prot,True)
+    _, lj_eps, lj_lambda, lj_sigma, _, _, _ = genParamsLJ(df.set_index('one'),name,prot)
     dflambda = lj_lambda.unstack()
     dflambda.index = dflambda.index.map('{0[0]}{0[1]}'.format)
     eps1 = lj_eps*(1-dflambda.loc[unique].values)
@@ -165,7 +165,7 @@ def reweight(dp,df,dfprior,proteins,proteinsRgs):
         out_of_prior = f_out_of_prior(trial_df.iloc[:-2],dfprior)
 
     prior = dfprior.lookup(trial_df.one[:-2],trial_df.lambdas[:-2])
-    # calculate AH energies, weights and fraction of effective frames    
+    # calculate AH energies, weights and fraction of effective frames
     weights = ray.get([calcWeights.remote(trial_df,name,prot) for name,prot in pd.concat((trial_proteins,trial_proteinsRgs),sort=True).iterrows()])
     for name,w,eff in weights:
         if name in trial_proteins.index:
@@ -193,11 +193,15 @@ def reweight(dp,df,dfprior,proteins,proteinsRgs):
             trial_proteinsRgs.at[name,'chi2_rg'] = chi2_rg
         return True, trial_df, trial_proteins, trial_proteinsRgs, prior
 
-# load the initial lambda set and check that it is equal to AVG
 df = pd.read_pickle('residues.pkl')
+
+# set the initial lambda parameters to AVG
+if args.cycle=='o1':
+    df.lambdas = df.average
+
 logging.info(df.lambdas-df.average)
 
-# load the experimental NMR PRE data
+# load the experimental PRE NMR data
 for name in proteins.index:
     proteins.at[name,'expPREs'] = loadExpPREs(name,proteins.loc[name])
 
@@ -241,47 +245,46 @@ logging.info('Initial Chi2 Hydrodynamic Radius {:.3f} +/- {:.3f}'.format(protein
 logging.info('Initial Chi2 Gyration Radius {:.3f} +/- {:.3f}'.format(proteinsRgs.chi2_rg.mean(),proteinsRgs.chi2_rg.std()))
 
 dfprior = pd.read_pickle('prior.pkl')
-dfchi2 = pd.DataFrame(columns=['chi2_pre','chi2_rg','prior'])
+dfchi2 = pd.DataFrame(columns=['chi2_pre','chi2_rg','prior','w_aSyn','w_aSyn140','lambdas'])
 dflambdas = pd.DataFrame(columns=['chi2_pre','chi2_rg','spearman','lambdas'])
 
 # set the initial value for the control parameter of simulated annealing
 if (args.cycle=='o1' or args.cycle=='o2'):
-    kT0 = 2 
+    kT0 = 2
 else:
     kT0 = 0.1
+logging.info('kT0 {:.1f}'.format(kT0))
 kT = kT0
 
 theta_prior = theta * np.log(dfprior.lookup(df.one[:-2],df.lambdas[:-2])).sum()
 
 logging.info('Initial theta*prior {:.2f}'.format(theta_prior))
 
-dfchi2.loc[0] = [proteins.chi2_pre.mean(),proteinsRgs.chi2_rg.mean(),theta_prior/theta]
+dfchi2.loc[0] = [proteins.chi2_pre.mean(),proteinsRgs.chi2_rg.mean(),theta_prior/theta,proteins.loc['aSyn','weights'],proteinsRgs.loc['aSyn140','weights'],df.lambdas[:-2]]
 
 variants = ['A1','M12FP12Y','P7FM7Y','M9FP6Y','M8FP4Y','M9FP3Y','M10R','M6R','P2R','P7R','M3RP3K','M6RP6K','M10RP10K','M4D','P4D','P8D','P12D','P12E','P7KP12D','P7KP12Db','M12FP12YM10R','M10FP7RP12D']
 
 # start simulated annealing
 for k in range(2,5002):
-
     # interrupt simulated annealing when the control parameter drops below 1e-15
     if (kT<1e-15):
         logging.info('kT {:.2f}'.format(kT))
         break
-
     # scale the control parameter
     kT = kT * .99
     passed, trial_df, trial, trialRgs, prior = reweight(dp,df,dfprior,proteins,proteinsRgs)
-    # passed if the effective fraction of frames exceeds 0.3
+    # passed is True if the effective fraction of frames exceeds 0.3
     if passed:
         theta_prior = theta * np.log(prior).sum()
         delta1 = trial.chi2_pre.mean() + trialRgs.chi2_rg.mean() - theta_prior
         delta2 = proteins.chi2_pre.mean() + proteinsRgs.chi2_rg.mean() - theta*dfchi2.iloc[-1]['prior']
         delta = delta1 - delta2
-        # Metropolis criterion for accepting trial lambda set
+        # Metropolis criterion for accepting trial lambda parameters
         if ( np.exp(-delta/kT) > np.random.rand() ):
             proteins = trial.copy()
             proteinsRgs = trialRgs.copy()
             df = trial_df.copy()
-            dfchi2.loc[k-1] = [trial.chi2_pre.mean(),trialRgs.chi2_rg.mean(),theta_prior/theta]
+            dfchi2.loc[k-1] = [trial.chi2_pre.mean(),trialRgs.chi2_rg.mean(),theta_prior/theta,trial.loc['aSyn','weights'],trialRgs.loc['aSyn140','weights'],df.lambdas[:-2]]
             if (trial.chi2_pre.mean() < 21) and (trialRgs.chi2_rg.mean() < 3):
                 spearman = proteinsRgs.loc[variants,'expRg'].astype(float).corr(proteinsRgs.loc[variants,'Rg'].astype(float),method='spearman')
                 dflambdas.loc[k-1] = [trial.chi2_pre,trialRgs.chi2_rg,spearman,df.lambdas]

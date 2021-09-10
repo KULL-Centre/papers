@@ -1,19 +1,19 @@
 #!/bin/bash 
-#SBATCH --job-name=1_10_AVG
+#SBATCH --job-name=10_AVG
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=64
 #SBATCH --exclusive
-#SBATCH --mem-per-cpu=3000
+#SBATCH --cpus-per-task=64
+#SBATCH --mem-per-cpu=2000
 #SBATCH -t 72:00:00
 #SBATCH -o opt.out
 #SBATCH -e opt.err
-#SBATCH --partition=sbinlab
+#SBATCH --partition=sbinlab_ib
 
 source /groups/sbinlab/giulio/.bashrc
 conda activate hoomd
 
-declare -a proteins_list=(OPN FUS FUS12E Sic1 aSyn A2 ht40 A1 Hst5 aSyn140 PNt Hst52 ACTR RNaseA p15PAF OPN220 Sic92 FhuA CoRNID ColNT hNL3cyt p53 K10 K27 K25 K32 K23 K44 M12FP12Y P7FM7Y M9FP6Y M8FP4Y M9FP3Y M10R M6R P2R P7R M3RP3K M6RP6K M10RP10K M4D P4D P8D P12D P12E P7KP12D P7KP12Db M12FP12YM10R M10FP7RP12D)
-declare -a proteinsPRE_list=(OPN FUS FUS12E Sic1 aSyn A2 ht40)
+declare -a proteins_list=(OPN FUS FUS12E Sic1 aSyn A2 A1 Hst5 aSyn140 PNt Hst52 ACTR RNaseA p15PAF OPN220 Sic92 FhuA CoRNID ColNT hNL3cyt SH4UD K10 K27 K25 K32 K23 K44 M12FP12Y P7FM7Y M9FP6Y M8FP4Y M9FP3Y M10R M6R P2R P7R M3RP3K M6RP6K M10RP10K M4D P4D P8D P12D P12E P7KP12D P7KP12Db M12FP12YM10R M10FP7RP12D)
+declare -a proteinsPRE_list=(OPN FUS FUS12E Sic1 aSyn A2)
 
 # Clean-up the folder
 rm log

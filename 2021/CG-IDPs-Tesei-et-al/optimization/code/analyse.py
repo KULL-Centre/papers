@@ -120,7 +120,7 @@ def calcRg(df,name,prot):
 
 def initProteins(outdir):
     outdir = '/'+outdir if len(outdir)>0 else outdir
-    proteins = pd.DataFrame(index=['OPN','FUS','FUS12E','Sic1','aSyn','ht40','A2'],
+    proteins = pd.DataFrame(index=['OPN','FUS','FUS12E','Sic1','aSyn','A2'],
             columns=['labels','eps_factor','wh','tau_c','temp','expRh','Rh','RhKR','Rg','obs','pH','rgarray','ionic','invrij','expPREs','initPREs','eff','chi2_pre','chi2_rh','fasta','weights','path'])
     fasta_OPN = """MHQDHVDSQSQEHLQQTQNDLASLQQTHYSSEENADVPEQPDFPDV
 PSKSQETVDDDDDDDNDSNDTDESDEVFTDFPTEAPVAPFNRGDNAGRGDSVAYGFRAKA
@@ -137,13 +137,6 @@ QNLVPVTPSTTKSFKNAPLLAPPNSNMGMTSPFNGLTSPQRSPFPKSSVKRT""".replace('\n', '')
     fasta_aSyn = """MDVFMKGLSKAKEGVVAAAEKTKQGVAEAAGKTKEGVLYVGSKTKEGVVHGVATVAEKTK
 EQVTNVGGAVVTGVTAVAQKTVEGAGSIAAATGFVKKDQLGKNEEGAPQEGILEDMPVDP
 DNEAYEMPSEEGYQDYEPEA""".replace('\n', '')
-    fasta_ht40 = """MAEPRQEFEVMEDHAGTYGLGDRKDQGGYTMHQDQEGDTDAGLKESPLQTPT
-EDGSEEPGSETSDAKSTPTAEDVTAPLVDEGAPGKQAAAQPHTEIPEGTTAEEAGIGDTPSLEDEAAGH
-VTQARMVSKSKDGTGSDDKKAKGADGKTKIATPRGAAPPGQKGQANATRIPAKTPPAPKTPPSSGEPPK
-SGDRSGYSSPGSPGTPGSRSRTPSLPTPPTREPKKVAVVRTPPKSPSSAKSRLQTAPVPMPDLKNVKSK
-IGSTENLKHQPGGGKVQIINKKLDLSNVQSKCGSKDNIKHVPGGGSVQIVYKPVDLSKVTSKCGSLGNI
-HHKPGGGQVEVKSEKLDFKDRVQSKIGSLDNITHVPGGGNKKIETHKLTFRENAKAKTDHGAEIVYKSP
-VVSGDTSPRHLSNVSSTGSIDMVDSPQLATLADEVSASLAKQGL""".replace('\n', '')
     fasta_A2 = """GHMGRGGNFGFGDSRGGGGNFGPGPGSNFRGGSDGYGSGR
 GFGDGYNGYGGGPGGGNFGGSPGYGGGRGGYGGGGPGYGNQGGGYGGGYDNYGGGNYGSG
 NYNDFGNYNQQPSNYGPMKSGNFGGSRNMGGPYGGGNYGPGGSGGSGGYGGRSRY""".replace('\n', '')
@@ -152,8 +145,6 @@ NYNDFGNYNQQPSNYGPMKSGNFGGSRNMGGPYGGGNYGPGGSGGSGGYGGRSRY""".replace('\n', '')
                                wh=850,temp=298,expRh=2.89,obs='ratio',pH=5.5,fasta=list(fasta_A2),ionic=0.005,weights=False,path='A2'+outdir)
     proteins.loc['aSyn'] = dict(labels=[24, 42, 62, 87, 103], eps_factor=0.2,tau_c=1.0,
                                wh=700,temp=283,expRh=2.82,obs='ratio',pH=7.4,fasta=list(fasta_aSyn),ionic=0.15,weights=False,path='aSyn'+outdir)
-    proteins.loc['ht40'] = dict(labels=[15, 72, 125, 178, 239, 256, 322, 352, 384, 416], eps_factor=0.2,tau_c=5.0,
-                               wh=900,temp=278,expRh=5.4,obs='ratio',pH=6.8,fasta=list(fasta_ht40),ionic=0.1,weights=False,path='ht40'+outdir)
     proteins.loc['OPN'] = dict(labels=[10, 33, 64, 88, 117, 130, 144, 162, 184, 203], eps_factor=0.2,tau_c=3.0,
                                wh=800,temp=298,expRh=4.107,obs='rate',pH=6.5,fasta=list(fasta_OPN),ionic=0.15,weights=False,path='OPN'+outdir)
     proteins.loc['FUS'] = dict(labels=[16, 86, 142], eps_factor=0.2,tau_c=10.0,
@@ -166,7 +157,7 @@ NYNDFGNYNQQPSNYGPMKSGNFGGSRNMGGPYGGGNYGPGGSGGSGGYGGRSRY""".replace('\n', '')
 
 def initProteinsRgs(outdir):
     outdir = '/'+outdir if len(outdir)>0 else outdir
-    proteins = pd.DataFrame(index=['A1','Hst5','aSyn140','PNt','Hst52','ACTR','RNaseA','p15PAF','OPN220','Sic92','FhuA','CoRNID','ColNT','hNL3cyt','p53','K10','K27','K25','K32','K23','K44','M12FP12Y','P7FM7Y','M9FP6Y','M8FP4Y','M9FP3Y','M10R','M6R','P2R','P7R','M3RP3K','M6RP6K','M10RP10K','M4D','P4D','P8D','P12D','P12E','P7KP12D','P7KP12Db','M12FP12YM10R','M10FP7RP12D'],
+    proteins = pd.DataFrame(index=['A1','SH4UD','Hst5','aSyn140','PNt','Hst52','ACTR','RNaseA','p15PAF','OPN220','Sic92','FhuA','CoRNID','ColNT','hNL3cyt','K10','K27','K25','K32','K23','K44','M12FP12Y','P7FM7Y','M9FP6Y','M8FP4Y','M9FP3Y','M10R','M6R','P2R','P7R','M3RP3K','M6RP6K','M10RP10K','M4D','P4D','P8D','P12D','P12E','P7KP12D','P7KP12Db','M12FP12YM10R','M10FP7RP12D'],
             columns=['eps_factor','temp','expRg','expRgErr','Rg','rgarray','eff','chi2_rg','weights','pH','ionic','fasta','path'])
     fasta_Hst52 = """DSHAKRHHGYKRKFHEKHHSHRGYDSHAKRHHGYKRKFHEKHHSHRGY""".replace('\n', '') # DOI: 10.1021/acs.jpcb.0c09635
     fasta_Hst5 = """DSHAKRHHGYKRKFHEKHHSHRGY""".replace('\n', '') 
@@ -250,8 +241,8 @@ SSNFDPMDGGNFDDRSSGPYDDGGQYFADPRNQGGYGGSSSSKSYGSKRRF""".replace('\n', '')
 SSNYGPMKGGNYGGSSSGPYGGGGQYYAKPGNQGGYGGSSSSSSYGSGGGY""".replace('\n', '')
     fasta_M10FP7RP12D = """GSMASADSSQRDRDDRGNFGDGRGGGGGGNDNFGRGGNGSDRGGGGGSRGDGRYGGDGDRYNGGGNDGRNGGGGGSYNDGGNYNNQ
 SSNGDPMKGGNGRDRSSGPYDRGGQYGAKPRNQGGYGGSSSSRSYGSDRRG""".replace('\n', '')
-    fasta_p53 = """MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGP
-DEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPL""".replace('\n', '') # DOI: 10.1073/pnas.0801353105
+    fasta_SH4UD = """MGSNKSKPKDASQRRRSLEPAENVHGAGGGAFPASQTPSKPASADGHRGPSAAFAPAAA
+EPKLFGGFNSSDTVTSPQRAGPLAGGSAWSHPQFEK""".replace('\n', '') # DOI: 
     fasta_hNL3cyt = """MYRKDKRRQEPLRQPSPQRGAWAPELGAAPEEELAALQLGPTHHECEAG
 PPHDTLRLTALPDYTLTLRRSPDDIPLMTPNTITMIPNSLVG
 LQTLHPYNTFAAGFNSTGLPHSHSTTRV""".replace('\n', '') # DOI: 10.1529/biophysj.107.126995
@@ -259,7 +250,7 @@ LQTLHPYNTFAAGFNSTGLPHSHSTTRV""".replace('\n', '') # DOI: 10.1529/biophysj.107.12
 
     proteins.loc['ColNT'] = dict(eps_factor=0.2,temp=277,expRg=2.83,expRgErr=0.1,pH=7.6,fasta=list(fasta_ColNT),ionic=0.4,path='ColNT'+outdir)
     proteins.loc['hNL3cyt'] = dict(eps_factor=0.2,temp=293,expRg=3.15,expRgErr=0.2,pH=8.5,fasta=list(fasta_hNL3cyt),ionic=0.3,path='hNL3cyt'+outdir)
-    proteins.loc['p53'] = dict(eps_factor=0.2,temp=293,expRg=2.87,expRgErr=0.1,pH=7.2,fasta=list(fasta_p53),ionic=0.2,path='p53'+outdir)
+    proteins.loc['SH4UD'] = dict(eps_factor=0.2,temp=293,expRg=2.71,expRgErr=0.1,pH=8.0,fasta=list(fasta_SH4UD),ionic=0.2,path='SH4UD'+outdir)
     proteins.loc['OPN220'] = dict(eps_factor=0.2,temp=298,expRg=5.13,expRgErr=0.2,pH=6.5,fasta=list(fasta_OPN220),ionic=0.15,path='OPN220'+outdir)
     proteins.loc['Sic92'] = dict(eps_factor=0.2,temp=293,expRg=3.0,expRgErr=0.4,pH=7.5,fasta=list(fasta_Sic92),ionic=0.2,path='Sic92'+outdir)
     proteins.loc['FhuA'] = dict(eps_factor=0.2,temp=298,expRg=3.34,expRgErr=0.1,pH=7.5,fasta=list(fasta_FhuA),ionic=0.15,path='FhuA'+outdir)
@@ -301,15 +292,17 @@ LQTLHPYNTFAAGFNSTGLPHSHSTTRV""".replace('\n', '') # DOI: 10.1529/biophysj.107.12
     proteins.loc['CoRNID'] = dict(eps_factor=0.2,temp=293,expRg=4.7,expRgErr=0.2,pH=7.5,fasta=list(fasta_CoRNID),ionic=0.2,path='CoRNID'+outdir)
     return proteins
 
-def genParamsLJ(df,name,prot,reweight=False):
+def genParamsLJ(df,name,prot):
     fasta = prot.fasta.copy()
     r = df.copy()
-    if not reweight:
-        r.loc['X'] = r.loc[fasta[0]]
-        r.loc['Z'] = r.loc[fasta[-1]]
-        fasta[0] = 'X'
-        fasta[-1] = 'Z'
+    r.loc['X'] = r.loc[fasta[0]]
+    r.loc['Z'] = r.loc[fasta[-1]]
+    r.loc['X','MW'] += 2
+    r.loc['Z','MW'] += 16
+    fasta[0] = 'X'
+    fasta[-1] = 'Z'
     types = list(np.unique(fasta))
+    MWs = [r.loc[a,'MW'] for a in types]
     sigmamap = pd.DataFrame((r.sigmas.values+r.sigmas.values.reshape(-1,1))/2,
                             index=r.sigmas.index,columns=r.sigmas.index)
     lambdamap = pd.DataFrame((r.lambdas.values+r.lambdas.values.reshape(-1,1))/2,
@@ -317,15 +310,13 @@ def genParamsLJ(df,name,prot,reweight=False):
     lj_eps = prot.eps_factor*4.184
     # Generate pairs of amino acid types
     pairs = np.array(list(itertools.combinations_with_replacement(types,2)))
-    return pairs, lj_eps, lambdamap, sigmamap, fasta, types
+    return pairs, lj_eps, lambdamap, sigmamap, fasta, types, MWs
 
 def genParamsDH(df,name,prot):
     kT = 8.3145*prot.temp*1e-3
     r = df.copy()
     # Set the charge on HIS based on the pH of the protein solution
     r.loc['H','q'] = 1. / ( 1 + 10**(prot.pH-6) )
-    r.loc['X'] = r.loc[prot.fasta[0]]
-    r.loc['Z'] = r.loc[prot.fasta[-1]]
     r.loc['X','q'] = r.loc[prot.fasta[0],'q'] + 1.
     r.loc['Z','q'] = r.loc[prot.fasta[-1],'q'] - 1.
     # Calculate the prefactor for the Yukawa potential
