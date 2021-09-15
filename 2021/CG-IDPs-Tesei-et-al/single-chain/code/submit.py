@@ -33,7 +33,7 @@ SSNFGPMKGGNFGGRSSGPYGGGGQYFAKPRNQGGYGGSSSSSSYGSGRRF""".replace('\n', '')
     proteins.loc['NEWSEQ'] = dict(temp=298,pH=7.0,fasta=list(fasta_NEWSEQ),ionic=0.15)
     return proteins
 
-proteins = initProteinsDF()
+proteins = initProteins()
 proteins.to_pickle('proteins.pkl')
 
 for name in ['NEWSEQ']: # or proteins.index: to simulate all the sequences in initProteins()
