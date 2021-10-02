@@ -2,7 +2,7 @@ Here is an example of how to rescale protein-water interactions in Martini 3 usi
 
 You will need a topology file (.top) for your system. For this example the provided topology file is A1_system_topology.top.
 
-Your protein must be named something with "Protein" under [ moleculetype ] in the topology, e.g. the protein A1 in this example is named "Protein 1" in this example.
+Your protein must be named something with "Protein" under [ moleculetype ] in the topology, e.g. the protein A1 is named "Protein 1" in this example.
 
 You can run the script from the command line using:
 ```
