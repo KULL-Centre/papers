@@ -23,7 +23,7 @@ dssp=/lindorffgrp-isilon/thomasen/software/miniconda3/bin/mkdssp
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-#Loop through oligomer-sizes
+#Loop through proteins
 for i in A2 FUS K25 A1 CoRNID ColNT FhuA Hst52 K19 Sic1 aSyn Hst5 ACTR PNt
 do
 
