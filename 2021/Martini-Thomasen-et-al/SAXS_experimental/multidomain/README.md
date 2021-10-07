@@ -1,0 +1,1 @@
+Experimental SAXS data for three multidomain proteins: full-length hnRNPA1 (hnRNPA1), full-length hnRNPA1 with an N-terminal His-SUMO tag (hSUMO-hnRNPA1) (Martin et al. 2021) and TIA-1 (Sonntag et al. 2017).
