@@ -18,7 +18,7 @@ submission = Template("""#!/bin/bash
 source /groups/sbinlab/giulio/.bashrc
 conda activate hoomd
 
-python ./simulate.py --name {{name}}""")
+python ./simulate.py --name {{name}} --model {{model}}""")
 
 def initProteins():
     proteins = pd.DataFrame(index=['A1','A1NLS','NEWSEQ'],
@@ -36,9 +36,11 @@ SSNFGPMKGGNFGGRSSGPYGGGGQYFAKPRNQGGYGGSSSSSSYGSGRRF""".replace('\n', '')
 proteins = initProteins()
 proteins.to_pickle('proteins.pkl')
 
+model = 'M1' # available models: 'M1', 'M2', 'M3', 'AVG', 'HPSUrry' and 'HPS'
+
 for name in ['NEWSEQ']: # or proteins.index: to simulate all the sequences in initProteins()
     if not os.path.isdir(name):
         os.mkdir(name)
     with open('{:s}.sh'.format(name), 'w') as submit:
-        submit.write(submission.render(name=name))
+        submit.write(submission.render(name=name,model=model))
     subprocess.run(['sbatch','--partition','sbinlab','{:s}.sh'.format(name)])

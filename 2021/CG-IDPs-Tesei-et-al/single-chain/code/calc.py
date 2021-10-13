@@ -15,6 +15,7 @@ from mdtraj import element
 from scipy.optimize import least_squares
 from scipy.optimize import curve_fit
 import time
+from argparse import ArgumentParser
 
 proteins = pd.read_pickle('proteins.pkl')
 
@@ -76,7 +77,12 @@ def calcRg(df,traj):
     rgE = np.std(rgarray)/np.sqrt(rgarray.size)
     return rgarray, rg, rgE
 
+parser = ArgumentParser()
+parser.add_argument('--model',nargs='?',const='', type=str)
+args = parser.parse_args()
+
 residues = pd.read_csv('residues.csv',index_col='three')
+residues.lambdas = residues[args.model]
 t0 = time.time()
 
 data = {}

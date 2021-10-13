@@ -15,6 +15,7 @@ import Bio.PDB
 
 parser = ArgumentParser()
 parser.add_argument('--name',nargs='?',const='', type=str)
+parser.add_argument('--model',nargs='?',const='', type=str)
 args = parser.parse_args()
 
 def simulate(residues,name,prot):
@@ -143,6 +144,7 @@ def genDCD(residues,name,prot):
 
 proteins = pd.read_pickle('proteins.pkl')
 residues = pd.read_csv('residues.csv',index_col='one')
+residues.lambdas = residues[args.model]
 
 t0 = time.time()
 simulate(residues,args.name,proteins.loc[args.name])

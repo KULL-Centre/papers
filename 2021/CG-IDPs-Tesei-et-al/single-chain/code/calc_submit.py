@@ -15,8 +15,10 @@ submission = Template("""#!/bin/bash
 source /groups/sbinlab/giulio/.bashrc
 conda activate hoomd
 
-python ./calc.py""")
+python ./calc.py --model {{model}}""")
+
+model = 'M1' # available models: 'M1', 'M2', 'M3', 'AVG', 'HPSUrry' and 'HPS'
 
 with open('calc.sh', 'w') as submit:
-    submit.write(submission.render(name='analysis'))
+    submit.write(submission.render(name='analysis',model=model))
 subprocess.run(['sbatch','calc.sh'])
