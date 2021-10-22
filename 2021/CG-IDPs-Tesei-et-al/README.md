@@ -24,3 +24,5 @@ To open the Notebooks, install [Miniconda](https://conda.io/miniconda.html) and 
     source activate cg-idps
     jupyter-notebook
 ```
+
+This repository also contains an unmodified copy of [PULCHRA PowerfUL CHain Restoration Algorithm Version 3.06](https://www.pirx.com/pulchra/) (archive file `pulchra_306.tgz`). 
