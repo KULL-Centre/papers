@@ -12,7 +12,7 @@ new_cmap.reverse()
 rtg = LinearSegmentedColormap.from_list("rtg", new_cmap)
 
 dro = np.arange(-8.0,21.1,1.0)*3.34
-r0 = np.arange(0.85,1.11,0.025)*1.64
+r0 = np.arange(0.85,1.11,0.025)
 yt = []
 for i,x in enumerate(r0):
     if not (i+1)%2 == 0:
@@ -44,7 +44,7 @@ def grid_entropy(grid, wdir, minind):
 def minfind(grid):
     minind = np.where(grid[...,6] == np.nanmin(grid[...,6]))[0][0]
     mindro = grid[...,1][minind]*3.34
-    minr0 = grid[...,2][minind]*1.64
+    minr0 = grid[...,2][minind]
     return int(minind), mindro, minr0
 
 def rg_kde(rg,w):
@@ -54,10 +54,19 @@ def rg_kde(rg,w):
     return np.array([x,kde,av])
 
 
+def good_fit(slope,intercept,x,y,err):
+    store = 0
+    for i in range(len(x)):
+        r = (slope*x[i])+intercept
+        store = store + ((r-y[i])/err[i])**2
+    return store/len(x)
+
+
 def guinier_scan(expf,cut,start,end):
 
     sRg = []
     Rg = []
+    score = []
 
     q = expf[...,0]
     exp = expf[...,1]
@@ -73,14 +82,16 @@ def guinier_scan(expf,cut,start,end):
         a = model.coef_[0]
         b = model.intercept_
     
+        score.append(good_fit(a,b,guinier_q,guinier_i,guinier_err))
+    
         rg = np.sqrt(-a*3)
-        if rg*q[i] >= 0.9:
-            if rg*q[i] >= 1.3:
-                break
-            Rg.append(rg)
-            sRg.append(rg*q[i])
+        Rg.append(rg)
+        sRg.append(rg*q[i])
 
-    return sRg, Rg
+        if sRg[-1] >= 1.8:
+            break
+
+    return sRg, Rg, score
 
 def rg_calc_mass(path,size):
     rg = []
