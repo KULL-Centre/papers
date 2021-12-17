@@ -5,7 +5,7 @@ Refining conformational ensembles of flexible proteins against small-angle X-ray
 https://doi.org/10.1016/j.bpj.2021.10.003 [Final published version]\
 https://doi.org/10.1101/2021.05.29.446281 [Preprint]
 
-The conformational ensembles can be found at https://doi.org/10.5281/zenodo.4804381
+The conformational ensembles can be found at https://doi.org/10.5281/zenodo.5786488
 
 ### List of content
 - **SAXS_data**: Experimental SAXS data used in this work.
