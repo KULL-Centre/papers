@@ -12,7 +12,7 @@ submission = Template("""#!/bin/bash
 #SBATCH -t 20:00:00
 #SBATCH -o PRE_{{name}}.out
 #SBATCH -e PRE_{{name}}.err
-#SBATCH --partition=sbinlab_ib
+#SBATCH --partition=sbinlab
 
 source /groups/sbinlab/giulio/.bashrc
 conda activate hoomd
@@ -29,5 +29,5 @@ echo $execution_time""")
 for name,tcmin in zip(['FUS'],[1]):
     with open('PRE_{}.sh'.format(name), 'w') as submit:
         submit.write(submission.render(name=name,tcmin=tcmin))
-    subprocess.run(['sbatch','--partition','sbinlab_ib','PRE_{}.sh'.format(name)])
+    subprocess.run(['sbatch','PRE_{}.sh'.format(name)])
     time.sleep(2)

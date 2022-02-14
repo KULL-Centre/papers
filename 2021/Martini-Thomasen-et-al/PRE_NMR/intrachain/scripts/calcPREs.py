@@ -29,14 +29,14 @@ for _, prot in proteins.loc[[args.name]].iterrows():
 proc_PRE = [(label,name) for name,prot in proteins.loc[[args.name]].iterrows() for label in prot.labels]
 # use total number of label positions as number of cpus
 num_cpus = len(proc_PRE)
-     
+
 ray.init(num_cpus=num_cpus)
 
 @ray.remote
 def evaluatePRE(n, label, name, prot):
     prefix = '{:s}/{:s}/calcPREs/res'.format(args.name,args.ff)
     filename = prefix+'-{:d}.pkl'.format(label)
-    u = MDAnalysis.Universe('{:s}/{:s}/{:s}.gro'.format(args.name,args.ff,name),
+    u = MDAnalysis.Universe('{:s}/{:s}/allatom.gro'.format(args.name,args.ff),
             '{:s}/{:s}/allatom.xtc'.format(args.name,args.ff))
     load_file = False
     PRE = PREpredict(u, label, log_file = '{:s}/{:s}/log'.format(args.name,args.ff),

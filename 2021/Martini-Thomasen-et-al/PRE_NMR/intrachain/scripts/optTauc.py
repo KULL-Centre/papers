@@ -16,14 +16,14 @@ parser = ArgumentParser()
 parser.add_argument('--name',dest='name',type=str,required=True)
 args = parser.parse_args()
 
-proteins = pd.read_pickle('proteins.pkl')
+proteins = pd.read_pickle('proteins.pkl').astype(object)
 
 def loadExpPREs(name,prot):
     value = {}
     error = {}
     resnums = np.arange(1,len(prot.fasta)+1)
     for label in prot.labels:
-        value[label], error[label] = np.loadtxt('../expPREs/{:s}/expPREs/exp-{:d}.dat'.format(name,label),unpack=True)
+        value[label], error[label] = np.loadtxt('expPREs/{:s}/expPREs/exp-{:d}.dat'.format(name,label),unpack=True)
     v = pd.DataFrame(value,index=resnums)
     v.rename_axis('residue', inplace=True)
     v.rename_axis('label', axis='columns',inplace=True)
@@ -60,7 +60,7 @@ def optTauC(name,prot,model,chi2_results,rs_results,tau_c_range):
         rs = 0
         for label in prot.labels:
             x,y = np.loadtxt('{:s}/{:.2f}/calcPREs/res-{:d}.dat'.format(name,model,label),usecols=(0,1),unpack=True)
-            measured_resnums = np.where(~np.isnan(y))[0] 
+            measured_resnums = np.where(~np.isnan(y))[0]
             data = pd.read_pickle('{:s}/{:.2f}/calcPREs/res-{:d}.pkl'.format(name,model,label), compression='gzip')
             gamma_2_av = np.full(y.size, fill_value=np.NaN)
             s_pre = np.power(data['r3'], 2)/data['r6']*data['angular']
@@ -84,7 +84,7 @@ def optTauC(name,prot,model,chi2_results,rs_results,tau_c_range):
 
     for label in prot.labels:
         x,y = np.loadtxt('{:s}/{:.2f}/calcPREs/res-{:d}.dat'.format(name,model,label),usecols=(0,1),unpack=True)
-        measured_resnums = np.where(~np.isnan(y))[0] 
+        measured_resnums = np.where(~np.isnan(y))[0]
         data = pd.read_pickle('{:s}/{:.2f}/calcPREs/res-{:d}.pkl'.format(name,model,label),compression='gzip')
         gamma_2_av = np.full(y.size, fill_value=np.NaN)
         s_pre = np.power(data['r3'], 2)/data['r6']*data['angular']
@@ -99,7 +99,7 @@ for name in proteins.index:
     proteins.at[name,'expPREs'] = loadExpPREs(name,proteins.loc[name])
 
 tau_c_range = np.arange(1,20.05,1)
-lambda_range = np.array([1.00,1.06,1.08])
+lambda_range = np.array([1.00,1.10,1.12])
 
 chi2_results = pd.DataFrame(index=tau_c_range,
                         columns=lambda_range)

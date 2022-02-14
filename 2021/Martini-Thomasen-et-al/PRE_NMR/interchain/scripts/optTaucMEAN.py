@@ -65,7 +65,7 @@ def optTauC(prot,model,chi2_results,rs_results,Nreplicas,tau_c_range):
             all_gamma_2 = []
             for run in range(1,Nreplicas+1):
                 x,y = np.loadtxt(prot.path+model+'/run{:d}/calcPREs/resAB-{:d}.dat'.format(run,label),usecols=(0,1),unpack=True)
-                measured_resnums = np.where(~np.isnan(y))[0] 
+                measured_resnums = np.where(~np.isnan(y))[0]
                 data = pd.read_pickle(prot.path+model+'/run{:d}/calcPREs/resAB-{:d}.pkl'.format(run,label), compression='gzip')
                 gamma_2_av = np.full(y.size, fill_value=np.NaN)
                 s_pre = np.power(data['r3'], 2)/data['r6']*data['angular']
@@ -73,14 +73,14 @@ def optTauC(prot,model,chi2_results,rs_results,Nreplicas,tau_c_range):
                 gamma_2 = np.ma.MaskedArray(gamma_2, mask = np.isnan(gamma_2))
                 gamma_2_av[measured_resnums] = np.ma.average(gamma_2, axis=0).data
                 x,y = np.loadtxt(prot.path+model+'/run{:d}/calcPREs/resBA-{:d}.dat'.format(run,label),usecols=(0,1),unpack=True)
-                measured_resnums = np.where(~np.isnan(y))[0] 
+                measured_resnums = np.where(~np.isnan(y))[0]
                 data = pd.read_pickle(prot.path+model+'/run{:d}/calcPREs/resBA-{:d}.pkl'.format(run,label), compression='gzip')
                 gamma_2_av = np.full(y.size, fill_value=np.NaN)
                 s_pre = np.power(data['r3'], 2)/data['r6']*data['angular']
                 gamma_2 = Operations.calc_gamma_2(data['r6'], s_pre, tau_c = tc * 1e-9, tau_t = 1e-10, wh = prot.wh, k = 1.23e16)
                 gamma_2 = np.ma.MaskedArray(gamma_2, mask = np.isnan(gamma_2))
                 gamma_2_av[measured_resnums] = np.ma.average(gamma_2, axis=0).data
-                
+
                 all_gamma_2.append(gamma_2_av)
             y = np.mean(all_gamma_2,axis=0)
             mask = np.isfinite(y)&np.isfinite(prot.expPREs.value[label].values)
@@ -100,7 +100,7 @@ def optTauC(prot,model,chi2_results,rs_results,Nreplicas,tau_c_range):
         all_gamma_2 = []
         for run in range(1,Nreplicas+1):
             x,y = np.loadtxt(prot.path+model+'/run{:d}/calcPREs/resAB-{:d}.dat'.format(run,label),usecols=(0,1),unpack=True)
-            measured_resnums = np.where(~np.isnan(y))[0] 
+            measured_resnums = np.where(~np.isnan(y))[0]
             data = pd.read_pickle(prot.path+model+'/run{:d}/calcPREs/resAB-{:d}.pkl'.format(run,label), compression='gzip')
             gamma_2_av = np.full(y.size, fill_value=np.NaN)
             s_pre = np.power(data['r3'], 2)/data['r6']*data['angular']
@@ -111,9 +111,9 @@ def optTauC(prot,model,chi2_results,rs_results,Nreplicas,tau_c_range):
             np.savetxt(prot.path+model+'/run{:d}/calcPREs/resAB-{:d}.dat'.format(run,label),np.c_[x,i_ratio,gamma_2_av])
             all_i_ratio.append(i_ratio)
             all_gamma_2.append(gamma_2_av)
- 
+
             x,y = np.loadtxt(prot.path+model+'/run{:d}/calcPREs/resBA-{:d}.dat'.format(run,label),usecols=(0,1),unpack=True)
-            measured_resnums = np.where(~np.isnan(y))[0] 
+            measured_resnums = np.where(~np.isnan(y))[0]
             data = pd.read_pickle(prot.path+model+'/run{:d}/calcPREs/resBA-{:d}.pkl'.format(run,label), compression='gzip')
             gamma_2_av = np.full(y.size, fill_value=np.NaN)
             s_pre = np.power(data['r3'], 2)/data['r6']*data['angular']
@@ -125,7 +125,7 @@ def optTauC(prot,model,chi2_results,rs_results,Nreplicas,tau_c_range):
             all_i_ratio.append(i_ratio)
             all_gamma_2.append(gamma_2_av)
         np.savetxt(prot.path+model+'/res-{:d}.dat'.format(label),np.c_[x,np.mean(all_i_ratio,axis=0),np.mean(all_gamma_2,axis=0),np.std(all_gamma_2,axis=0)/np.sqrt(Nreplicas)])
- 
+
     return tc_min, calcChi2(prot,model)
 
 for name in proteins.index:
@@ -141,7 +141,7 @@ PREs = {}
 Nreplicas = 10
 # run PRE calculations
 time0 = time.time()
-for i in [1.00,1.06,1.08]:
+for i in [1.00,1.10,1.12]:
     model = '{:.2f}'.format(i)
     tau_c, chi2_pre = optTauC(proteins.loc[args.name],model,chi2_results,rs_results,Nreplicas,tau_c_range)
     PREs[model] = {'chi2':chi2_pre, 'tau_c':tau_c, 'expPREs':proteins.at[args.name,'expPREs'], 'calcPREs':loadInitPREs(args.name,proteins.loc[args.name],model)}
