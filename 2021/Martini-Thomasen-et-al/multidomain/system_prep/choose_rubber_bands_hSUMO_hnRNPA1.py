@@ -12,7 +12,7 @@ nr_domains = 3
 
 #List of start and stop atoms of domain borders
 #Given in the form [domain 1 start-atom, domain 1 stop-atom, domain 2 start-atom, domain 2 stop-atom]
-start_stop_atoms = [99, 262, 291, 478, 513, 695]
+start_stop_atoms = [95, 270, 299, 481, 509, 701]
 
 #Check that there are start and stop atoms for all domains
 assert len(start_stop_atoms) == 2*nr_domains

@@ -3,10 +3,9 @@
 for i in $(seq 1 10)
 do
 
-for l in 1.00 1.06 1.08
+for l in 1.00 1.10 1.12
 do
 
-#rm -r $protein/lambda_$l/Backmapping
 #mkdir two_FUS_$i/lambda_$l/Backmapping
 cd two_FUS_$i/lambda_$l/Backmapping
 cp ../../../Backmap.py .

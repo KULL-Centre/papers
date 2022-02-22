@@ -4,7 +4,7 @@ import mdtraj as md
 cg_traj = '../prodrun_nopbc.xtc'
 cg_top = '../../../two_FUS_init/PRO_CG.gro'
 
-BM='/home/projects/ku_10001/people/fretho/software/backward-v5/initram-v5_200.sh'
+BM='/home/projects/ku_10001/people/fretho/software/backward-v5_3.0/initram-v5_200.sh'
 gmx='/home/projects/ku_10001/apps/gromacs-2018.1_AVX2_256_12JUN2018/bin/gmx_mpi'
 
 outfile_xtc = '../prodrun_AAbackmapped.xtc'
@@ -30,12 +30,13 @@ for i in range(0,len(traj)):
         #Remove files for next iteration
         os.system('rm backmapped.gro')
         os.system('rm CG_frame.gro')
+        os.system('rm \#*')
 	
 #Load initial AA frame as traj
 AA_traj = md.load('AA_frame0.pdb')
 
 #Loop over all frames but first and concatenate frame to traj
-for i in range(0,len(traj)):
+for i in range(1,len(traj)):
     frame = md.load('AA_frame%i.pdb' % i)
     frame.time = i*1000
     AA_traj = md.Trajectory.join(AA_traj, frame)

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-for i in aSyn_PRE FUS A2
+for i in htau40 OPN aSyn_PRE A2 #FUS
 do
 
 cd ${i}
 
-for j in 1.00 1.06 1.08
+for j in 1.00 1.10 1.12
 do
 
 cd lambda_${j}

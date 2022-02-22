@@ -1,6 +1,6 @@
 #!/bin/bash 
  
-for i in K25 A1 ColNT FhuA Hst52 K19 Sic1 aSyn Hst5 ACTR CoRNID PNt
+for i in ACTR_helices aSyn_bigboxtest K25 A1 CoRNID ColNT FhuA Hst52 K19 PNt Sic1 aSyn Hst5 ACTR aSyn_PME Hst5_PME
 do 
  
 cd $i 

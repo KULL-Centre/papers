@@ -4,9 +4,7 @@ t=298
 
 cd two_FUS_init
 
-
-
-for j in 1.00 #1.08
+for j in 1.00
 do
 
 cd lambda_${j}

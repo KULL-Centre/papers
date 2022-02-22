@@ -1,6 +1,6 @@
-#!/bin/bash
-#PBS -l nodes=1:ppn=40
+#PBS -l nodes=1:ppn=40:thinnode
 #PBS -l walltime=480:00:00
+#PBS -l mem=130gb
 # Go to the directory from where the job was submitted (initial directory is $HOME)
 echo Working directory is $PBS_O_WORKDIR
 cd $PBS_O_WORKDIR
@@ -19,8 +19,3 @@ gmx_mpi pdb2gmx -f ../../min_AA.pdb -o AA.gro -ignh -water none -ff charmm27 -qu
 
 python=/home/projects/ku_10001/people/fretho/miniconda3/bin/python3.8
 $python Backmap.py
-
-echo "========= Job finished at `date` =========="
-
-
-

@@ -1,5 +1,6 @@
-#PBS -l nodes=1:ppn=40
+#PBS -l nodes=1:ppn=40:thinnode
 #PBS -l walltime=240:00:00
+#PBS -l mem=100gb
 # Go to the directory from where the job was submitted (initial directory is $HOME)
 echo Working directory is $PBS_O_WORKDIR
 cd $PBS_O_WORKDIR

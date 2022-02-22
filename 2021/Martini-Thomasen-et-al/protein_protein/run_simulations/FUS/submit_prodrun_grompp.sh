@@ -7,7 +7,7 @@ do
 
 cd two_FUS_$i
 
-for j in 1.00 1.06 1.08
+for j in 1.00 1.10 1.12
 do
 
 mkdir lambda_${j}

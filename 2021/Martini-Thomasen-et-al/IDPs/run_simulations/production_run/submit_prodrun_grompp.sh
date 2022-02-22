@@ -1,17 +1,18 @@
 #!/bin/bash
 
-for i in K25 A1 CoRNID ColNT FhuA Hst52 K19 PNt Sic1 aSyn Hst5 ACTR 
+for i in ACTR_helices aSyn_bigboxtest K25 A1 CoRNID ColNT FhuA Hst52 K19 PNt Sic1 aSyn Hst5 ACTR
 do
 
 cd $i
 
+t=0
 
 if [[ "$i" == "ColNT" ]]
 then
         t=277
 fi
 
-if [[ "$i" == "ACTR" ]]
+if [[ "$i" == "ACTR" || "$i" == "ACTR_helices" ]]
 then
         t=278
 fi
@@ -21,7 +22,7 @@ then
         t=288
 fi
 
-if [[ "$i" == "Hst5" || "$i" == "Sic1" || "$i" == "aSyn" || "$i" == "CoRNID" ]]
+if [[ "$i" == "Hst5" || "$i" == "Sic1" || "$i" == "aSyn" || "$i" == "CoRNID" || "$i" == "aSyn_bigboxtest" ]]
 then
         t=293
 fi
@@ -37,7 +38,6 @@ then
 fi
 
 echo "$i is at ${t}K"
-
 
 for j in 1.00 1.04 1.06 1.08 1.10 1.12 1.14
 do

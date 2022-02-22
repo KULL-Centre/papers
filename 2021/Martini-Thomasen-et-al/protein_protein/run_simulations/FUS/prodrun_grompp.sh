@@ -1,8 +1,9 @@
 #!/bin/sh
 #PBS -W group_list=ku_10001 -A ku_10001
 #PBS -N grompp
-#PBS -l nodes=1:ppn=1
+#PBS -l nodes=1:ppn=1:thinnode
 #PBS -l walltime=240:00:00
+#PBS -l mem=3gb
 # Go to the directory from where the job was submitted (initial directory is $HOME)
 echo Working directory is $PBS_O_WORKDIR
 cd $PBS_O_WORKDIR

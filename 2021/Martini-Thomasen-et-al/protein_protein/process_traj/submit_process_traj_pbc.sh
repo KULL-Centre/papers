@@ -1,16 +1,16 @@
 #!/bin/bash
 
-for protein in ubq FUS aSyn
+for i in FUS htau40 p15PAF aSyn ubq villin_h36
 do
 
-cd $protein
+cd $i
 
 for k in $(seq 1 10)
 do
 
-cd two_${protein}_${k}
+cd two_${i}_${k}
 
-for j in 1.00 1.06 1.08
+for j in 1.00 1.10 1.12
 do
 
 cd lambda_${j}

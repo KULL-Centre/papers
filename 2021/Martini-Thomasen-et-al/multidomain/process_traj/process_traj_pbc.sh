@@ -1,7 +1,8 @@
 #!/bin/sh
 #PBS -W group_list=ku_10001 -A ku_10001
 #PBS -N process_traj_pbc
-#PBS -l nodes=1:ppn=1
+#PBS -l nodes=1:ppn=1:thinnode
+#PBS -l mem=3gb
 #PBS -l walltime=48:00:00
 # Go to the directory from where the job was submitted (initial directory is $HOME)
 echo Working directory is $PBS_O_WORKDIR
