@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in htau40 OPN aSyn_PRE A2 #FUS
+for i in htau40 OPN aSyn_PRE A2 FUS
 do
 
 cd ${i}
