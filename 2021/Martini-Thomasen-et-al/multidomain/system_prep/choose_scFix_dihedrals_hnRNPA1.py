@@ -45,7 +45,7 @@ print("SC-BB-BB-SC scFix are from line %s to line %s in %s" % (start_line_SCBBBB
 
 with open(outfile, 'w') as f:
 
-    #Write topology before scFix dihedrals
+    #Write topology before scFix
     for line in toplines[:start_line_SCBBBB_BBBBSC]:
         f.write(line)
 
