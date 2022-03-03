@@ -51,20 +51,18 @@ with open(outfile, 'w') as f:
 
     j=0
     for i in range(nr_domains):
-        print("Writing dihedrals for domain %i from atom %i to %i" % (i+1, start_stop_atoms[j], start_stop_atoms[j+1]))
         dihedrals = dihedrals_to_keep_domain(start_stop_atoms[j], start_stop_atoms[j+1], toplines, start_line_SCBBBB_BBBBSC, end_line_SCBBBB_BBBBSC)
         for line in dihedrals:
             f.write(line)
 
         j+=2
 
-    #Write topology from first scFix dihedrals to next scFix dihedrals 
+    #Write topology from first scFix to next scFix
     for line in toplines[end_line_SCBBBB_BBBBSC:start_line_SCBBBBSC]:
         f.write(line)
     
     j=0
     for i in range(nr_domains):
-        print("Writing dihedrals for domain %i from atom %i to %i" % (i+1, start_stop_atoms[j], start_stop_atoms[j+1]))
         dihedrals = dihedrals_to_keep_domain(start_stop_atoms[j], start_stop_atoms[j+1], toplines, start_line_SCBBBBSC, end_line_SCBBBBSC)
         for line in dihedrals:
             f.write(line)
