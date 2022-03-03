@@ -49,7 +49,6 @@ with open(outfile, 'w') as f:
     for line in toplines[:start_line_SCBBBB_BBBBSC]:
         f.write(line)
 
-    #Get rubberbands for each domain and write to file
     j=0
     for i in range(nr_domains):
         print("Writing dihedrals for domain %i from atom %i to %i" % (i+1, start_stop_atoms[j], start_stop_atoms[j+1]))
