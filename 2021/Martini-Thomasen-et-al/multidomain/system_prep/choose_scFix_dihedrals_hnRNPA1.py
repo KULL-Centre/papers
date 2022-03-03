@@ -57,7 +57,7 @@ with open(outfile, 'w') as f:
 
         j+=2
 
-    #Write topology from first scFix dihedrals to next scFix dihedrals 
+    #Write topology from first scFix to next scFix
     for line in toplines[end_line_SCBBBB_BBBBSC:start_line_SCBBBBSC]:
         f.write(line)
     
