@@ -1,0 +1,470 @@
+---
+title: "Regression models of yeast degrons"
+author: "Kristoffer E. Johansson"
+output: html_notebook
+date: "March 2022"
+---
+
+Load data and dependencies
+```{r}
+require("glmnet")
+require("gplots")
+
+psi = read.csv("Mashahreh_wt_tiles.csv", sep=";")
+```
+
+
+Calculate amino acid composition of all peptides
+```{r}
+aa_one = strsplit("CDEKRHNQAGSTVMLIFYWP","")[[1]]
+
+# Add amino acid composition of each peptide
+add_aa_composition = function(df, field="peptide", na_unnatural=T) {
+    # function that will add amino acid composition to a data froma
+    l = lapply(df[,field], function(s) {table(strsplit(s,"")[[1]]) })
+    # check for non-standard amino acids
+    i = which( sapply(l, function(t){ ! all(names(t) %in% aa_one) }) )
+    if (length(i) > 0) { 
+        print(sprintf("WARNING: %d peptides have non-standard amino acids",length(i)))
+        print(cbind(i,df[i,field]))
+    }
+    for (aa in aa_one) {
+        df[,aa] = sapply(l, function(t,aa){ if (aa %in% names(t)) t[aa] else 0}, aa=aa)
+    }
+    if (na_unnatural) { df[i,aa_one] = NA }
+    return(df)
+}
+
+psi = add_aa_composition(psi)
+```
+
+Plot of bins in PSI distribution
+
+```{r fig.width=6, fig.height=4}
+# excluding peptides with few observations removes a peak in the bin from 2.6-2.7
+i_use = which(psi$wt.raw_sum > 50)
+h = hist(psi[i_use,"wt.psi"], breaks=seq(1,4,.1), plot=F)
+plot(h$mids, h$density, type="l", ylab="Density", xlab="PSI", yaxt="n")
+abline(v=seq(1,4,.5))
+text(seq(1.25,3.75,.5), rep(.45,6), paste("Bin",seq(6)), srt=45)
+```
+
+
+Amino acid composition as a function of PSI
+
+```{r fig.width=9, fig.height=4}
+i_use = which(psi$wt.raw_sum > 50)
+
+aa_distributions = function(col, psi_breaks) {
+    bins = length(psi_breaks)-1
+    aa_dist = matrix(NA, nrow=bins, ncol=20, dimnames=list(paste0("bin",seq(bins)),aa_one))
+    for (bin_i in seq(bins)) {
+        i = intersect(i_use, which(psi[,col] >= psi_breaks[bin_i] & psi[,col] < psi_breaks[bin_i+1]))
+        t = table(unlist(strsplit(psi[i,"peptide"],"")))
+        aa_dist[paste0("bin",bin_i),] = t[aa_one]
+        ex_name = setdiff(names(t),aa_one)
+        if (length(ex_name) > 0) {
+            print(sprintf("Extra amino acid in bin %d: %s",bin_i,paste(ex_name)))
+            print(t)
+        }
+    }
+    return(aa_dist)
+}
+
+psi_breaks = seq(1, 4, 0.5)
+bins = length(psi_breaks)-1
+aa_dist = aa_distributions("wt.psi", psi_breaks)
+aa_pct = aa_dist/matrix(apply(aa_dist,MARGIN=1,sum), nrow=bins, ncol=length(aa_one), byrow=FALSE)
+b = barplot(aa_pct*100, beside=T, ylab="pct")
+legend("top", paste0("Bin ",seq(bins),": PSI ",psi_breaks[1:bins],"-",psi_breaks[2:(bins+1)]), pch=15, col=gray.colors(bins), ncol=bins/2)
+
+# Simple bin error from number of genotypes in each bin
+bin_err = 1/sqrt(apply(aa_dist,MARGIN=1,sum))*100
+for (j in seq_along(aa_one)) arrows(b[,j], y0=aa_pct[,j]*100+bin_err, y1=aa_pct[,j]*100-bin_err, code=3, length=.01, angle=90)
+```
+
+Find peptides that looks like the validation peptides
+```{r}
+# Validation peptides 
+validation_peptides = c("YLVPFIIAAMVIMHLMA","IMRCKIYFFYLRISKKL","FKRNAVFVGTIFAGAFV","NKLHYCVSCAIHARIVR","SLYLLSIWVKKFKWAGI",
+                        "DEPDEQGNPKKRPGKLS","SGKSNTSNDASNKKETK","VIDKLKNENTDLKDIIQ","LNIRIQTYGETTAVDAL","KVGSIRVHKSGKLSVKI","YQVYREVCAACHSLDRV",
+                        "FKRNAVFVGTEEAGAEV","FKRNAVFVGTRRAGARV","SLELESIWVKKFKWAGE","SLRLRSIWVKKFKWAGR")
+names(validation_peptides) = c("R1","R2","R3","R4","R5","R6","R7","R8","R9","R10","R11","R3_E","R3_R","R5_E","R5_R")
+
+# check for sequences containing the sequence of the 8 left- and rightmost amino acids od validation peptides
+i_valpep_left  = lapply(substr(validation_peptides, 1, 8), function(s){ which(grepl(s,psi$peptide)) })
+i_valpep_right = lapply(substr(validation_peptides,10,17), function(s){ which(grepl(s,psi$peptide)) })
+# union
+i_valpep = unique(unlist(i_valpep_left), unlist(i_valpep_right))
+
+print(sprintf("Found %d peptides that contain the sequencence the first or last 8 amino acids of the validation peptides",length(i_valpep)))
+```
+
+
+Linar model of amino acid composition
+-------------------------------------
+
+```{r}
+# Selection on PSI data
+i_use = which(psi$wt.raw_sum > 50 & ! is.na(psi$A))
+print(sprintf("Using %d of %d peptides for linear model",length(i_use),nrow(psi)))
+
+# Data for model
+x = as.matrix(psi[i_use,aa_one])
+y = psi[i_use,"wt.psi"]
+lambdas = 10^seq(2, -3, by = -.1)
+```
+
+```{r}
+# Linear model with regularization coefficient optimized by 10 fold cross validation
+# Alpha=0 is L2 and aplha=1 is lasso regularization
+cv_lm = cv.glmnet(x, y, alpha=0, family='gaussian', lambda=lambdas)
+```
+
+```{r}
+eval_model = function(y_true, y_pred, x) {
+  sse = sum((y_pred - y_true)^2)
+  sst = sum((y_true - mean(y_true))^2)
+  rsq = 1 - sse / sst
+  rmse = sqrt(sse/nrow(x))
+  return(data.frame(RMSE=rmse, Rsq=rsq))
+}
+
+#lambda = "lambda.1se"
+lambda = "lambda.min"
+pred = predict(cv_lm, s=lambda, newx=x)
+edf = eval_model(y, pred, x)
+
+plot(cv_lm)
+legend("bottomright", c(lambda, sprintf("RMSE: %.2f",edf$RMSE), sprintf("R-sq: %.2f",edf$Rsq)), pch=NA)
+
+plot(cv_lm$glmnet.fit, xvar="lambda")
+
+barplot(coef(cv_lm)[aa_one,], names.arg=aa_one,
+        main=sprintf("Offset %.2f, %s",coef(cv_lm)[1],lambda))
+```
+
+```{r fig.width=3.1, fig.height=3}
+h = hist2d(pred, y, nbins=40, col=c("white", rev(gray.colors(10))), breaks=c(0,seq(1,220,length.out=11)),
+          xlab="PSI model", ylab="PSI screen", xlim=c(1,4), ylim=c(1,4), main=sprintf("Rsq %.2f",edf$Rsq))
+```
+
+
+Logistic regression of amino acid composition
+---------------------------------------------
+```{r}
+eval_roc = function(y_true, y_pred) {
+  # y_true should be two-level factors or bool
+  # y_pred should be probabilities of second level (or TRUE), i.e. type="response"
+  if (! is.factor(y_true) ) {
+    y_true = as.factor(y_true)
+    stopifnot( length(levels(y_true)) == 2 )
+  }
+  if (any(is.na(y_pred))) {
+    print(sprintf("WARNING: Predictions contain %d NA values",sum(is.na(y_pred))))
+  }
+  # is second level (degron; true) mask
+  isl_mask = y_true == levels(y_true)[2]
+  n_pos = sum(isl_mask)
+  n_neg = length(y_true) - n_pos
+  threshold = seq(1,0,-0.01)
+  # True positive rate
+  tp = sapply(threshold, function(t){ sum(y_pred>t & isl_mask) }) 
+  tpr = tp / n_pos
+  # False positive rate
+  fp = sapply(threshold, function(t){ sum(y_pred>t & ! isl_mask) }) 
+  fpr = fp / n_neg
+  # Area under the curve
+  auc = sum( (c(fpr,1)-c(0,fpr))*(c(tpr,1)+c(0,tpr)) )/2
+  plot(fpr, tpr, type="l", xlab="False positive rate", ylab="True positive rate",
+       main=sprintf("AUC: %.4f",auc))
+  points(fpr[51], tpr[51], pch=16)
+  text(fpr[51], tpr[51], sprintf("50%% threshold (%.2f,%.2f)",fpr[51], tpr[51]), pos=4)
+  return(data.frame(threshold=threshold, cut=1-threshold, tpr=tpr, fpr=fpr, specificity=1-fpr, 
+                    ppv = tp / (tp+fp), npv = (n_neg-fp) / (n_neg-fp + n_pos-tp), n=tp+fp))
+}
+```
+
+Cross validation 
+
+```{r}
+# Selection on data
+reads_cut = 50
+degron_cut = 2.2
+stable_cut = 2.8
+n_hq = sum(psi$wt.raw_sum > reads_cut)
+print(sprintf("Peptides with more than %d reads: %d of %d (%.2f%%)",reads_cut,n_hq,nrow(psi),n_hq/nrow(psi)*100))
+print(sprintf("Using peptides with more than %d reads and PSI < %.2f or PSI > %.2f",reads_cut, degron_cut, stable_cut))
+i_use = which(psi$wt.raw_sum > reads_cut & ! is.na(psi$A) & (psi$wt.psi < degron_cut | psi$wt.psi >= stable_cut))
+#i_use = setdiff(i_use, i_valpep)
+print(sprintf("Using %d of %d (%.2f%%) peptides for logistic regression model",length(i_use),nrow(psi),length(i_use)/nrow(psi)*100))
+
+# Data for amino acid composition model
+x_aa = as.matrix(psi[i_use,aa_one])
+# Binary category: TRUE (positive label) is degron
+y = psi[i_use,"wt.psi"] < (degron_cut+stable_cut)/2
+print(sprintf("Of these, %d (%.2f%%) are degrons and %d (%.2f%%) stable",sum(y),sum(y)/length(i_use)*100,sum(!y),sum(!y)/length(i_use)*100))
+lambdas = 10^seq(2, -4, -0.1)
+```
+
+```{r}
+# Alpha=0 is ridge/L2 and aplha=1 is lasso regularization
+# For 'binomial', results are returned only for the class corresponding to the second level of the factor response
+# Measure 'deviance' (actual deviance) is default, alternative 'mse' (squared loss), 'class' (miscalssification) or 'auc'
+cv_lm_aa = cv.glmnet(x_aa, y, alpha=0, family='binomial', lambda=lambdas, type.measure="auc", nfolds=10)
+```
+
+```{r}
+lambda = 1e-3
+#lambda = cv_lm_aa["lambda.1se"][[1]]
+#lambda = cv_lm_aa["lambda.min"][[1]]
+
+plot(cv_lm_aa)
+abline(v=log(lambda), lty=2, lwd=2)
+plot(cv_lm_aa$glmnet.fit, xvar="lambda")
+barplot(coef(cv_lm_aa)[aa_one,], names.arg=aa_one,
+        main=sprintf("Offset %.2f, lambda %.2e",coef(cv_lm_aa)[1],lambda))
+
+# Evaluate on training data
+pred = predict(cv_lm_aa, s=lambda, newx=x_aa, type="response")
+roc = eval_roc(y, pred)
+legend("bottomright", sprintf("lambda: %.2e",lambda))
+
+# Evaluate on all data
+i_use = which(psi$wt.raw_sum > reads_cut & ! is.na(psi$A))
+#i_use = setdiff(i_use, i_valpep)
+print(sprintf("Using %d of %d (%.2f%%) peptides for full evaluation",length(i_use),nrow(psi),length(i_use)/nrow(psi)*100))
+x_all = as.matrix(psi[i_use,aa_one])
+y_all = psi[i_use,"wt.psi"] < (degron_cut+stable_cut)/2
+print(sprintf("Of these, %d (%.2f%%) are degrons and %d (%.2f%%) stable",sum(y),sum(y)/length(i_use)*100,sum(!y),sum(!y)/length(i_use)*100))
+
+pred_all = predict(cv_lm_aa, s=lambda, newx=x_all, type="response")
+roc = eval_roc(y_all, pred_all)
+legend("bottomright", sprintf("lambda: %.2e",lambda))
+
+```
+reads_cut = 50, l = 1e-3
+deg_cut stab_cut    AUC AUC_full
+    2.5      2.5   0.79     0.79
+    2.4      2.6   0.81     0.79 
+    2.2      2.8   0.85     0.79
+    2.0      3.0   0.88     0.79
+
+Full model
+```{r}
+# Fix ridge regularization
+lambda = 1e-3
+
+# Training data
+raw_cut = 50
+degron_cut = 2.2
+stable_cut = 2.8
+i_use = which(psi$wt.raw_sum > raw_cut & ! is.na(psi$A) & (psi$wt.psi < degron_cut | psi$wt.psi >= stable_cut))
+# i_use = setdiff(i_use, i_valpep)
+
+# Data for model
+x_aa = as.matrix(psi[i_use,aa_one])
+y = psi[i_use,"wt.psi"] < (degron_cut+stable_cut)/2
+
+# Fit model
+logit = glmnet(x_aa, y, alpha=0, family='binomial', lambda=lambda)
+
+# Evaluate on traning data
+pred = predict(logit, newx=x_aa, type="response")
+logit_roc = eval_roc(y, pred)
+legend("bottomright", c(sprintf("data: %d",length(y)), sprintf("lambda: %.1e",lambda), sprintf("discard %.2f < PSI < %.2f",degron_cut,stable_cut)))
+
+print(logit_roc)
+
+# Evaluate on all data
+i_use = which(psi$wt.raw_sum > raw_cut & ! is.na(psi$A))
+x_aa = as.matrix(psi[i_use,aa_one])
+y = psi[i_use,"wt.psi"] < (degron_cut+stable_cut)/2
+pred = predict(logit, newx=x_aa, type="response")
+logit_roc_all = eval_roc(y, pred)
+legend("bottomright", c(sprintf("data: %d",length(y)), sprintf("lambda: %.1e",lambda), sprintf("discard %.2f < PSI < %.2f",degron_cut,stable_cut)))
+
+print(logit_roc_all)
+
+barplot(coef(logit)[aa_one,], names.arg=aa_one,
+        main=sprintf("Offset %.2f, lambda %s",coef(cv_lm_aa)[1],lambda))
+
+save(logit, logit_roc, logit_roc_all, file="regres.rda")
+```
+
+
+Logistic regression of di-peptides
+----------------------------------
+
+```{r}
+# vector with the 400 possible di-peptides
+dipep = paste0(rep(aa_one,each=length(aa_one)), rep(aa_one,length(aa_one)))
+
+add_dipep_composition = function(df, field="peptide") {
+  for (dp in dipep) {
+    df[,dp] = 0
+  }
+  for (i in seq_along(df[,field])) {
+    peptide_aa = strsplit(df[i,field],"")[[1]]
+    peptide_dipep = paste0(peptide_aa[1:(length(peptide_aa)-1)], peptide_aa[2:length(peptide_aa)])
+    if (! all(peptide_dipep %in% dipep)) {
+      df[i,dipep] = NA
+      print(sprintf("WARNING: Bad dipeptide composition of peptide %d: %s. NA inserted",i,df[i,field]))
+      next
+    }
+    for (dp in peptide_dipep) {
+      df[i,dp] = df[i,dp]+1
+    }
+    #print(paste(df[i,field], df[i,"RL"], df[i,"LI"], df[i,"DL"]))
+  }
+  return(df)
+}
+
+psi_dipep = add_dipep_composition(psi)
+
+dipep_sums = sapply(dipep, function(dp){ sum(psi_dipep[,dp], na.rm=T) })
+# Are there substatial counts on all dipeptides
+print(summary(dipep_sums))
+```
+
+Cross validation
+```{r}
+# Data for did-peptide model
+reads_cut = 50
+degron_cut = 2.2
+stable_cut = 2.8
+i_use = which(psi_dipep$wt.raw_sum > reads_cut & ! is.na(psi_dipep$AA) & (psi_dipep$wt.psi < degron_cut | psi_dipep$wt.psi >= stable_cut))
+# i_use = setdiff(i_use, i_valpep)
+print(sprintf("Using %d of %d peptides for linear model",length(i_use),nrow(psi_dipep)))
+
+x_dp = as.matrix(psi_dipep[i_use,dipep])
+# Binary degron category
+y_dp = psi_dipep[i_use,"wt.psi"] < (degron_cut+stable_cut)/2
+print(sprintf("Of these, %d are degrons",sum(y_dp)))
+```
+
+```{r}
+# Alpha=0 is L2 and aplha=1 is lasso regularization
+# For 'binomial', results are returned only for the class corresponding to the second level of the factor response
+# Measure 'deviance' (actual deviance) is default, alternative 'mse' (squared loss), 'class' (miscalssification) or 'auc'
+cv_lm_dp = cv.glmnet(x_dp, y_dp, alpha=0, family='binomial', lambda=lambdas, type.measure="auc")
+```
+
+
+```{r}
+lambda = 1.0
+# lambda = cv_lm_dp["lambda.min"][[1]]
+# lambda = cv_lm_dp["lambda.1se"][[1]]
+
+plot(cv_lm_dp)
+abline(v=log(lambda), lty=2, lwd=2)
+plot(cv_lm_dp$glmnet.fit, xvar="lambda")
+
+# Evaluate on training data
+pred = predict(cv_lm_dp, s=lambda, newx=x_dp, type="response")
+roc = eval_roc(y_dp, pred)
+legend("bottomright", sprintf("lambda: %.1e",lambda))
+
+# Evaluate on all data
+i_use = which(psi$wt.raw_sum > reads_cut & ! is.na(psi$A))
+#i_use = setdiff(i_use, i_valpep)
+print(sprintf("Using %d of %d (%.2f%%) peptides for full evaluation",length(i_use),nrow(psi),length(i_use)/nrow(psi)*100))
+x_dp_all = as.matrix(psi_dipep[i_use,dipep])
+y_dp_all = psi_dipep[i_use,"wt.psi"] < (degron_cut+stable_cut)/2
+print(sprintf("Of these, %d (%.2f%%) are degrons and %d (%.2f%%) stable",sum(y_dp_all),sum(y_dp_all)/length(i_use)*100,sum(!y_dp_all),sum(!y_dp_all)/length(i_use)*100))
+pred_all = predict(cv_lm_dp, s=lambda, newx=x_dp_all, type="response")
+roc = eval_roc(y_dp_all, pred_all)
+legend("bottomright", sprintf("lambda: %.1e",lambda))
+```
+reads_cut = 50, l = 1e-3
+deg_cut stab_cut      AUC   AUC_full
+    2.5      2.5   0.8105     0.8105
+    2.4      2.6   0.8315     0.8091
+    2.2      2.8   0.8723     0.8050
+    2.0      3.0   0.9064     0.7999
+
+
+Full model without cross validation
+```{r}
+# Fix ridge regularization, AUC is quite insensitive to lambda, parameters are not!
+lambda = 1.0
+# lambda = lambdas[21] # lambda.1se = 1.00
+# lambda = lambdas[29] # lambda.min = 0.16
+
+# Training data
+raw_cut = 50
+degron_cut = 2.2
+stable_cut = 2.8
+i_use = which(psi_dipep$wt.raw_sum > reads_cut & ! is.na(psi_dipep$AA) & (psi_dipep$wt.psi < degron_cut | psi_dipep$wt.psi >= stable_cut))
+#i_use = setdiff(i_use, i_valpep)
+print(sprintf("Using %d of %d peptides for dipeptide model",length(i_use),nrow(psi_dipep)))
+
+x_dp = as.matrix(psi_dipep[i_use,dipep])
+y_dp = psi_dipep[i_use,"wt.psi"] < (degron_cut+stable_cut)/2
+print(sprintf("Of these, %d are degrons",sum(y_dp)))
+
+# Fit model
+logit_dp = glmnet(x_dp, y_dp, alpha=0, family='binomial', lambda=lambda)
+
+# Evaluate on traning data
+pred = predict(logit_dp, newx=x_dp, type="response")
+roc = eval_roc(y_dp, pred)
+legend("bottomright", c(sprintf("data: %d",length(y_dp)), sprintf("lambda: %.1e",lambda), sprintf("discard %.2f < PSI < %.2f",degron_cut,stable_cut)))
+print(roc)
+
+# Evaluate on all data
+i_use = which(psi_dipep$wt.raw_sum > raw_cut & ! is.na(psi_dipep$AA))
+# i_use = setdiff(i_use, i_valpep)
+print(sprintf("Using %d of %d peptides for evaluating dipeptide model on all data",length(i_use),nrow(psi_dipep)))
+x_dp_all = as.matrix(psi_dipep[i_use,dipep])
+y_dp_all = psi_dipep[i_use,"wt.psi"] < (degron_cut+stable_cut)/2
+pred_all = predict(logit_dp, newx=x_dp_all, type="response")
+roc_all = eval_roc(y_dp_all, pred_all)
+legend("bottomright", c(sprintf("data: %d",length(y_dp_all)), sprintf("lambda: %.1e",lambda), sprintf("discard %.2f < PSI < %.2f",degron_cut,stable_cut)))
+print(roc_all)
+```
+reads_cut = 50, l = 1e-3
+deg_cut stab_cut      AUC   AUC_full
+    2.5      2.5   0.8105     0.8105
+    2.4      2.6   0.8316     0.8091
+    2.2      2.8   0.8723     0.8049
+    2.0      3.0   0.9064     0.7999
+
+
+Heatmap plot of the 400 dipeptide parameters
+```{r fig.width=7.5, fig.height=6}
+param = coef(logit_dp)[,1]
+# summary(param)
+grad_range_min = floor(min(param[dipep])*100)/100
+grad_range_max = ceiling(max(param[dipep])*100)/100
+
+ns = abs(grad_range_min)*100
+nd = abs(grad_range_max)*100
+col_destab = "#ff5a6b";  col_neutral = "#ffff00";    col_stab = "#079700"
+col_grad = c(colorRampPalette( c(col_stab, col_neutral), space="rgb")(ns), colorRampPalette( c(col_neutral,col_destab), space="rgb")(nd))
+col_breaks = seq(grad_range_min, grad_range_max, length.out=ns+nd+1)
+
+# Heatmap
+layout(matrix(c(1,1,3,2), ncol=2, ), width=c(5,1), height=c(1,3))
+m = matrix(param[dipep], ncol=20, byrow=T)
+image(m, xaxt="n", yaxt="n", zlim=c(grad_range_min,grad_range_max), col=col_grad)
+abline(0,1)
+axis(1, seq(0, 20, length=20)/20, aa_one, cex.axis=.8, las=1, gap.axis=0)
+axis(2, seq(0, 20, length=20)/20, aa_one, cex.axis=.8, las=1, gap.axis=0)
+title(xlab="First amino acid", ylab="Second amino acid", main=sprintf("Offset: %.2f",param['(Intercept)']))
+
+# Scalebar
+par(mar=c(3,2,1,4)+.1)
+image(t(col_breaks), zlim=c(grad_range_min,grad_range_max), col=col_grad, breaks=col_breaks, xaxt="n", yaxt="n")
+n = 6
+axis(4,seq(0,n, length=n)/n, seq(grad_range_min, grad_range_max, length=n), las=2)
+```
+It seems that the di-peptide model parameters reflects little more than single amino acid parameters
+
+```{r, fig.width=2, fig.height=2}
+aa_dipep_coef = (rep(coef(logit)[aa_one,],each=length(aa_one)) + rep(coef(logit)[aa_one,],length(aa_one)))/2.0
+names(aa_dipep_coef) = paste0(rep(aa_one, each=length(aa_one)), rep(aa_one,length(aa_one)))
+rp = cor(aa_dipep_coef, coef(logit_dp)[dipep,], method="pearson")
+plot(aa_dipep_coef, coef(logit_dp)[dipep,], xlab="Average of single amino acid parameters", ylab="Di-peptide parameters")
+#legend("topleft", sprintf("Pearson %.3f",rp))
+```
