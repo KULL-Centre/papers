@@ -118,8 +118,7 @@ for i in range(nonbonded_start_line,len(toplines)):
     new_toplines.append(new_topline)
     
     #Stop if next line is the beginning of new toplogy stuff
-    #(if your toplogy file is strangely formatted, maybe this will cause a problem)
-    if '[' in toplines[i+1] or ';' in toplines[i+1]:
+    if '[' in toplines[i+1]:
         nonbonded_end_line = i+1
         break
 
