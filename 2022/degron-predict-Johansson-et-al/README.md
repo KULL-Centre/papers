@@ -1,5 +1,15 @@
 Data and code for "Prediction of quality-control degradation signals in yeast proteins" by Johansson et al
 
+Files
+-----
+
+- QCDpred.py: Stand-alone python implementation of the QCDpred model (see below)
+- QCDpred.ipynb: ipython notebook implementation of the QCDpred model intended for webserver usage with Google colab (see below)
+- degron_model.Rmd: Rstudio notebook used for development of QCDpred
+- Mashahreh_wt_tiles.csv: PSI data of yeast complexes from Mashahreh et al. 2022 used for training the model
+- yeast_proteome.csv: Data used in the analysis of the yeast proteome (without membrane associated proteins) based on data from Dubreuil et al. 2019 and Christiano et al. 2014
+- QCDpred_tiles.txt: QCDpred evaluation of all tiles in the yeast proteome in yeast_proteome.csv
+
 The degron prediction program QCDpred is available as a stand-alone python program and a web server using Googles CoLab Service 
 
 QCDpred.py
