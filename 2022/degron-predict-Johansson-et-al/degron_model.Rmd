@@ -42,7 +42,7 @@ Plot of bins in PSI distribution
 
 ```{r fig.width=6, fig.height=4}
 # excluding peptides with few observations removes a peak in the bin from 2.6-2.7
-i_use = which(psi$wt.raw_sum > 50)
+i_use = which(psi$wt.raw_sum > 50 & ! is.na(psi$A))
 h = hist(psi[i_use,"wt.psi"], breaks=seq(1,4,.1), plot=F)
 plot(h$mids, h$density, type="l", ylab="Density", xlab="PSI", yaxt="n")
 abline(v=seq(1,4,.5))
@@ -53,7 +53,7 @@ text(seq(1.25,3.75,.5), rep(.45,6), paste("Bin",seq(6)), srt=45)
 Amino acid composition as a function of PSI
 
 ```{r fig.width=9, fig.height=4}
-i_use = which(psi$wt.raw_sum > 50)
+i_use = which(psi$wt.raw_sum > 50 & ! is.na(psi$A))
 
 aa_distributions = function(col, psi_breaks) {
     bins = length(psi_breaks)-1
@@ -81,23 +81,6 @@ legend("top", paste0("Bin ",seq(bins),": PSI ",psi_breaks[1:bins],"-",psi_breaks
 # Simple bin error from number of genotypes in each bin
 bin_err = 1/sqrt(apply(aa_dist,MARGIN=1,sum))*100
 for (j in seq_along(aa_one)) arrows(b[,j], y0=aa_pct[,j]*100+bin_err, y1=aa_pct[,j]*100-bin_err, code=3, length=.01, angle=90)
-```
-
-Find peptides that looks like the validation peptides
-```{r}
-# Validation peptides 
-validation_peptides = c("YLVPFIIAAMVIMHLMA","IMRCKIYFFYLRISKKL","FKRNAVFVGTIFAGAFV","NKLHYCVSCAIHARIVR","SLYLLSIWVKKFKWAGI",
-                        "DEPDEQGNPKKRPGKLS","SGKSNTSNDASNKKETK","VIDKLKNENTDLKDIIQ","LNIRIQTYGETTAVDAL","KVGSIRVHKSGKLSVKI","YQVYREVCAACHSLDRV",
-                        "FKRNAVFVGTEEAGAEV","FKRNAVFVGTRRAGARV","SLELESIWVKKFKWAGE","SLRLRSIWVKKFKWAGR")
-names(validation_peptides) = c("R1","R2","R3","R4","R5","R6","R7","R8","R9","R10","R11","R3_E","R3_R","R5_E","R5_R")
-
-# check for sequences containing the sequence of the 8 left- and rightmost amino acids od validation peptides
-i_valpep_left  = lapply(substr(validation_peptides, 1, 8), function(s){ which(grepl(s,psi$peptide)) })
-i_valpep_right = lapply(substr(validation_peptides,10,17), function(s){ which(grepl(s,psi$peptide)) })
-# union
-i_valpep = unique(unlist(i_valpep_left), unlist(i_valpep_right))
-
-print(sprintf("Found %d peptides that contain the sequencence the first or last 8 amino acids of the validation peptides",length(i_valpep)))
 ```
 
 
@@ -196,7 +179,6 @@ n_hq = sum(psi$wt.raw_sum > reads_cut)
 print(sprintf("Peptides with more than %d reads: %d of %d (%.2f%%)",reads_cut,n_hq,nrow(psi),n_hq/nrow(psi)*100))
 print(sprintf("Using peptides with more than %d reads and PSI < %.2f or PSI > %.2f",reads_cut, degron_cut, stable_cut))
 i_use = which(psi$wt.raw_sum > reads_cut & ! is.na(psi$A) & (psi$wt.psi < degron_cut | psi$wt.psi >= stable_cut))
-#i_use = setdiff(i_use, i_valpep)
 print(sprintf("Using %d of %d (%.2f%%) peptides for logistic regression model",length(i_use),nrow(psi),length(i_use)/nrow(psi)*100))
 
 # Data for amino acid composition model
@@ -232,7 +214,6 @@ legend("bottomright", sprintf("lambda: %.2e",lambda))
 
 # Evaluate on all data
 i_use = which(psi$wt.raw_sum > reads_cut & ! is.na(psi$A))
-#i_use = setdiff(i_use, i_valpep)
 print(sprintf("Using %d of %d (%.2f%%) peptides for full evaluation",length(i_use),nrow(psi),length(i_use)/nrow(psi)*100))
 x_all = as.matrix(psi[i_use,aa_one])
 y_all = psi[i_use,"wt.psi"] < (degron_cut+stable_cut)/2
@@ -260,7 +241,6 @@ raw_cut = 50
 degron_cut = 2.2
 stable_cut = 2.8
 i_use = which(psi$wt.raw_sum > raw_cut & ! is.na(psi$A) & (psi$wt.psi < degron_cut | psi$wt.psi >= stable_cut))
-# i_use = setdiff(i_use, i_valpep)
 
 # Data for model
 x_aa = as.matrix(psi[i_use,aa_one])
@@ -334,7 +314,6 @@ reads_cut = 50
 degron_cut = 2.2
 stable_cut = 2.8
 i_use = which(psi_dipep$wt.raw_sum > reads_cut & ! is.na(psi_dipep$AA) & (psi_dipep$wt.psi < degron_cut | psi_dipep$wt.psi >= stable_cut))
-# i_use = setdiff(i_use, i_valpep)
 print(sprintf("Using %d of %d peptides for linear model",length(i_use),nrow(psi_dipep)))
 
 x_dp = as.matrix(psi_dipep[i_use,dipep])
@@ -367,7 +346,6 @@ legend("bottomright", sprintf("lambda: %.1e",lambda))
 
 # Evaluate on all data
 i_use = which(psi$wt.raw_sum > reads_cut & ! is.na(psi$A))
-#i_use = setdiff(i_use, i_valpep)
 print(sprintf("Using %d of %d (%.2f%%) peptides for full evaluation",length(i_use),nrow(psi),length(i_use)/nrow(psi)*100))
 x_dp_all = as.matrix(psi_dipep[i_use,dipep])
 y_dp_all = psi_dipep[i_use,"wt.psi"] < (degron_cut+stable_cut)/2
@@ -396,7 +374,6 @@ raw_cut = 50
 degron_cut = 2.2
 stable_cut = 2.8
 i_use = which(psi_dipep$wt.raw_sum > reads_cut & ! is.na(psi_dipep$AA) & (psi_dipep$wt.psi < degron_cut | psi_dipep$wt.psi >= stable_cut))
-#i_use = setdiff(i_use, i_valpep)
 print(sprintf("Using %d of %d peptides for dipeptide model",length(i_use),nrow(psi_dipep)))
 
 x_dp = as.matrix(psi_dipep[i_use,dipep])
@@ -414,7 +391,6 @@ print(roc)
 
 # Evaluate on all data
 i_use = which(psi_dipep$wt.raw_sum > raw_cut & ! is.na(psi_dipep$AA))
-# i_use = setdiff(i_use, i_valpep)
 print(sprintf("Using %d of %d peptides for evaluating dipeptide model on all data",length(i_use),nrow(psi_dipep)))
 x_dp_all = as.matrix(psi_dipep[i_use,dipep])
 y_dp_all = psi_dipep[i_use,"wt.psi"] < (degron_cut+stable_cut)/2
