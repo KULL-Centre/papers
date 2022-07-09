@@ -7,7 +7,7 @@ This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks an
 - `analyses.ipynb` Jupyter Notebook to analyze all the simulation data and generate plots
 - `calc_conc.ipynb` Jupyter Notebook to calculate _c<sub>sat</sub>_ and _c<sub>con</sub>_ from direct-coexistence molecular simulations
 - `prior.ipynb` Jupyter Notebook to carry out the analysis of the hydrophobicity scales collected by Simm et al. [DOI: 10.1186/s40659-016-0092-5](https://doi.org/10.1186/s40659-016-0092-5)
-- `optimization/` Data and Python code related to the optimization of the residue-specific ``stickiness'' parameters [HOOMD-blue](https://hoomd-blue.readthedocs.io/en/latest/) 
+- `optimization/` Data and Python code related to the optimization of the residue-specific ``stickiness'' parameters using [HOOMD-blue](https://hoomd-blue.readthedocs.io/en/latest/) installed with [mphowardlab/azplugins](https://github.com/mphowardlab/azplugins)
 - `SC/` Data and Python code related to single-chain simulations of the CALVADOS model
 - `MC/` Data and Python code related to multi-chain simulations of the CALVADOS model in slab geometry
 

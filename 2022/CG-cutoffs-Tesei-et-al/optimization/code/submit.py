@@ -16,7 +16,7 @@ submission_1 = Template("""#!/bin/sh
 
 source /groups/sbinlab/giulio/.bashrc
 
-conda activate hoomd
+conda activate calvados
 
 echo $SLURM_CPUS_PER_TASK
 
@@ -37,7 +37,7 @@ submission_2 = Template("""#!/bin/sh
 
 source /groups/sbinlab/giulio/.bashrc
 
-conda activate hoomd
+conda activate calvados
 
 echo $SLURM_CPUS_PER_TASK
 
@@ -58,7 +58,7 @@ submission_3 = Template("""#!/bin/sh
 
 source /groups/sbinlab/giulio/.bashrc
 
-conda activate hoomd
+conda activate calvados
 
 echo $SLURM_CPUS_PER_TASK
 

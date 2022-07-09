@@ -13,12 +13,11 @@ submission = Template("""#!/bin/bash
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=18
 #SBATCH -t 24:00:00
-#SBATCH --mem=300GB
 #SBATCH -o {{name}}_{{temp}}.out
 #SBATCH -e {{name}}_{{temp}}.err
 
 source /home/gitesei/.bashrc
-conda activate hoomd
+conda activate calvados
 module purge
 module load cmake/3.9.4 gcc/6.5.0 openmpi/4.0.3 llvm/7.0.0 cuda/9.2.148
 
