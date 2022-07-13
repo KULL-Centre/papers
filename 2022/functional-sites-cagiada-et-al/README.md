@@ -11,7 +11,7 @@ This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks an
 
 ### Usage
 
-To run the Notebooks, we suggest to open it in [Google Colaboratory]([https://colab.research.google.com/).
+To run the Notebooks, we suggest to open it in [Google Colaboratory](https://colab.research.google.com/), it can be open clicking [here](https://colab.research.google.com/github/KULL-Centre/papers/blob/main/2022/functional-sites-cagiada-et-al/Functional_site_model.ipynb).
 To run the Notebook is necessary to follow different steps:
 1 Run the first two cells, which install all the dependencies and load the required functions to run the predictor.
 2 Run in the order all the cells marked as 'Preliminary operations' which allow to upload all the necessary information for running the notebook:
@@ -19,8 +19,9 @@ To run the Notebook is necessary to follow different steps:
   - adding the file with the thermodynamic stability measure (for the file format look in the following section).
   - adding the file with the evolutionary conservation measure made (for the file format look in the following section).
   - adding the target protein pdb (which should cover all the target sequence or part of it)
-3 Run the cell 'Variant prediction and residue classification' to load the model and using it to make predictions with the provided input informations.
-4 Run the cell 'Download predictions'  which allow to generate and create the files with prediction at variant and residue level.
+3 Download from the 'catboost_model' folder the catboost model file and upload it into your colab session. N.B This is a REQUIRED STEP and the model will work only if the file is loaded into the main folde, WITHOUT changing the file's name. This will be automatized soon. 
+4 Run the cell 'Variant prediction and residue classification' to load the model and using it to make predictions with the provided input informations.
+5 Run the cell 'Download predictions'  which allow to generate and create the files with prediction at variant and residue level.
 
 
 ### File format:
