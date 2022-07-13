@@ -25,30 +25,30 @@ To run the Notebook is necessary to follow different steps:
 
 
 ### File format:
-1 All the input data should follow the same numeration of the uploaded target sequence. In case of different numeration, for themodynamic stability changes and conservation measures is it possible to input the difference between the uploaded target sequence and the file's sequence. This option is not available in the pdb uploading cell.
+- All the input data should follow the same numeration of the uploaded target sequence. In case of different numeration, for themodynamic stability changes and conservation measures is it possible to input the difference between the uploaded target sequence and the file's sequence. This option is not available in the pdb uploading cell.
 
-2 Input files containing thermodynamic stability changes prediction should be properly formatted.
+- Input files containing thermodynamic stability changes prediction should be properly formatted.
 
-----------------------------------
+********************************* 
 E.g. for Protein with 45 residues:
 
-Mutation  Score[in kcal/mol]
-M1A       2.4
-M1C       1.2
-...
-M1W       1.3
-C2A       0.2
-..
-..
-Y45W       0.3
-
-----------------------------------
+Mutation  Score[in kcal/mol]  
+M1A       2.4  
+M1C       1.2  
+..  
+M1W       1.3  
+C2A       0.2   
+..  
+..  
+Y45W       0.3  
+  
+********************************* 
 Synonymous mutations should be skipped or reported as mutation to =. Stop mutations has to been removed from the list.
 Examples of predictions can be found in 'score_rosetta' folder.
 
-3 Input files containing evoluationary conservation measures should follow the same format rules as shown for stability prediction or the GEMME website output folder (remember to select in the notebook the format used). All the prediction should be generated using GEMME.
+- Input files containing evoluationary conservation measures should follow the same format rules as shown for stability prediction or the GEMME website output folder (remember to select in the notebook the format used). All the prediction should be generated using GEMME.
 
-4 PBD files should follow the same numeration and should not contain extra residue/regions compared to the uploaded target sequence. The target structure has to be named as chain A.
+- PBD files should follow the same numeration and should not contain extra residue/regions compared to the uploaded target sequence. The target structure has to be named as chain A.
 
 ### Output:
 Running  the 'Download predictions' cell generates two output files, which can be downloaded as archive or display online in the colaboratory.
