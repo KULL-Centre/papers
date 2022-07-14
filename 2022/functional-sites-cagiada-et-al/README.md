@@ -18,8 +18,7 @@ To run the Notebook is necessary to follow different steps:
   - adding the target protein sequence
   - adding the file with the thermodynamic stability measure (for the file format look in the following section).
   - adding the file with the evolutionary conservation measure made (for the file format look in the following section).
-  - adding the target protein pdb (which should cover all the target sequence or part of it)
-3 Download from the 'catboost_model' folder the catboost model file and upload it into your colab session. N.B This is a REQUIRED STEP and the model will work only if the file is loaded into the main folde, WITHOUT changing the file's name. This will be automatized soon. 
+  - adding the target protein pdb (which should cover all the target sequence or part of it) 
 4 Run the cell 'Variant prediction and residue classification' to load the model and using it to make predictions with the provided input informations.
 5 Run the cell 'Download predictions'  which allow to generate and create the files with prediction at variant and residue level.
 
@@ -46,7 +45,7 @@ Y45W       0.3
 Synonymous mutations should be skipped or reported as mutation to =. Stop mutations has to been removed from the list.
 Examples of predictions can be found in 'score_rosetta' folder.
 
-- Input files containing evoluationary conservation measures should follow the same format rules as shown for stability prediction or the GEMME website output folder (remember to select in the notebook the format used). All the prediction should be generated using GEMME.
+- Input files containing evolutionary conservation measures should follow the same format rules as shown for stability prediction or the GEMME website output folder (remember to select in the notebook the format used). All the prediction should be generated using GEMME.
 
 - PBD files should follow the same numeration and should not contain extra residue/regions compared to the uploaded target sequence. The target structure has to be named as chain A.
 
