@@ -21,7 +21,7 @@ Tested on Linux using Miniconda.
 `cd src/pdb_parser_scripts`<br/>
 `git clone` https://github.com/rlabduke/reduce.git <br/>
 `cd reduce/`<br/>
-`make`; `make install` # This might give an error but provides the reduce executable in this directory<br/>..
+`make`; `make install` # This might give an error but provides the reduce executable in this directory.
 
 4. Download the data file `df_rasp_gnomad_clinvar.csv` from https://zenodo.org/record/6835878#.YtCFlC8RpQJ and add it to the directory `data/test/GnomAD_ClinVar/`.
 
