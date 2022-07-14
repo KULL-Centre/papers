@@ -4,8 +4,8 @@ Scripts and data to repeat the analyses in Blaabjerg et al.:
 
 ## Code
 Overview of files:<br>
-`src/run_pred.py` contains a pipeline for making ddG ML predictions.<br/>
-`src/run_pred_SLURM.sh` contains a recommended SLURM script.<br/>
+`src/run_pipeline.py` contains a pipeline for repeating analyses in paper.<br/>
+`src/run_pipeline_SLURM.sh` contains a recommended SLURM script.<br/>
 
 ## Installation
 (Tested on Linux using Miniconda).
