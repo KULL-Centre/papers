@@ -1,3 +1,4 @@
+## Introduction
 Scripts and data to repeat the analyses in Blaabjerg et al.: 
 "Rapid protein stability prediction using deep learning representations"
 
@@ -23,4 +24,4 @@ Overview of files:<br>
 `make`; `make install` # This might give an error but provides the reduce executable in this directory<br/>
 
 ## Execution
-1. Execute the pipeline on using the python script `src/run_pipeline.py`.
+Execute the pipeline using the python script `src/run_pipeline.py`.
