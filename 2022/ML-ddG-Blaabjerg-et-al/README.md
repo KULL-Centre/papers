@@ -29,3 +29,6 @@ Tested on Linux using Miniconda.
 
 ## Execution
 Execute the pipeline using the python script `src/run_pipeline.py`.
+
+## Acknowledgements
+Parts of the code - specifically related to the 3D CNN model - was developed by Maher Kassem and Wouter Boomsma. We thank them for their contributions.
