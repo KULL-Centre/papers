@@ -1,8 +1,8 @@
 # Rapid protein stability prediction using deep learning representations
 
 ## Introduction
-Scripts and data to repeat the analyses in Blaabjerg et al.: 
-*"Rapid protein stability prediction using deep learning representations"*.
+Scripts and data to repeat the analyses in Blaabjerg et al.:
+[*"Rapid protein stability prediction using deep learning representations"*](https://colab.research.google.com/github/KULL-Centre/papers/blob/main/2022/ML-ddG-Blaabjerg-et-al/RaSPLab.ipynb).
 
 ## Code
 Overview of files:<br>
