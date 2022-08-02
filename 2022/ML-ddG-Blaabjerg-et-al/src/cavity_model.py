@@ -1,7 +1,4 @@
-import glob
 import os
-import random
-from typing import Callable, List, Union
 
 import numpy as np
 import pandas as pd
@@ -44,47 +41,20 @@ class ResidueEnvironment:
 
     def __init__(
         self,
-        xyz_coords: np.ndarray,
-        atom_types: np.ndarray,
-        restype_onehot: np.ndarray,
-        chain_id: str,
-        pdb_residue_number: int,
-        pdb_id: str,
+        xyz_coords,
+        atom_types,
+        restype_onehot,
+        chain_id,
+        pdb_residue_number,
+        pdb_id,
     ):
-        self._xyz_coords = xyz_coords
-        self._atom_types = atom_types
-        self._restype_onehot = restype_onehot
-        self._chain_id = chain_id
-        self._pdb_residue_number = pdb_residue_number
-        self._pdb_id = pdb_id
-
-    @property
-    def xyz_coords(self):
-        return self._xyz_coords
-
-    @property
-    def atom_types(self):
-        return self._atom_types
-
-    @property
-    def restype_onehot(self):
-        return self._restype_onehot
-
-    @property
-    def restype_index(self):
-        return np.argmax(self.restype_onehot)
-    
-    @property
-    def chain_id(self):
-        return self._chain_id
-
-    @property
-    def pdb_residue_number(self):
-        return self._pdb_residue_number
-
-    @property
-    def pdb_id(self):
-        return self._pdb_id
+        self.xyz_coords = xyz_coords
+        self.atom_types = atom_types
+        self.restype_onehot = restype_onehot
+        self.restype_index = np.argmax(self.restype_onehot)
+        self.chain_id = chain_id
+        self.pdb_residue_number = pdb_residue_number
+        self.pdb_id = pdb_id
 
     def __repr__(self):
         return (
@@ -111,35 +81,20 @@ class ResidueEnvironmentsDataset(Dataset):
 
     def __init__(
         self,
-        input_data: Union[List[str], List[ResidueEnvironment]],
-        transformer: Callable = None,
-        dataset_key: str = None,
+        input_data,
+        transformer,
     ):
-        self._dataset_key = dataset_key
 
         if all(isinstance(x, ResidueEnvironment) for x in input_data):
-            self._res_env_objects = input_data
+            self.res_env_objects = input_data
         elif all(isinstance(x, str) for x in input_data):
-            self._res_env_objects = self._parse_envs(input_data)
+            self.res_env_objects = self.parse_envs(input_data)
         else:
             raise ValueError(
                 "Input data is not of type" "Union[List[str], List[ResidueEnvironment]]"
             )
 
-        self._transformer = transformer
-
-    @property
-    def res_env_objects(self):
-        return self._res_env_objects
-
-    @property
-    def transformer(self):
-        return self._transformer
-
-    @transformer.setter
-    def transformer(self, transformer):
-        """TODO: Think if a constraint to add later"""
-        self._transformer = transformer
+        self.transformer = transformer
 
     def __len__(self):
         return len(self.res_env_objects)
@@ -150,11 +105,7 @@ class ResidueEnvironmentsDataset(Dataset):
             sample = self.transformer(sample)
         return sample
 
-    def _parse_envs(self, npz_filenames: List[str]) -> List[ResidueEnvironment]:
-        """
-        TODO: Make this more readable
-        """
-
+    def parse_envs(self, npz_filenames):
         res_env_objects = []
         for i in range(len(npz_filenames)):
             coordinate_features = np.load(npz_filenames[i])
@@ -166,13 +117,12 @@ class ResidueEnvironmentsDataset(Dataset):
             chain_ids = coordinate_features["chain_ids"]
             pdb_residue_numbers = coordinate_features["residue_numbers"]
             chain_boundary_indices = coordinate_features["chain_boundary_indices"]
-
-            if self._dataset_key == "Homology":
+            N_residues = selector_prot_seq.shape[0]
+            if "bin" in npz_filenames[i]:  # Check if file belongs to Homology data set
                 pdb_id = os.path.basename(npz_filenames[i])[:19]
             else:
                 pdb_id = os.path.basename(npz_filenames[i])[:4]
 
-            N_residues = selector_prot_seq.shape[0]
             for resi_i in range(N_residues):
                 selector = selector_prot_seq[resi_i]
                 selector_masked = selector[selector > -1]  # Remove Filler
@@ -212,27 +162,17 @@ class ToTensor:
 
     Parameters
     ----------
-    device: str
+    DEVICE: str
         Either "cuda" (gpu) or "cpu". Is set-able.
     """
 
-    def __init__(self, device: str):
-        self.device = device
+    def __init__(self, DEVICE):
+        self.device = DEVICE
 
-    @property
-    def device(self):
-        return self.__device
-
-    @device.setter
-    def device(self, device):
-        allowed_devices = ["cuda", "cpu"]
-        if device in allowed_devices:
-            self.__device = device
-        else:
-            raise ValueError('chosen device "{device}" not in {allowed_devices}')
-
-    def __call__(self, sample: ResidueEnvironment):
-        """Converts single ResidueEnvironment object into x_ and y_"""
+    def __call__(self, sample):
+        """
+        Converts single ResidueEnvironment object into x_ and y_
+        """
 
         sample_env = np.hstack(
             [np.reshape(sample.atom_types, [-1, 1]), sample.xyz_coords]
@@ -240,12 +180,12 @@ class ToTensor:
 
         return {
             "x_": torch.tensor(sample_env, dtype=torch.float32).to(self.device),
-            "y_": torch.tensor(
-                np.array(sample.restype_onehot), dtype=torch.float32
-            ).to(self.device),
+            "y_": torch.tensor(np.array(sample.restype_onehot), dtype=torch.float32).to(
+                self.device
+            ),
         }
 
-    def collate_cat(self, batch: List[ResidueEnvironment]):
+    def collate_cat(self, batch):
         """
         Collate method used by the dataloader to collate a
         batch of ResidueEnvironment objects.
@@ -265,13 +205,14 @@ class ToTensor:
 
         return data, target
 
+
 class CavityModel(torch.nn.Module):
     """
     3D convolutional neural network to missing amino acid classification
 
     Parameters
     ----------
-    device: str
+    DEVICE: str
         Either "cuda" (gpu) or "cpu". Is set-able.
     n_atom_types: int
         Number of atom types. (C, H, N, O, S, P)
@@ -285,61 +226,22 @@ class CavityModel(torch.nn.Module):
 
     def __init__(
         self,
-        device: str,
-        get_latent: bool,
-        n_atom_types: int = 6,
-        bins_per_angstrom: float = 1.0,
-        grid_dim: int = 18,
-        sigma: float = 0.6,
+        get_latent=False,
+        n_atom_types=6,
+        bins_per_angstrom=1.0,
+        grid_dim=18,
+        sigma=0.6,
     ):
-
         super().__init__()
 
-        self.device = device
-        self._n_atom_types = n_atom_types
-        self._get_latent = get_latent        
-        self._bins_per_angstrom = bins_per_angstrom
-        self._grid_dim = grid_dim
-        self._sigma = sigma
-        self._model()
+        self.n_atom_types = n_atom_types
+        self.get_latent = get_latent
+        self.bins_per_angstrom = bins_per_angstrom
+        self.grid_dim = grid_dim
+        self.sigma = sigma
+        self.sigma_p = self.sigma * self.bins_per_angstrom
+        self.model()
 
-    @property
-    def device(self):
-        return self.__device
-
-    @device.setter
-    def device(self, device):
-        allowed_devices = ["cuda", "cpu"]
-        if device in allowed_devices:
-            self.__device = device
-        else:
-            raise ValueError('chosen device "{device}" not in {allowed_devices}')
-
-    @property
-    def n_atom_types(self):
-        return self._n_atom_types
-
-    @property
-    def get_latent(self):
-        return self._get_latent
-
-    @property
-    def bins_per_angstrom(self):
-        return self._bins_per_angstrom
-
-    @property
-    def grid_dim(self):
-        return self._grid_dim
-
-    @property
-    def sigma(self):
-        return self._sigma
-
-    @property
-    def sigma_p(self):
-        return self.sigma * self.bins_per_angstrom
-
-    @property
     def lin_spacing(self):
         lin_spacing = np.linspace(
             start=-self.grid_dim / 2 * self.bins_per_angstrom
@@ -350,29 +252,38 @@ class CavityModel(torch.nn.Module):
         )
         return lin_spacing
 
-    def _model(self):
+    def model(self):
         self.xx, self.yy, self.zz = torch.tensor(
             np.meshgrid(
-                self.lin_spacing, self.lin_spacing, self.lin_spacing, indexing="ij"
+                self.lin_spacing(),
+                self.lin_spacing(),
+                self.lin_spacing(),
+                indexing="ij",
             ),
             dtype=torch.float32,
-        ).to(self.device)
+        )
 
         self.conv1 = torch.nn.Sequential(
             torch.nn.Conv3d(6, 16, kernel_size=(3, 3, 3), stride=1, padding=1),
-            torch.nn.MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=(0, 0, 0)),
+            torch.nn.MaxPool3d(
+                kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=(0, 0, 0)
+            ),
             torch.nn.BatchNorm3d(16),
             torch.nn.LeakyReLU(),
         )
         self.conv2 = torch.nn.Sequential(
             torch.nn.Conv3d(16, 32, kernel_size=(3, 3, 3), stride=1, padding=0),
-            torch.nn.MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=(0, 0, 0)),
+            torch.nn.MaxPool3d(
+                kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=(0, 0, 0)
+            ),
             torch.nn.BatchNorm3d(32),
             torch.nn.LeakyReLU(),
         )
         self.conv3 = torch.nn.Sequential(
             torch.nn.Conv3d(32, 64, kernel_size=(3, 3, 3), stride=1, padding=1),
-            torch.nn.MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=(0, 0, 0)),
+            torch.nn.MaxPool3d(
+                kernel_size=(2, 2, 2), stride=(2, 2, 2), padding=(0, 0, 0)
+            ),
             torch.nn.BatchNorm3d(64),
             torch.nn.LeakyReLU(),
             torch.nn.Flatten(),
@@ -385,8 +296,8 @@ class CavityModel(torch.nn.Module):
         self.dense2 = torch.nn.Linear(in_features=128, out_features=100)
         self.dense3 = torch.nn.Linear(in_features=100, out_features=20)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self._gaussian_blurring(x)
+    def forward(self, x):
+        x = self.gaussian_blurring(x)
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.conv3(x)
@@ -396,10 +307,10 @@ class CavityModel(torch.nn.Module):
             return x
         elif self.get_latent == False:
             x = torch.nn.functional.leaky_relu(x)
-            x = self.dense3(x)        
+            x = self.dense3(x)
             return x
 
-    def _gaussian_blurring(self, x: torch.Tensor) -> torch.Tensor:
+    def gaussian_blurring(self, x):
         """
         Method that takes 2d torch.Tensor describing the atoms of the batch.
 
@@ -427,7 +338,7 @@ class CavityModel(torch.nn.Module):
                 self.grid_dim,
                 self.grid_dim,
             )
-        ).to(self.device)
+        ).to(x.device)
         for j in range(self.n_atom_types):
             mask_j = x[:, 1] == j
             atom_type_j_data = x[mask_j]
@@ -435,9 +346,11 @@ class CavityModel(torch.nn.Module):
                 pos = atom_type_j_data[:, 2:]
                 density = torch.exp(
                     -(
-                        (torch.reshape(self.xx, [-1, 1]) - pos[:, 0]) ** 2
-                        + (torch.reshape(self.yy, [-1, 1]) - pos[:, 1]) ** 2
-                        + (torch.reshape(self.zz, [-1, 1]) - pos[:, 2]) ** 2
+                        (torch.reshape(self.xx.to(x.device), [-1, 1]) - pos[:, 0]) ** 2
+                        + (torch.reshape(self.yy.to(x.device), [-1, 1]) - pos[:, 1])
+                        ** 2
+                        + (torch.reshape(self.zz.to(x.device), [-1, 1]) - pos[:, 2])
+                        ** 2
                     )
                     / (2 * self.sigma_p ** 2)
                 )
@@ -477,72 +390,38 @@ class DownstreamModel(torch.nn.Module):
     """
     Downstream FC neural network.
     """
+
     def __init__(self):
         super().__init__()
 
         # Model
         self.lin1 = torch.nn.Sequential(
-	                torch.nn.Linear(142, 128),
-	                torch.nn.BatchNorm1d(128),
-                    torch.nn.LeakyReLU(),
+            torch.nn.Linear(142, 128),
+            torch.nn.BatchNorm1d(128),
+            torch.nn.LeakyReLU(),
         )
         self.lin2 = torch.nn.Sequential(
-                    torch.nn.Linear(128, 64),
-                    torch.nn.BatchNorm1d(64),
-                    torch.nn.LeakyReLU(),
+            torch.nn.Linear(128, 64),
+            torch.nn.BatchNorm1d(64),
+            torch.nn.LeakyReLU(),
         )
         self.lin3 = torch.nn.Sequential(
-                    torch.nn.Linear(64, 16),
-                    torch.nn.BatchNorm1d(16),
-                    torch.nn.LeakyReLU(),
+            torch.nn.Linear(64, 16),
+            torch.nn.BatchNorm1d(16),
+            torch.nn.LeakyReLU(),
         )
         self.lin4 = torch.nn.Linear(in_features=16, out_features=1)
         self.sigmoid = torch.nn.Sigmoid()
-  
+
     # Forward
-    def forward(self, x): 
+    def forward(self, x):
         x = self.lin1(x)
         x = self.lin2(x)
         x = self.lin3(x)
         x = self.lin4(x)
-        x = self.sigmoid(x)        
+        x = self.sigmoid(x)
         return x
 
-
-class DownstreamModel20(torch.nn.Module):
-    """
-    Downstream FC neural network.
-    """
-    def __init__(self):
-        super().__init__()
-
-        # Model
-        self.lin1 = torch.nn.Sequential(
-	                torch.nn.Linear(62, 128),
-	                torch.nn.BatchNorm1d(128),
-                    torch.nn.LeakyReLU(),
-        )
-        self.lin2 = torch.nn.Sequential(
-                    torch.nn.Linear(128, 64),
-                    torch.nn.BatchNorm1d(64),
-                    torch.nn.LeakyReLU(),
-        )
-        self.lin3 = torch.nn.Sequential(
-                    torch.nn.Linear(64, 16),
-                    torch.nn.BatchNorm1d(16),
-                    torch.nn.LeakyReLU(),
-        )
-        self.lin4 = torch.nn.Linear(in_features=16, out_features=1)
-        self.sigmoid = torch.nn.Sigmoid()
-    
-    # Forward
-    def forward(self, x): 
-        x = self.lin1(x)
-        x = self.lin2(x)
-        x = self.lin3(x)
-        x = self.lin4(x)
-        x = self.sigmoid(x)        
-        return x
 
 class DDGDataset(Dataset):
     """
@@ -551,25 +430,12 @@ class DDGDataset(Dataset):
 
     def __init__(
         self,
-        df: pd.DataFrame,
-        transformer: Callable = None,
+        df,
+        transformer=None,
     ):
 
-        self._df = df
+        self.df = df
         self.transformer = transformer
-
-    @property
-    def df(self):
-        return self._df
-
-    @property
-    def transformer(self):
-        return self._transformer
-
-    @transformer.setter
-    def transformer(self, transformer):
-        """TODO: Think if a constraint to add later"""
-        self._transformer = transformer
 
     def __len__(self):
         return self.df.shape[0]
@@ -587,34 +453,20 @@ class DDGToTensor:
 
     Parameters
     ----------
-    device: str
+    DEVICE: str
         Either "cuda" (gpu) or "cpu". Is set-able.
     """
 
-    def __init__(self, device: str, flag: str):
-        self.device = device
+    def __init__(self, flag, DEVICE):
+        self.device = DEVICE
         self.flag = flag
 
-    @property
-    def device(self):
-        return self.__device
-
-    @device.setter
-    def device(self, device):
-        allowed_devices = ["cuda", "cpu"]
-        if device in allowed_devices:
-            self.__device = device
-        else:
-            raise ValueError('chosen device "{device}" not in {allowed_devices}')
-
-    def __call__(self, sample: pd.Series):
+    def __call__(self, sample):
         # Cavity
-        atom_types = sample["resenv"]._atom_types
-        xyz_coords = sample["resenv"]._xyz_coords
+        atom_types = sample["resenv"].atom_types
+        xyz_coords = sample["resenv"].xyz_coords
 
-        x_cavity = np.hstack(
-            [np.reshape(atom_types, [-1, 1]), xyz_coords]
-        )
+        x_cavity = np.hstack([np.reshape(atom_types, [-1, 1]), xyz_coords])
 
         # Downstream
         wt_onehot = np.zeros(20)
@@ -637,9 +489,11 @@ class DDGToTensor:
                 "variant": variant,
                 "x_cavity": torch.tensor(x_cavity, dtype=torch.float32).to(self.device),
                 "x_ds": torch.tensor(x_ds, dtype=torch.float32).to(self.device),
-                "score_fermi": torch.tensor(ddg_fermi, dtype=torch.float32).to(self.device),
+                "score_fermi": torch.tensor(ddg_fermi, dtype=torch.float32).to(
+                    self.device
+                ),
                 "score": torch.tensor(ddg, dtype=torch.float32).to(self.device),
-               }
+            }
         else:
             return {
                 "pdbid": pdbid,
@@ -647,8 +501,7 @@ class DDGToTensor:
                 "variant": variant,
                 "x_cavity": torch.tensor(x_cavity, dtype=torch.float32).to(self.device),
                 "x_ds": torch.tensor(x_ds, dtype=torch.float32).to(self.device),
-                }
-
+            }
 
     def collate_multi(self, batch):
         """
@@ -674,8 +527,20 @@ class DDGToTensor:
         x_ds_batch = torch.cat([torch.unsqueeze(b["x_ds"], 0) for b in batch], dim=0)
 
         if self.flag != "pred":
-            ddg_fermi_batch = torch.cat([torch.unsqueeze(b["score_fermi"], 0) for b in batch], dim=0)
-            ddg_batch = torch.cat([torch.unsqueeze(b["score"], 0) for b in batch], dim=0)
-            return pdbid_batch, chainid_batch, variant_batch, x_cavity_batch, x_ds_batch, ddg_fermi_batch, ddg_batch
+            ddg_fermi_batch = torch.cat(
+                [torch.unsqueeze(b["score_fermi"], 0) for b in batch], dim=0
+            )
+            ddg_batch = torch.cat(
+                [torch.unsqueeze(b["score"], 0) for b in batch], dim=0
+            )
+            return (
+                pdbid_batch,
+                chainid_batch,
+                variant_batch,
+                x_cavity_batch,
+                x_ds_batch,
+                ddg_fermi_batch,
+                ddg_batch,
+            )
         else:
             return pdbid_batch, chainid_batch, variant_batch, x_cavity_batch, x_ds_batch
