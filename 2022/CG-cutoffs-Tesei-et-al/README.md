@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6815068.svg)](https://doi.org/10.5281/zenodo.6815068)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6815067.svg)](https://doi.org/10.5281/zenodo.6815067)
 
 # Improved Predictions of Phase Behaviour of Intrinsically Disordered Proteins by Tuning the Interaction Range
 
@@ -16,6 +16,12 @@ This repository contains Python code, [Jupyter](http://jupyter.org) Notebooks an
 Further usage examples of the CALVADOS model are available at [KULL-Centre/CALVADOS](https://github.com/KULL-Centre/CALVADOS).
 
 ### Usage
+
+This folder can be downloaded individually (without cloning the whole repository) by issuing the following terminal command
+
+```
+svn checkout https://github.com/KULL-Centre/papers/trunk/2022/CG-cutoffs-Tesei-et-al
+```
 
 To open the Notebooks, install [Miniconda](https://conda.io/miniconda.html) and make sure all required packages are installed by issuing the following terminal commands
 
