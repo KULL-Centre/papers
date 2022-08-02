@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
 import glob
 import os
 import pathlib
@@ -69,47 +67,65 @@ NUM_ENSEMBLE = 10
 
 
 def main():
-    ## Pre-process all protein structures
-    # print(f"Pre-processing PDBs ...")
-    # pdb_dirs = [f"{os.path.dirname(os.getcwd())}/data/train/cavity/structure/",
-    #            f"{os.path.dirname(os.getcwd())}/data/train/downstream/structure/",
-    #            f"{os.path.dirname(os.getcwd())}/data/test/ProTherm/homology_models/structure/",
-    #            f"{os.path.dirname(os.getcwd())}/data/test/ProTherm/targets/structure/",
-    #            f"{os.path.dirname(os.getcwd())}/data/test/Protein_G/structure/",
-    #            f"{os.path.dirname(os.getcwd())}/data/test/Rosetta_10/structure/",
-    #            f"{os.path.dirname(os.getcwd())}/data/test/VAMP/structure/",
-    #            f"{os.path.dirname(os.getcwd())}/data/test/Xstal_vs_AF2/structure/",
-    #            ]
-    # for pdb_dir in pdb_dirs:
-    #    subprocess.call([f"{os.path.dirname(os.getcwd())}/src/pdb_parser_scripts/parse_pdbs_pred.sh", str(pdb_dir)])
-    # print("Pre-processing finished.")
-    #
-    ## Load parsed PISCES PDBs and perform train/val split
-    # pdb_filenames_cavity = sorted(glob.glob(f"{os.path.dirname(os.getcwd())}/data/train/cavity/structure/parsed/*coord*"))
+    # Pre-process all protein structures
+    print(f"Pre-processing PDBs ...")
+    pdb_dirs = [
+        f"{os.path.dirname(os.getcwd())}/data/train/cavity/structure/",
+        f"{os.path.dirname(os.getcwd())}/data/train/downstream/structure/",
+        f"{os.path.dirname(os.getcwd())}/data/test/ProTherm/homology_models/structure/",
+        f"{os.path.dirname(os.getcwd())}/data/test/ProTherm/targets/structure/",
+        f"{os.path.dirname(os.getcwd())}/data/test/Protein_G/structure/",
+        f"{os.path.dirname(os.getcwd())}/data/test/Rosetta_10/structure/",
+        f"{os.path.dirname(os.getcwd())}/data/test/VAMP/structure/",
+        f"{os.path.dirname(os.getcwd())}/data/test/Xstal_vs_AF2/structure/",
+    ]
+    for pdb_dir in pdb_dirs:
+        subprocess.call(
+            [
+                f"{os.path.dirname(os.getcwd())}/src/pdb_parser_scripts/parse_pdbs_pred.sh",
+                str(pdb_dir),
+            ]
+        )
+    print("Pre-processing finished.")
 
-    # if SHUFFLE_PDBS_CAVITY:
-    #    random.shuffle(pdb_filenames_cavity)
+    # Load parsed PISCES PDBs and perform train/val split
+    pdb_filenames_cavity = sorted(
+        glob.glob(
+            f"{os.path.dirname(os.getcwd())}/data/train/cavity/structure/parsed/*coord*"
+        )
+    )
 
-    # dataloader_train_cavity, dataset_train_cavity, dataloader_val_cavity, dataset_val_cavity = train_val_split_cavity(
-    #     pdb_filenames_cavity, TRAIN_VAL_SPLIT_CAVITY, BATCH_SIZE_CAVITY, DEVICE)
+    if SHUFFLE_PDBS_CAVITY:
+        random.shuffle(pdb_filenames_cavity)
 
-    ## Define cavity model
-    # cavity_model_net = CavityModel(get_latent=False).to(DEVICE)
-    # loss_cavity = torch.nn.CrossEntropyLoss()
-    # optimizer_cavity = torch.optim.Adam(cavity_model_net.parameters(), lr=LEARNING_RATE_CAVITY)
+    (
+        dataloader_train_cavity,
+        dataset_train_cavity,
+        dataloader_val_cavity,
+        dataset_val_cavity,
+    ) = train_val_split_cavity(
+        pdb_filenames_cavity, TRAIN_VAL_SPLIT_CAVITY, BATCH_SIZE_CAVITY, DEVICE
+    )
 
-    ## Train cavity model
-    # print("Starting cavity model training")
-    # best_cavity_model_path = train_loop(
-    #    dataloader_train_cavity,
-    #    dataloader_val_cavity,
-    #    cavity_model_net,
-    #    loss_cavity,
-    #    optimizer_cavity,
-    #    EPOCHS_CAVITY,
-    #    PATIENCE_CUTOFF,
-    # )
-    # print("Finished cavity model training")
+    # Define cavity model
+    cavity_model_net = CavityModel(get_latent=False).to(DEVICE)
+    loss_cavity = torch.nn.CrossEntropyLoss()
+    optimizer_cavity = torch.optim.Adam(
+        cavity_model_net.parameters(), lr=LEARNING_RATE_CAVITY
+    )
+
+    # Train cavity model
+    print("Starting cavity model training")
+    best_cavity_model_path = train_loop(
+        dataloader_train_cavity,
+        dataloader_val_cavity,
+        cavity_model_net,
+        loss_cavity,
+        optimizer_cavity,
+        EPOCHS_CAVITY,
+        PATIENCE_CUTOFF,
+    )
+    print("Finished cavity model training")
 
     # Create temporary residue environment datasets to more easily match ddG data
     pdb_filenames_ds = sorted(
@@ -146,9 +162,11 @@ def main():
 
     # Checkpoint - save
     df_ddg.to_pickle(f"{os.path.dirname(os.getcwd())}/output/ddg_train_val.pkl")
-    # f = open(f"{os.path.dirname(os.getcwd())}/output/cavity_models/best_model_path.txt", "w")
-    # f.write(best_cavity_model_path)
-    # f.close()
+    f = open(
+        f"{os.path.dirname(os.getcwd())}/output/cavity_models/best_model_path.txt", "w"
+    )
+    f.write(best_cavity_model_path)
+    f.close()
 
     # Checkpoint - load
     df_ddg = pd.read_pickle(f"{os.path.dirname(os.getcwd())}/output/ddg_train_val.pkl")
@@ -174,32 +192,32 @@ def main():
     cavity_model_net.eval()
     loss_ds = torch.nn.L1Loss()
 
-    ### Train downstream model ensemble
-    # print("Starting downstream model ensemble training")
-    # for i in range(NUM_ENSEMBLE):
-    #    # Initialize model with fixed seed
-    #    model_idx=i
-    #    ds_model_net = DownstreamModel().to(DEVICE)
-    #    torch.manual_seed(seed=model_idx)
-    #    torch.cuda.manual_seed(seed=model_idx)
-    #    ds_model_net.apply(init_lin_weights)
-    #    optimizer_ds = torch.optim.Adam(ds_model_net.parameters(), lr=LEARNING_RATE_DS)
-    #    # Train model
-    #    print(f"Training model: {model_idx+1}/{NUM_ENSEMBLE}")
-    #    ds_train_val(
-    #         df_ddg,
-    #         dataloader_train_ds,
-    #         dataloader_val_ds,
-    #         cavity_model_net,
-    #         ds_model_net,
-    #         loss_ds,
-    #         optimizer_ds,
-    #         model_idx,
-    #         EPOCHS_DS,
-    #         DEVICE,
-    #         )
-    #    print(f"Finished training model: {model_idx+1}/{NUM_ENSEMBLE}")
-    # print("Finished downstream model ensemble training")
+    # Train downstream model ensemble
+    print("Starting downstream model ensemble training")
+    for i in range(NUM_ENSEMBLE):
+        # Initialize model with fixed seed
+        model_idx = i
+        ds_model_net = DownstreamModel().to(DEVICE)
+        torch.manual_seed(seed=model_idx)
+        torch.cuda.manual_seed(seed=model_idx)
+        ds_model_net.apply(init_lin_weights)
+        optimizer_ds = torch.optim.Adam(ds_model_net.parameters(), lr=LEARNING_RATE_DS)
+        # Train model
+        print(f"Training model: {model_idx+1}/{NUM_ENSEMBLE}")
+        ds_train_val(
+            df_ddg,
+            dataloader_train_ds,
+            dataloader_val_ds,
+            cavity_model_net,
+            ds_model_net,
+            loss_ds,
+            optimizer_ds,
+            model_idx,
+            EPOCHS_DS,
+            DEVICE,
+        )
+        print(f"Finished training model: {model_idx+1}/{NUM_ENSEMBLE}")
+    print("Finished downstream model ensemble training")
 
     # Plot learning curve with error bars
     learning_curve_ds_with_errorbars()
