@@ -3,6 +3,7 @@ import enum
 import os
 import sys
 import time
+
 import Bio
 import Bio.PDB
 import Bio.PDB.Vector
@@ -15,6 +16,7 @@ import simtk.unit
 basepath = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(1, basepath)
 import grid
+
 
 def extract_atomic_features(pdb_filename):
     """Extract atomic features from pdb"""
@@ -101,7 +103,7 @@ def extract_atomic_features(pdb_filename):
                 residue_index_local = residue.index - chain_start_index
                 assert residue.name == sequence[i][residue_index_local]
 
-    # Convert valid lists to numpy arrays 
+    # Convert valid lists to numpy arrays
     # (even convert atom_names since its simpler to mask with despite being str)
     features["atom_names"] = np.array(features["atom_names"], dtype="a5")
     features["res_indices"] = np.array(features["res_indices"], dtype=np.int)
@@ -119,8 +121,8 @@ def extract_coordinates(features, max_radius, include_center):
     position_array = np.vstack([features["x"], features["y"], features["z"]]).T
 
     # Retrieve residue indices as numpy int array
-    # This array has many repeats, since it follows the sequence of atoms, 
-    # not residues. It counts globally across chains, i.e. no resets and 
+    # This array has many repeats, since it follows the sequence of atoms,
+    # not residues. It counts globally across chains, i.e. no resets and
     # starts from zero.
     res_indices_glob = features["res_indices"]
     res_indices_uniq = np.unique(
@@ -226,12 +228,16 @@ def extract_coordinates(features, max_radius, include_center):
     return xyz_ref_origo_arr, atom_types_numeric, selector_array
 
 
-
-def extract_environments(pdb_filename: str, pdb_id: str, max_radius: float = 9.0, 
-                         out_dir: str = "./", include_center: bool = False):
+def extract_environments(
+    pdb_filename: str,
+    pdb_id: str,
+    max_radius: float = 9.0,
+    out_dir: str = "./",
+    include_center: bool = False,
+):
     """
     Extract residue environments from PDB file. Outputs .npz file.
-    
+
     Parameters
     ----------
     pdb_filename: str
@@ -246,7 +252,7 @@ def extract_environments(pdb_filename: str, pdb_id: str, max_radius: float = 9.0
         makes sense with set to False, since we are classifying the missing
         center residue.
     """
-    
+
     # Extract atomic features and other relevant info
     (
         features,
@@ -256,7 +262,7 @@ def extract_environments(pdb_filename: str, pdb_id: str, max_radius: float = 9.0
         resids_pdb,
     ) = extract_atomic_features(pdb_filename)
 
-    # Extract relevant coordinates (already masked with selector and referenced), 
+    # Extract relevant coordinates (already masked with selector and referenced),
     # all atom types and the mask for each residue (selector_array)
     xyz_ref_origo_arr, atom_types_numeric, selector_array = extract_coordinates(
         features, max_radius, include_center
@@ -277,16 +283,17 @@ def extract_environments(pdb_filename: str, pdb_id: str, max_radius: float = 9.0
 
 def str2bool(v):
     if isinstance(v, bool):
-       return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return v
+    if v.lower() in ("yes", "true", "t", "y", "1"):
         return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+    elif v.lower() in ("no", "false", "f", "n", "0"):
         return False
     else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
-        
+        raise argparse.ArgumentTypeError("Boolean value expected.")
+
+
 if __name__ == "__main__":
-     
+
     t0 = time.time()
 
     # Argument parser
@@ -307,5 +314,5 @@ if __name__ == "__main__":
     # Extract
     extract_environments(pdb_filename, pdb_id, max_radius, out_dir, include_center)
     t1 = time.time()
-    sys.stdout.flush() 
+    sys.stdout.flush()
     print(f"Time for parsing environments from {pdb_filename}: {t1-t0}")

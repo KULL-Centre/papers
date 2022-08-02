@@ -314,7 +314,7 @@ def main():
         n_rosetta_start = len(df_rosetta)
         populate_dfs_with_resenvs(df_rosetta, resenv_dataset)
         print(
-            f"{n_rosetta_start-len(df_rosetta)} data points dropped when matching rosetta and structure in: {dataset_key} data set."
+            f"{n_rosetta_start-len(df_rosetta)} data points dropped when (inner) matching Rosetta and structure in: {dataset_key} data set."
         )
 
         # Add experimental ddGs to total dataframe

@@ -3,8 +3,9 @@ import os
 import subprocess
 import sys
 import tempfile
-from io import BytesIO, StringIO
 import time
+from io import BytesIO, StringIO
+
 import Bio.PDB
 import Bio.PDB.Polypeptide
 import Bio.SeqIO
@@ -12,7 +13,6 @@ import pdbfixer
 import simtk
 import simtk.openmm
 import simtk.openmm.app
-
 
 PDBIO = Bio.PDB.PDBIO()
 PDB_PARSER = Bio.PDB.PDBParser(PERMISSIVE=0)
@@ -44,6 +44,7 @@ class NonHetSelector(Bio.PDB.Select):
 class PDBFixerResIdentifiabilityIssue(Exception):
     pass
 
+
 def _step_1_reduce(
     reduce_executable,
     pdb_input_filename,
@@ -55,7 +56,10 @@ def _step_1_reduce(
         reduce_executable,
         "-BUILD",
         "-DB",
-        os.path.join(os.path.dirname(reduce_executable), "reduce_wwPDB_het_dict.txt"),
+        os.path.join(
+            os.path.dirname(os.path.dirname(reduce_executable)),
+            "reduce_wwPDB_het_dict.txt",
+        ),
         "-Quiet",
         pdb_input_filename,
     ]
@@ -155,11 +159,12 @@ def _step_4_fix_numbering(fixer, temp3, temp4):
 
     return structure_after
 
+
 def clean_pdb(pdb_input_filename: str, out_dir: str, reduce_executable: str):
     """
-    Function to clean pdbs using reduce and pdbfixer. The output file will 
+    Function to clean pdbs using reduce and pdbfixer. The output file will
     have "_cleaned.pdb" suffix.
-    
+
     Parameters
     ----------
     pdb_input_filename: str
@@ -169,12 +174,18 @@ def clean_pdb(pdb_input_filename: str, out_dir: str, reduce_executable: str):
     reduce_executable: str
         Path to the reduce executable
     """
-    
+
     pdbid = pdb_input_filename.split("/")[-1].split(".pdb")[0]
 
     # Step 1: Add hydrogens using reduce program
     with tempfile.NamedTemporaryFile(mode="wt", delete=True) as temp1:
-        first_model = _step_1_reduce(reduce_executable, pdb_input_filename, pdbid, temp1)
+        print(reduce_executable)
+        print(pdb_input_filename)
+        print(pdbid)
+
+        first_model = _step_1_reduce(
+            reduce_executable, pdb_input_filename, pdbid, temp1
+        )
 
         # Step 2: NonHetSelector filter
         with tempfile.NamedTemporaryFile(mode="wt", delete=True) as temp2:
@@ -195,11 +206,10 @@ def clean_pdb(pdb_input_filename: str, out_dir: str, reduce_executable: str):
                     ) as outpdb:
                         PDBIO.set_structure(structure_after[0])
                         PDBIO.save(outpdb)
-    
-    
+
 
 if __name__ == "__main__":
-    
+
     t0 = time.time()
 
     # Argument Parser
@@ -214,7 +224,7 @@ if __name__ == "__main__":
     out_dir = args_dict["out_dir"]
     reduce_executable = args_dict["reduce_exe"]
 
-    # Clean 
+    # Clean
     clean_pdb(pdb_input_filename, out_dir, reduce_executable)
     t1 = time.time()
     print(f"Time for cleaning {pdb_input_filename}: {t1-t0}")
