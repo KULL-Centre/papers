@@ -6,8 +6,12 @@ Scripts and data to repeat the analyses in Blaabjerg et al.:
 
 ## Code
 Overview of files:<br>
-`src/run_pipeline.py` contains a pipeline for repeating the analyses in paper.<br/>
-`src/run_pipeline_SLURM.sh` contains a recommended SLURM script.<br/>
+`src/run_pipeline.py` repeats the analyses in paper.<br/>
+`src/run_pipeline_SLURM.sh` recommended SLURM script.<br/>
+`src/cavity_model.py` classes for models and data.<br/>
+`src/helpers.py` various helper functions.<br/>
+`src/helpers.py` functions for plots.<br/>
+`src/pdb_parser_scripts/` various scripts for parsing PDB data.<br/>
 
 ## Installation
 Tested on Linux using Miniconda.
@@ -28,10 +32,10 @@ Tested on Linux using Miniconda.
 4. Download the data file `df_rasp_gnomad_clinvar.csv` from https://zenodo.org/record/6835878#.YtCFlC8RpQJ and add it to the directory `data/test/GnomAD_ClinVar/`.
 
 ## Execution
-Execute the pipeline using the python script `src/run_pipeline.py`.
+Execute the pipeline using `src/run_pipeline.py`.
 
 ## RaSPLab
-RaSP pipeline can be run in [Colab](https://colab.research.google.com/) clicking [here](https://colab.research.google.com/github/KULL-Centre/papers/blob/main/2022/ML-ddG-Blaabjerg-et-al/RaSPLab.ipynb)
+The RaSP model can be run in [Colab](https://colab.research.google.com/) clicking [here](https://colab.research.google.com/github/KULL-Centre/papers/blob/main/2022/ML-ddG-Blaabjerg-et-al/RaSPLab.ipynb)
 
 ## Acknowledgements
 Parts of the code - specifically related to the 3D CNN model - was developed by Maher Kassem and Wouter Boomsma. We thank them for their contributions.
