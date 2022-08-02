@@ -6,12 +6,12 @@ Scripts and data to repeat the analyses in Blaabjerg et al.:
 
 ## Code
 Overview of files:<br>
-`src/run_pipeline.py` repeats the analyses in paper.<br/>
-`src/run_pipeline_SLURM.sh` recommended SLURM script.<br/>
-`src/cavity_model.py` classes for models and data.<br/>
-`src/helpers.py` various helper functions.<br/>
-`src/helpers.py` functions for plots.<br/>
-`src/pdb_parser_scripts/` various scripts for parsing PDB data.<br/>
+`src/run_pipeline.py` - main script for repeating the analyses in paper.<br/>
+`src/run_pipeline_SLURM.sh` - a recommended SLURM script.<br/>
+`src/cavity_model.py` - classes for models and data.<br/>
+`src/helpers.py` - various helper functions.<br/>
+`src/visualization.py` - functions for plotting results.<br/>
+`src/pdb_parser_scripts/` - scripts for parsing PDBs.<br/>
 
 ## Installation
 Tested on Linux using Miniconda.
