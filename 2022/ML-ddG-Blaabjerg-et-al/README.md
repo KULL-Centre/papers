@@ -21,7 +21,7 @@ Tested on Linux using Miniconda.
 2. Install and activate conda environment with requirements:<br> 
 `conda create --name cavity-model python=3.6`<br>
 `conda activate cavity-model`<br>
-`conda install pandas scipy numpy=1.17.3 scikit-learn mpl-scatter-density pdbfixer=1.5 pytorch=1.2.0 cudatoolkit=10.0 biopython=1.72 openmm=7.3.1 matplotlib=3.1.1 seaborn ptitprince -c omnia -c conda-forge -c anaconda -c defaults`
+`conda install pyyaml pandas scipy numpy=1.17.3 scikit-learn mpl-scatter-density pdbfixer=1.5 pytorch=1.2.0 cudatoolkit=10.0 biopython=1.72 openmm=7.3.1 matplotlib=3.1.1 seaborn ptitprince -c omnia -c conda-forge -c anaconda -c defaults`
 
 3. Install reduce in the right directory. This program is used by the parser to add missing hydrogens to the proteins.<br/>
 `cd src/pdb_parser_scripts`<br/>
