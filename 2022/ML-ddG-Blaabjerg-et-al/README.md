@@ -25,7 +25,7 @@ Tested on Linux using Miniconda.
 
 3. Install reduce in the right directory. This program is used by the parser to add missing hydrogens to the proteins.<br/>
 `cd src/pdb_parser_scripts`<br/>
-`git clone` https://github.com/rlabduke/reduce.git <br/>
+`git clone https://github.com/rlabduke/reduce.git` <br/>
 `cd reduce/`<br/>
 `make`; `make install` # This might give an error but provides the reduce executable in this directory.
 
