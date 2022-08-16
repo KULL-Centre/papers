@@ -7,7 +7,6 @@ Scripts and data to repeat the analyses in Blaabjerg et al.:
 ## Code
 Overview of files:<br>
 `src/run_pipeline.py` - main script for repeating the analyses in paper.<br/>
-`src/run_pipeline_SLURM.sh` - a recommended SLURM script.<br/>
 `src/cavity_model.py` - classes for models and data.<br/>
 `src/helpers.py` - various helper functions.<br/>
 `src/visualization.py` - functions for plotting results.<br/>
