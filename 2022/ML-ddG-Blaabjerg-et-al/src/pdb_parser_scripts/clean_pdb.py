@@ -179,10 +179,6 @@ def clean_pdb(pdb_input_filename: str, out_dir: str, reduce_executable: str):
 
     # Step 1: Add hydrogens using reduce program
     with tempfile.NamedTemporaryFile(mode="wt", delete=True) as temp1:
-        print(reduce_executable)
-        print(pdb_input_filename)
-        print(pdbid)
-
         first_model = _step_1_reduce(
             reduce_executable, pdb_input_filename, pdbid, temp1
         )
