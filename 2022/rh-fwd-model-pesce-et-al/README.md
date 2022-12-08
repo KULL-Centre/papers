@@ -5,6 +5,7 @@
 - **Rh_M1+SAXS_weights**: Rh calculated with the Nygaard et al. approach, the Kirkwood-Riseman equation and HullRad from selected conformers sampled with CALVADOS, with the weights resulting from refining the ensembles against SAXS data with iBME.
 - **Rh_FM+SAXS_weights**: Rh calculated with the Nygaard et al. approach, the Kirkwood-Riseman equation and HullRad from conformers generated with Flexible-meccano, with the weights resulting from refining the ensembles against SAXS data with iBME. 
 - **Analysis.ipynb**: Notebook showing the data analyses discussed in the manuscript.
+- **SI_Analysis.ipynb**: Notebook showing the supplementary data analyses discussed in the manuscript.
 - **SAXS**: Solvent subtracted SAXS data of the eleven proteins used in the manuscript.
 - **NMR_datax**: Diffusion profiles from PFG NMR experiments for A1, Dss1, aSyn, GHR-ICD, NHE6cmdd, ANAC046 (with 1,4-dioxane).
 - **Sequences**: Sequences of the eleven IDPs used in this study.
