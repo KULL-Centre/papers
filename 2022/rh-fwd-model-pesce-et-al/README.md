@@ -11,4 +11,4 @@
 - **Sequences**: Sequences of the eleven IDPs used in this study.
 - **iBME_tscan.py**: Python wrap to perform iBME reweighting against SAXS data scanning theta values. It requires the BME package available at https://github.com/KULL-Centre/BME
 
-Conformational ensembles produced with Flexible-meccano and CALVADOS are available at https://doi.org/10.5281/zenodo.6628170
+Conformational ensembles produced with Flexible-meccano and CALVADOS are available at https://doi.org/10.5281/zenodo.7415039
