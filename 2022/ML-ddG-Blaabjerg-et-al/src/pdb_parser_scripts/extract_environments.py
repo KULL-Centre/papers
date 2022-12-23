@@ -106,7 +106,7 @@ def extract_atomic_features(pdb_filename):
     # Convert valid lists to numpy arrays
     # (even convert atom_names since its simpler to mask with despite being str)
     features["atom_names"] = np.array(features["atom_names"], dtype="a5")
-    features["res_indices"] = np.array(features["res_indices"], dtype=np.int)
+    features["res_indices"] = np.array(features["res_indices"], dtype=np.int32)
     features["x"] = np.array(features["x"], dtype=np.float32)
     features["y"] = np.array(features["y"], dtype=np.float32)
     features["z"] = np.array(features["z"], dtype=np.float32)
