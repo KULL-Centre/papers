@@ -1,5 +1,7 @@
 # THIS REPOSITORY IS NO LONGER ACTIVE
-# The latest model and future updates can be found on the project's new [GITHUB repository](https://github.com/KULL-Centre/_2022_ML-ddG-Blaabjerg).
+# - Latest model and future updates can be found on the project's new [GITHUB repository](https://github.com/KULL-Centre/_2022_ML-ddG-Blaabjerg).
+
+---
 
 # Rapid protein stability prediction using deep learning representations
 
